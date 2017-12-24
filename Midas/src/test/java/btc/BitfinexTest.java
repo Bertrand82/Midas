@@ -1,48 +1,106 @@
 package btc;
 
-import static org.junit.Assert.*;
-
 import org.junit.Test;
 
 import btc.BitfinexClient.EnumService;
 
 public class BitfinexTest {
 
+	
+	BitfinexClient bfnx = new BitfinexClient(BitfinexKeyTest.apiKey, BitfinexKeyTest.apiKeySecret);
 	@Test
 	public void test() throws Exception{
-		testBitfinex();
+		//testBitfinex();
+	}
+	
+	@Test
+	public void testBitfinexV1_Balance() throws Exception{
+		bfnx.serviceProcessV1(EnumService.balances);
+	}
+
+	@Test
+	public  void testBitfinexV1_AccountInfo() throws Exception {
+		bfnx.serviceProcessV1(EnumService.account_infos);
+		
+	}
+	
+	@Test
+	public  void testBitfinexV1_summary() throws Exception {
+		bfnx.serviceProcessV1(EnumService.summary);
+	}
+
+	@Test
+	public  void testBitfinexV1_key_info() throws Exception {
+		bfnx.serviceProcessV1(EnumService.key_info);
+	}
+	
+	@Test
+	public  void testBitfinexV1_margin_infos() throws Exception {
+		bfnx.serviceProcessV1(EnumService.margin_infos);
+	}
+
+	@Test
+	public  void testBitfinexV1_transfer() throws Exception {
+		bfnx.serviceProcessV1(EnumService.transfer);
+	}
+
+	@Test
+	public  void testBitfinexV1_withdraw() throws Exception {
+		bfnx.serviceProcessV1(EnumService.withdraw);
+	}
+
+	@Test
+	public  void testBitfinexV1_symbols() throws Exception {
+		bfnx.serviceProcessV1(EnumService.symbols);
+	}
+
+	@Test
+	public  void testBitfinexV1_symbols_details() throws Exception {
+		bfnx.serviceProcessV1(EnumService.symbols_details);
+	}
+
+	@Test
+	public  void testBitfinexV1_ticker() throws Exception {
+		bfnx.serviceProcess(EnumService.ticker,"","btcusd");
+	}
+	@Test
+	public  void testBitfinexV1_stats() throws Exception {
+		bfnx.serviceProcess(EnumService.stats,"","btcusd");
+	}
+	@Test
+	public  void testBitfinexV1_orderbook() throws Exception {
+		bfnx.serviceProcess(EnumService.orderbook,"","btcusd");
+	}
+	@Test
+	public  void testBitfinexV1_trades() throws Exception {
+		bfnx.serviceProcess(EnumService.trades,"","btcusd");
+	}
+
+	@Test
+	public  void testBitfinexV1_lends() throws Exception {
+		bfnx.serviceProcess(EnumService.lends,"usd","");
+	}
+
+	@Test
+	public  void testBitfinexV1_statusV2() throws Exception {
+		bfnx.serviceProcessV1(EnumService.statusV2);
+	}
+
+	@Test
+	public  void testBitfinexV1_tickerV2() throws Exception {
+		bfnx.serviceProcess(EnumService.tickerV2,"","tBTCUSD");
+	}
+	
+	@Test
+	public  void testBitfinexV1_tradesV2() throws Exception {
+		bfnx.serviceProcess(EnumService.tradesV2,"","tBTCUSD");
+	}
+
+	@Test
+	public  void testBitfinexV1_walletV2() throws Exception {
+		bfnx.serviceProcess(EnumService.walletV2,"","");
 	}
 
 	
-	public static void testBitfinex() throws Exception {
-		String apiKey = "egerM4sGU0jYYTdab8ViADYBr0dHIbAotwY5byr44T1";
-		String apiKeySecret = "XfHGunq6dFkr8Xz3IlEstuj4c3000fHGtTg5jeo2FQo";
-		for(EnumService es : EnumService.values()){
-			System.out.println(es+" ::::: "+es.key);
-		}
-		BitfinexClient bfnx = new BitfinexClient(apiKey, apiKeySecret);
-		bfnx.serviceProcessV1(EnumService.balances);
-		bfnx.serviceProcessV1(EnumService.account_infos);
-		bfnx.serviceProcessV1(EnumService.summary);
-		//bfnx.serviceProcess(services.deposit_new);
-		bfnx.serviceProcessV1(EnumService.key_info);
-		bfnx.serviceProcessV1(EnumService.margin_infos);
-		bfnx.serviceProcessV1(EnumService.transfer);
-		bfnx.serviceProcessV1(EnumService.withdraw);
-		System.out.println("------------------------------------------ public --------------");
-		bfnx.serviceProcessV1(EnumService.symbols);
-		bfnx.serviceProcessV1(EnumService.symbols_details);
-		bfnx.serviceProcess(EnumService.ticker,"","btcusd");
-		bfnx.serviceProcess(EnumService.stats,"","btcusd");
-		bfnx.serviceProcess(EnumService.orderbook,"","btcusd");
-		bfnx.serviceProcess(EnumService.trades,"","btcusd");
-		bfnx.serviceProcess(EnumService.lends,"usd","");
-		bfnx.serviceProcessV1(EnumService.statusV2);
-		bfnx.serviceProcess(EnumService.tickerV2,"","tBTCUSD");
-		bfnx.serviceProcess(EnumService.tickersV2,"","tBTCUSD,tLTCUSD,fUSD");
-		bfnx.serviceProcess(EnumService.tradesV2,"","tBTCUSD");
-		bfnx.serviceProcess(EnumService.walletV2,"","");
-			
-	}
 
 }
