@@ -5,6 +5,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import btc.model.Symbols;
+import btc.model.v2.Tickers;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
@@ -83,7 +84,7 @@ public class BitfinexClient {
 		lends("lends",Type.Public ,true,null,Params.Currency),
 		statusV2("platform/status",Type.Public_V2 ,true,null,Params.No) ,
 		tickerV2("ticker",Type.Public_V2 ,true,null,Params.Symbol),
-		tickersV2("tickers",Type.Public_V2 ,true,null,Params.SymbolsGetParams),
+		tickersV2("tickers",Type.Public_V2 ,true,Tickers.class,Params.SymbolsGetParams),
 		tradesV2("trades",Type.Public_V2 ,true,null,Params.Symbol,"hist"),
 		walletV2("auth/r/wallets",Type.Authenticated_V2 ,true,null,Params.No,null);
 		/**
@@ -194,8 +195,8 @@ public class BitfinexClient {
 	}
 	
 		
-	public void serviceProcess(EnumService service,String currency, String symbol) throws Exception {
-		System.out.println("\nstart   ------------------------------------------------------------------------ "+service);
+	public Object serviceProcess(EnumService service,String currency, String symbol) throws Exception {
+		System.out.println("\nstart   -------------------------------- "+service+" ----------------------------------------");
 		String r;
 		if(service.isPrivate()){
 			r = this.sendRequestV1Authenticated(service);
@@ -203,12 +204,14 @@ public class BitfinexClient {
 			r = this.sendRequest(service,currency, symbol)	;
 		}
 		System.out.println("sendRequestV1 public service :"+service.key+" result :" + r);
-		traceResult(r, service);
+		JSONObject json = traceResult(r, service);
+		Object object = service.instancie(json);
+		return object;
 	}
 	
 
 
-	private void traceResult(String result,EnumService service){
+	private JSONObject traceResult(String result,EnumService service){
 
 		try {
 			String joStr;
@@ -219,7 +222,7 @@ public class BitfinexClient {
 			}
 			System.out.println(joStr);
 			JSONObject jo = new JSONObject(joStr);
-			Object object = service.instancie(jo);
+			
 			System.out.println("sendRequestV1 "+service.key+" result json :" + jo);
 			List<Object> list = new ArrayList<Object>();
 			if (jo.has(service.key)) {
@@ -229,9 +232,11 @@ public class BitfinexClient {
 					list.add( array.get(i));
 				}
 			}
+			return jo;
 		} catch (Throwable e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			return null;
 		}
 	}
 	

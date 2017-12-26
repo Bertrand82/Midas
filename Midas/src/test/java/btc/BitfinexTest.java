@@ -1,16 +1,41 @@
 package btc;
 
+import java.io.File;
+
 import org.junit.Test;
 
 import btc.BitfinexClient.EnumService;
+import btc.swing.ProtectedConfigFile;
 
 public class BitfinexTest {
-
+	static final File defaultFile = new File("config2.properties");
+	String password = "mypassword";
 	
-	BitfinexClient bfnx = new BitfinexClient(BitfinexKeyTest.apiKey, BitfinexKeyTest.apiKeySecret);
+	ProtectedConfigFile pcf  ;
+	String keyApi ;
+	String keySecret ;
+	BitfinexClient bfnx;
+	public BitfinexTest() {
+		if (!defaultFile.exists()){
+			System.err.println("Pas de fichier de config de test!!!!!");
+			throw new RuntimeException("PAs de fichier de config crypte pour keys");
+		}
+		
+		 try {
+			 pcf  = new ProtectedConfigFile(password,defaultFile);
+			 keyApi = pcf.get(ProtectedConfigFile.keyBitfinexSecretKey);
+			 keySecret = pcf.get(ProtectedConfigFile.keyBifinexApiKey);
+			 bfnx = new BitfinexClient(keyApi, keySecret);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+	
 	@Test
 	public void test() throws Exception{
-		//testBitfinex();
+		
 	}
 	
 	@Test

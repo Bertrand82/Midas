@@ -21,7 +21,6 @@ public class Symbols {
 
 	public Symbols() throws Exception {
 		this(new JSONObject(jsonStr));
-
 	}
 
 	public Symbols(JSONObject jo) {
@@ -75,8 +74,8 @@ public class Symbols {
 	public List<String> getAllEndWith(String end) {
 		List<String> listFiltred = new ArrayList<String>();
 		for(String s : this.list){
-			if (s.endsWith(end)){
-				listFiltred.add(s);
+			if (s.trim().endsWith(end)){
+				listFiltred.add(s.trim());
 			}
 		}
 		return listFiltred;
