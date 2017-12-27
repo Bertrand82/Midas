@@ -1,12 +1,22 @@
 package btc;
 
+import java.io.File;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import btc.swing.MidasGUI;
 
 public class MainBot {
 
-	
+	static final Logger logger = LogManager.getLogger(MainBot.class.getName());
+	static final Logger loggerTrade = LogManager.getLogger("trade");
 	public static void main(String[] a){
-		System.out.println("Start Midas");
+		System.err.println("Start Midas voir log dans directory  logs ");
+		File dirLog = new File("logs");
+		dirLog.mkdirs();
+		logger.info("start");
+		loggerTrade.info("start");
 		new MidasGUI();
 	}
 }

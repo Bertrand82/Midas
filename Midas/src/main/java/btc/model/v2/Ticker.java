@@ -38,14 +38,27 @@ public class Ticker {
 			System.out.print("  :::["+i+"] "+jsonArray.get(i));
 		}
 		
-		/*this.name= jsonArray.getString(0);
-		this.daylyChange = jsonArray.getDouble(8);
-		this.daylyChangePerCent =jsonArray.getDouble(9);
-		this.lastPrice = jsonArray.getDouble(10);
-		this.volumeDaily = jsonArray.getDouble(11);
-		this.highDaily = jsonArray.getDouble(12);
-		this.lowDaily = jsonArray.getDouble(13);
-		*/
+		this.name= jsonArray.getString(0);
+		this.daylyChange = jsonArray.getDouble(5);
+		this.daylyChangePerCent =jsonArray.getDouble(6);
+		this.lastPrice = jsonArray.getDouble(7);
+		this.volumeDaily = jsonArray.getDouble(8);
+		this.highDaily = jsonArray.getDouble(9);
+		this.lowDaily = jsonArray.getDouble(10);
+
 	}
+
+
+
+	@Override
+	public String toString() {
+		return "Ticker [name=" + name + ", volumeDaily=" + volumeDaily + ", highDaily=" + highDaily + ", lowDaily="
+				+ lowDaily + ", lastPrice=" + lastPrice + ", daylyChange=" + daylyChange + ", daylyChangePerCent="
+				+ daylyChangePerCent + "]";
+	}
+
+
+
+	
 
 }

@@ -1,5 +1,7 @@
 package btc.model.v2;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,6 +28,17 @@ public class Tickers {
 			e.printStackTrace();
 		}
 
+	}
+	
+
+	static final NumberFormat formatter = new DecimalFormat("0.0000"); 
+	@Override
+	public String toString() {
+		String s ="";
+		for(Ticker t : lTickers){
+			s+= t.name +" :  "+formatter.format(t.daylyChangePerCent)+" ;";
+		}
+		return s ;
 	}
 
 }

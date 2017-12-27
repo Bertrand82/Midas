@@ -1,8 +1,9 @@
 package btc.trading.first;
 
-import java.util.logging.FileHandler;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import btc.BitfinexClient;
 import btc.BitfinexClient.EnumService;
@@ -13,7 +14,7 @@ import btc.swing.SymbolsConfig;
 
 public class ThreadTrading implements Runnable{
 
-	Logger logger = Logger.getLogger("LoggerTrading");  
+	private static final Logger logger = LogManager.getLogger("trade");
 	long timeSleeping = 60l * 1000l;
 	Thread t = new Thread(this);
 	String symbolsCurrenciesSelected;
@@ -23,10 +24,7 @@ public class ThreadTrading implements Runnable{
 		
 		try {
 			this.symbolsCurrenciesSelected = SymbolsConfig.getInstance().getSymbolsSelectedRequest();
-			FileHandler fileLogHandler = new FileHandler("LogTrading.log");
-			logger.addHandler(fileLogHandler);
-			logger.setLevel(Level.INFO);
-			logger.log(Level.INFO, "start thread");
+			
 			ProtectedConfigFile pcf  = new ProtectedConfigFile(password);
 			String key = pcf.get(ProtectedConfigFile.keyBitfinexSecretKey);
 			String keySecret = pcf.get(ProtectedConfigFile.keyBifinexApiKey);
@@ -43,11 +41,13 @@ public class ThreadTrading implements Runnable{
 	}
 
 	public void run() {
+		System.out.println("run ....");
 		while(isOn ){
 			Tickers tickers = fetchTickers();
+			logger.info(""+tickers);
 			sleep(timeSleeping);
 		}
-		logger.log(Level.INFO, "stop thread");
+		logger.info( "stop thread");
 	}
 	
 	private Tickers fetchTickers(){
@@ -60,7 +60,7 @@ public class ThreadTrading implements Runnable{
 	}
 	
 	public void stop(String from){
-		logger.log(Level.INFO, "stop request from "+from);
+		logger.info( "stop request from "+from);
 		this.isOn =false;
 		this.awake();
 	}

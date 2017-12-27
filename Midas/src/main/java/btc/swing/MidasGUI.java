@@ -14,6 +14,7 @@ import javax.swing.JPanel;
 import btc.BitfinexClient;
 import btc.BitfinexClient.EnumService;
 import btc.model.Symbols;
+import btc.trading.first.ThreadTrading;
 
 public class MidasGUI {
 
@@ -21,9 +22,11 @@ public class MidasGUI {
 	DialogInputKey dialogInputKey;
 	DialogSelectSymbols dialogSelectSymbols;
 	ProtectedConfigFile protectedConfigFile;
+	JButton buttonStartThreadThreading = new JButton("Start Thread Trading");
+	String password ;
 	public MidasGUI() {
 		super();
-		JButton buttonStartThreadThreading = new JButton("Start Thread Trading");
+		
 		buttonStartThreadThreading.addActionListener(new ActionListener() {
 			
 			public void actionPerformed(ActionEvent e) {
@@ -85,11 +88,12 @@ public class MidasGUI {
 				configureBitFinexKey();
 			}
 		});
-		String password = (String)JOptionPane.showInputDialog(
+		 password = (String)JOptionPane.showInputDialog(
                 frame,
                 "Password:\n",
                 "Properties Password",
                 JOptionPane.PLAIN_MESSAGE,
+        		
                 null,
                 null,
                 "mypassword");
@@ -162,6 +166,8 @@ public class MidasGUI {
 	
 	private void startThreadTrading() {
 		System.out.println("startThreadTrading");
+		buttonStartThreadThreading.setEnabled(false);
+		ThreadTrading threadTrading = new ThreadTrading(password);
 	}
 	
 }
