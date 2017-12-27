@@ -14,7 +14,8 @@ import btc.swing.SymbolsConfig;
 
 public class ThreadTrading implements Runnable{
 
-	private static final Logger logger = LogManager.getLogger("trade");
+	private static final Logger loggerTrade= LogManager.getLogger("trade");
+	private static final Logger loggerTradeComparaison= LogManager.getLogger("tradeComparaison");
 	long timeSleeping = 60l * 1000l;
 	Thread t = new Thread(this);
 	String symbolsCurrenciesSelected;
@@ -41,13 +42,13 @@ public class ThreadTrading implements Runnable{
 	}
 
 	public void run() {
-		System.out.println("run ....");
+		log("run ....");
 		while(isOn ){
 			Tickers tickers = fetchTickers();
-			logger.info(""+tickers);
+			loggerTrade.info(""+tickers);
 			sleep(timeSleeping);
 		}
-		logger.info( "stop thread");
+		log( "stop thread");
 	}
 	
 	private Tickers fetchTickers(){
@@ -60,7 +61,7 @@ public class ThreadTrading implements Runnable{
 	}
 	
 	public void stop(String from){
-		logger.info( "stop request from "+from);
+		log( "stop request from "+from);
 		this.isOn =false;
 		this.awake();
 	}
@@ -74,5 +75,10 @@ public class ThreadTrading implements Runnable{
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	private void log(String s){
+		loggerTrade.info( s);
+		loggerTradeComparaison.info(s);
 	}
 }
