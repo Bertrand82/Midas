@@ -25,7 +25,7 @@ public class ProtectedConfigFile {
 	public static String keyBifinexApiKey ="kbfapik1";
 	public static String keyBitfinexSecretKey ="kbfsk2";
 	Properties properties = new Properties();
-	static final File defaultFile = new File("config.properties");
+	static final File defaultFile = new File("p_config.properties");
 	File file ;
 	
 	private  char[] password;

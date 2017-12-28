@@ -8,26 +8,16 @@ public class SymbolConfig implements Comparable<SymbolConfig>{
 	private boolean selected=false;
 	private String comment ="";
 	
-	
+	private Integer order=10000;
 	
 	public SymbolConfig() {
 		super();
 	}
 	
-	public SymbolConfig(String str) {
+	public SymbolConfig(String key, String isSelectedStr) {
 		super();
-		StringTokenizer st = new StringTokenizer(str, ";");
-		if (st.hasMoreTokens()){
-			this.name=st.nextToken();
-		}
-		
-		if (st.hasMoreTokens()){
-			this.selected=st.nextToken().equalsIgnoreCase("true");
-		}
-		if (st.hasMoreTokens()){
-			this.comment=st.nextToken();
-		}
-
+		this.name=key;
+		this.selected=(""+isSelectedStr).equalsIgnoreCase("true");
 	}
 
 	
@@ -58,7 +48,22 @@ public class SymbolConfig implements Comparable<SymbolConfig>{
 
 	public int compareTo(SymbolConfig o) {
 		
-		return this.name.compareTo(o.name);
+		return this.order.compareTo(o.order);
+	}
+
+	public void setOrder(String s) {
+		if(s== null){
+			return;
+		}
+		if(s.length()== 0){
+			return;
+		}
+		try {
+			this.order = Integer.parseInt(s);
+		} catch (NumberFormatException e) {
+			
+			e.printStackTrace();
+		}
 	}
 	
 	

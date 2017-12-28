@@ -1,6 +1,9 @@
 package btc.swing;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -32,7 +35,9 @@ public class SymbolsConfig {
 			e.printStackTrace();
 		}
 	}
-	private File file = new File("symbols.properties");
+	private File file_Symbol_selected = new File("p_symbolsSelected.properties");
+	private File file_Symbol_comment  = new File("p_symbolsComments.properties");
+	private File file_Symbol_sort  = new File("p_symbolsSort.properties");
 	private List< SymbolConfig> lSymbols = new ArrayList< SymbolConfig>();
 
 	public static SymbolsConfig getInstance() {
@@ -44,7 +49,7 @@ public class SymbolsConfig {
 		Properties p = toProperties();
 		FileWriter writer = null;
 		try {
-			writer = new FileWriter(file);
+			writer = new FileWriter(file_Symbol_selected);
 			p.store(writer, "maj symbols");
 		} catch(Exception e) {
 			e.printStackTrace();
@@ -59,18 +64,21 @@ public class SymbolsConfig {
 	}
 
 	public void loadFromFile()  {
-		Properties p = new Properties();
-		if (file.exists()) {
+		Properties prpSymbol_Selected = loadPropertiesSymbolSelected();
+		Properties prpSymbol_Currency_ = loadPropertiesSymbolCurrencies();
+		Properties prpSymbol_Sort = loadPropertiesSymbolSort() ;
+		if (file_Symbol_selected.exists()) {
 			FileReader reader = null;
 			try {
-				reader = new FileReader(file);
-				p.load(reader);
-				for (Object key : p.keySet()) {
-					String v = p.getProperty("" + key);
-					SymbolConfig s = new SymbolConfig(v);
-					this.lSymbols.add(s);
+				reader = new FileReader(file_Symbol_selected);
+				prpSymbol_Selected.load(reader);
+				for (Object key : prpSymbol_Selected.keySet()) {
+					String v = prpSymbol_Selected.getProperty("" + key);
+					SymbolConfig sym = new SymbolConfig(""+key,v);
+					sym.setComment(prpSymbol_Currency_.getProperty(""+key,""));
+					sym.setOrder(prpSymbol_Sort.getProperty(""+key,"10000"));
+					this.lSymbols.add(sym);
 				}
-				Collections.sort(lSymbols);
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -83,23 +91,58 @@ public class SymbolsConfig {
 				}
 			}
 		} else {
+			int i=0;
            for(Object[] oArray : data){
         	   String s="";
-        	   for(Object oo : oArray){
-        		  s += oo+";";
-        	   }
-        	   SymbolConfig sc = new SymbolConfig(s);
-        	   System.out.println("Symbols   ----- "+sc);
+        	   s=(""+oArray[0]).trim();
+        	   SymbolConfig sc = new SymbolConfig(s,"false");
+        	   sc.setComment(prpSymbol_Currency_.getProperty(s));
+        	   sc.setOrder(prpSymbol_Sort.getProperty(s,"10000"));
+         	   System.out.println("Symbols   ----- s:"+s+" xxx  "+sc);
         	   lSymbols.add( sc);
            }
-           Collections.sort(lSymbols);
+          
+		}
+		Collections.sort(lSymbols);
+	}
+
+	private Properties loadPropertiesSymbolCurrencies() {
+		Properties p = new Properties();
+		load(p,file_Symbol_comment);
+		return p;
+	}
+	private Properties loadPropertiesSymbolSort() {
+		Properties p = new Properties();
+		load(p,file_Symbol_sort);
+		return p;
+	}
+
+	private Properties loadPropertiesSymbolSelected() {
+		Properties p = new Properties();
+		load(p,file_Symbol_selected);
+		return p;
+	}
+
+	public static void load(Properties p, File file) {
+		try {
+			if (file.exists()){
+				FileInputStream inStream = new FileInputStream(file);
+				p.load(inStream);
+				inStream.close();
+			}
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 
 	Properties toProperties() {
 		Properties p = new Properties();
 		for (SymbolConfig symbol : this.lSymbols) {
-			p.setProperty(symbol.getName(), symbol.toString());
+			p.setProperty(symbol.getName(), ""+symbol.isSelected());
 		}
 		return p;
 	}
