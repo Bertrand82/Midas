@@ -18,7 +18,7 @@ import org.json.JSONArray;
 13 LOW	float	Daily low
 
  */
-public class Ticker {
+public class Ticker implements Comparable<Ticker>, ITicker{
 
 	String name ;
 	double volumeDaily;
@@ -55,6 +55,139 @@ public class Ticker {
 		return "Ticker [name=" + name + ", volumeDaily=" + volumeDaily + ", highDaily=" + highDaily + ", lowDaily="
 				+ lowDaily + ", lastPrice=" + lastPrice + ", daylyChange=" + daylyChange + ", daylyChangePerCent="
 				+ daylyChangePerCent + "]";
+	}
+
+
+
+	/* (non-Javadoc)
+	 * @see btc.model.v2.ITicker#getShortName()
+	 */
+	@Override
+	public String getShortName() {
+		if (name.length() > 4){
+			return name.substring(1, 4);
+		}else {
+			return name;
+		}
+	}
+
+
+
+	public int compareTo(Ticker o) {
+		Double d = o.daylyChangePerCent;
+		return d.compareTo(this.daylyChangePerCent);
+	}
+
+
+
+	/* (non-Javadoc)
+	 * @see btc.model.v2.ITicker#getName()
+	 */
+	@Override
+	public String getName() {
+		return name;
+	}
+
+
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+
+
+	/* (non-Javadoc)
+	 * @see btc.model.v2.ITicker#getVolumeDaily()
+	 */
+	@Override
+	public double getVolumeDaily() {
+		return volumeDaily;
+	}
+
+
+
+	public void setVolumeDaily(double volumeDaily) {
+		this.volumeDaily = volumeDaily;
+	}
+
+
+
+	/* (non-Javadoc)
+	 * @see btc.model.v2.ITicker#getHighDaily()
+	 */
+	@Override
+	public double getHighDaily() {
+		return highDaily;
+	}
+
+
+
+	public void setHighDaily(double highDaily) {
+		this.highDaily = highDaily;
+	}
+
+
+
+	/* (non-Javadoc)
+	 * @see btc.model.v2.ITicker#getLowDaily()
+	 */
+	@Override
+	public double getLowDaily() {
+		return lowDaily;
+	}
+
+
+
+	public void setLowDaily(double lowDaily) {
+		this.lowDaily = lowDaily;
+	}
+
+
+
+	/* (non-Javadoc)
+	 * @see btc.model.v2.ITicker#getLastPrice()
+	 */
+	@Override
+	public double getLastPrice() {
+		return lastPrice;
+	}
+
+
+
+	public void setLastPrice(double lastPrice) {
+		this.lastPrice = lastPrice;
+	}
+
+
+
+	/* (non-Javadoc)
+	 * @see btc.model.v2.ITicker#getDaylyChange()
+	 */
+	@Override
+	public double getDaylyChange() {
+		return daylyChange;
+	}
+
+
+
+	public void setDaylyChange(double daylyChange) {
+		this.daylyChange = daylyChange;
+	}
+
+
+
+	/* (non-Javadoc)
+	 * @see btc.model.v2.ITicker#getDaylyChangePerCent()
+	 */
+	@Override
+	public double getDaylyChangePerCent() {
+		return daylyChangePerCent;
+	}
+
+
+
+	public void setDaylyChangePerCent(double daylyChangePerCent) {
+		this.daylyChangePerCent = daylyChangePerCent;
 	}
 
 

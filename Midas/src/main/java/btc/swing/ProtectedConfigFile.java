@@ -1,21 +1,8 @@
 package btc.swing;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
-import java.security.Key;
-import java.security.KeyPair;
-import java.security.KeyStore;
-import java.security.PrivateKey;
-import java.security.PublicKey;
-import java.security.cert.Certificate;
-
-import javax.crypto.SecretKey;
-import javax.crypto.SecretKeyFactory;
-import javax.crypto.spec.PBEKeySpec;
-
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
@@ -57,6 +44,9 @@ public class ProtectedConfigFile {
 		this(password,defaultFile);
 	}
 	public ProtectedConfigFile(String password,File file) throws Exception{
+		if (password == null){
+			password ="";
+		}
 		this.password = password.toCharArray();
 		this.file = file;
 		if (file.exists()){

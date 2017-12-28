@@ -1,8 +1,6 @@
 package btc;
 
-import static org.junit.Assert.*;
-
-import java.io.File;
+import static org.junit.Assert.assertEquals;
 
 import javax.crypto.spec.SecretKeySpec;
 

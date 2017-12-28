@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Configuration status="WARN">
-  <Properties>
-    <Property name="filename">target/test.log</Property>
-  </Properties>
+ 
   <Appenders>
     <Console name="Console" target="SYSTEM_OUT">
       <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
     </Console>
     <File name="trade" fileName="logs/trade.log" immediateFlush="true" append="true">
-            <PatternLayout pattern="%d{yyy-MM-dd HH:mm:ss.SSS} - %msg%n"/>
+            <PatternLayout pattern="%d{yyy-MM-dd | HH:mm:ss} | %msg%n"/>
+     </File>
+     <File name="tradeComparaison" fileName="logs/tradeComparaison.log" immediateFlush="true" append="true">
+            <PatternLayout pattern="%d{yyy-MM-dd HH:mm:ss}|  %msg%n"/>
      </File>
   </Appenders>
   <Loggers>
@@ -18,5 +19,9 @@
      <Logger name="trade" level="trace">
         <AppenderRef ref="trade"/>
     </Logger>
+    <Logger name="tradeComparaison" level="trace">
+        <AppenderRef ref="tradeComparaison"/>
+    </Logger>
+    
   </Loggers>
 </Configuration>

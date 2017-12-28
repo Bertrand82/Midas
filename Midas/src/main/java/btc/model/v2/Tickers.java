@@ -3,6 +3,7 @@ package btc.model.v2;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.json.JSONArray;
@@ -14,6 +15,7 @@ import btc.BitfinexClient.EnumService;
 public class Tickers {
 
 	List<Ticker> lTickers = new ArrayList<Ticker>();
+	List<Ticker> lTickersOrdered = new ArrayList<Ticker>();
 	public Tickers(JSONObject jo) throws Exception{
 		System.out.println("Constructeur Tickers");
 		try {
@@ -27,18 +29,31 @@ public class Tickers {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		this.lTickersOrdered.addAll(this.lTickers);
+		Collections.sort(lTickersOrdered);
 
 	}
 	
 
 	static final NumberFormat formatter = new DecimalFormat("0.0000"); 
+	
 	@Override
 	public String toString() {
-		String s ="";
+		String s ="Best : "+lTickersOrdered.get(0).getShortName()+" |";
+         s +="Worse : "+lTickersOrdered.get(lTickersOrdered.size()-1).getShortName()+" |";
 		for(Ticker t : lTickers){
-			s+= t.name +" :  "+formatter.format(t.daylyChangePerCent)+" ;";
+			s+= t.getShortName() +" : "+formatter.format(t.daylyChangePerCent)+"|";
 		}
 		return s ;
 	}
 
+	public List<Ticker> getlTickersOrdered() {
+		return lTickersOrdered;
+	}
+
+	public List<Ticker> getlTickers() {
+		return lTickers;
+	}
+
+	
 }
