@@ -23,6 +23,7 @@ public class Z_1_Currency implements ITicker,Serializable{
 	double lastPrice=0;
 	double daylyChange=0;
 	double daylyChangePerCent=0;
+	private ITicker ticker_Z_1;
 	
 	public Z_1_Currency(ITicker ticker) {
 		super();
@@ -32,6 +33,7 @@ public class Z_1_Currency implements ITicker,Serializable{
 	}
 
 	public void update(ITicker ticker){
+		this.ticker_Z_1 =ticker;
 		this.volumeDaily = tranformZ(this.volumeDaily,ticker.getVolumeDaily());
 		this.highDaily = tranformZ(this.highDaily,ticker.getHighDaily());
 		this.lowDaily = tranformZ(this.lowDaily,ticker.getLowDaily());
@@ -129,6 +131,10 @@ public class Z_1_Currency implements ITicker,Serializable{
 	public String getShortName() {
 		// TODO Auto-generated method stub
 		return shortName;
+	}
+
+	public ITicker getTicker_Z_1() {
+		return ticker_Z_1;
 	}
 	
 	

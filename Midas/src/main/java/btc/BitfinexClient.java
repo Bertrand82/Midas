@@ -24,6 +24,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import btc.model.Balances;
 import btc.model.Symbols;
 import btc.model.v2.Tickers;
 
@@ -61,7 +62,7 @@ public class BitfinexClient {
 		}
 	}
 	public enum EnumService {
-		balances("balances",Type.Authenticated ,true),
+		balances("balances",Type.Authenticated ,true,Balances.class),
 		account_infos("account_infos",Type.Authenticated ,true),
 		summary("summary",Type.Authenticated ,true),
 		deposit_new("deposit/new",Type.Authenticated ,true),
@@ -193,7 +194,11 @@ public class BitfinexClient {
 		System.out.println("\nstart   -------------------------------- "+service+" ----------------------------------------");
 		String r;
 		if(service.isPrivate()){
-			r = this.sendRequestV1Authenticated(service);
+			if (service.isV1()){
+			 r = this.sendRequestV1Authenticated(service);
+			} else {
+				r = this.sendRequestV2Authenticated(service);
+			}
 		} else {
 			r = this.sendRequest(service,currency, symbol)	;
 		}
@@ -203,6 +208,13 @@ public class BitfinexClient {
 		return object;
 	}
 	
+
+
+	private String sendRequestV2Authenticated(EnumService service) {
+		return "No Implemented uet";
+	}
+
+
 
 
 	private JSONObject traceResult(String result,EnumService service){
@@ -334,7 +346,8 @@ public class BitfinexClient {
 
 			JSONObject jo = new JSONObject();
 			jo.put("request", urlPath);
-			jo.put("nonce", Long.toString(getNonce()));
+			String nonce = Long.toString(getNonce());
+			jo.put("nonce", nonce);
 
 			// API v1
 			String payload = jo.toString();
@@ -349,11 +362,13 @@ public class BitfinexClient {
 			System.out.println("payload :" + payload);
 			String payload_sha384hmac = hmacDigest(payload_base64, apiKeySecret, ALGORITHM_HMACSHA384);
 
-			conn.setRequestProperty("Content-Type", "application/json");
+			conn.setRequestProperty("content-type", "application/json");
 			conn.setRequestProperty("Accept", "application/json");
-			conn.addRequestProperty("X-BFX-APIKEY", apiKey);
-			conn.addRequestProperty("X-BFX-PAYLOAD", payload_base64);
-			conn.addRequestProperty("X-BFX-SIGNATURE", payload_sha384hmac);
+			
+				conn.addRequestProperty("X-BFX-APIKEY", apiKey);
+				conn.addRequestProperty("X-BFX-PAYLOAD", payload_base64);
+				conn.addRequestProperty("X-BFX-SIGNATURE", payload_sha384hmac);
+			
 
 			// read the response
 			InputStream in = new BufferedInputStream(conn.getInputStream());

@@ -14,8 +14,8 @@ import btc.BitfinexClient.EnumService;
 
 public class Tickers {
 
-	List<Ticker> lTickers = new ArrayList<Ticker>();
-	List<Ticker> lTickersOrdered = new ArrayList<Ticker>();
+	List<ITicker> lTickers = new ArrayList<ITicker>();
+	List<ITicker> lTickersOrdered = new ArrayList<ITicker>();
 	public Tickers(JSONObject jo) throws Exception{
 		System.out.println("Constructeur Tickers");
 		try {
@@ -30,7 +30,7 @@ public class Tickers {
 			e.printStackTrace();
 		}
 		this.lTickersOrdered.addAll(this.lTickers);
-		Collections.sort(lTickersOrdered);
+		Collections.sort(lTickersOrdered, ITicker.comparatorDailyChangePercent);
 
 	}
 	
@@ -41,17 +41,18 @@ public class Tickers {
 	public String toString() {
 		String s ="Best : "+lTickersOrdered.get(0).getShortName()+" |";
          s +="Worse : "+lTickersOrdered.get(lTickersOrdered.size()-1).getShortName()+" |";
-		for(Ticker t : lTickers){
-			s+= t.getShortName() +" : "+formatter.format(t.daylyChangePerCent)+"|";
+		for(ITicker t : lTickers){
+			s+= t.getShortName() +" : "+formatter.format(t.getDaylyChangePerCent())+"|";
 		}
 		return s ;
 	}
 
-	public List<Ticker> getlTickersOrdered() {
+	public List<ITicker> getlTickersOrdered() {
+		Collections.sort(lTickersOrdered, ITicker.comparatorDailyChangePercent);
 		return lTickersOrdered;
 	}
 
-	public List<Ticker> getlTickers() {
+	public List<ITicker> getlTickers() {
 		return lTickers;
 	}
 

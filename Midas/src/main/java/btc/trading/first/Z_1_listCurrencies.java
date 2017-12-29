@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import btc.model.v2.ITicker;
 import btc.model.v2.Ticker;
 import btc.model.v2.Tickers;
 
@@ -15,30 +16,25 @@ public class Z_1_listCurrencies implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
 
-	public static final Comparator<Z_1_Currency> comparatorDailyChangePercent = new Comparator<Z_1_Currency>() {
 
-		@Override
-		public int compare(Z_1_Currency o1, Z_1_Currency o2) {
-			Double d = o2.daylyChangePerCent;
-			return d.compareTo(o1.daylyChangePerCent);
-		}
-	};
 	
 	List<Z_1_Currency> lTickers_1 = new ArrayList<Z_1_Currency>();
-
+	
 	public Z_1_listCurrencies(Tickers tickers) {
 		super();
-		for(Ticker ticker :tickers.getlTickers()){
+		for(ITicker ticker :tickers.getlTickers()){
 			Z_1_Currency z_1_Currency = new Z_1_Currency(ticker);			
 			lTickers_1.add(z_1_Currency);
 		}
+		
 	}
 
+	
 	public void update(Tickers tickers) {
-		for(Ticker ticker :tickers.getlTickers()){
+		for(ITicker ticker :tickers.getlTickers()){
 			Z_1_Currency z_1_Currency = getZ_1_Currency_byName(ticker.getName());
 			z_1_Currency.update(ticker);
-			lTickers_1.add(z_1_Currency);
+			
 		}
 	}
 
@@ -58,19 +54,41 @@ public class Z_1_listCurrencies implements Serializable {
 
 	}
 	
-	public synchronized List<Z_1_Currency> getListOrder_byDailyChangePerCent(){
-		Collections.sort(lTickers_1,comparatorDailyChangePercent);
-		return lTickers_1;
+	public  List<ITicker> getListOrder_byDailyChangePerCent(){
+		List<ITicker> listNew = new ArrayList<ITicker>();
+		listNew.addAll(lTickers_1);
+		Collections.sort(listNew,ITicker.comparatorDailyChangePercent);
+		return listNew;
 
 	}
 
-	public synchronized Z_1_Currency getTickerBest() {
-		Z_1_Currency z =getListOrder_byDailyChangePerCent().get(0);
+	public synchronized ITicker getTickerBest() {
+		ITicker z =getListOrder_byDailyChangePerCent().get(0);
 		return z;
 	}
 
-	public synchronized Z_1_Currency getTickerWorse() {
-		Z_1_Currency z =getListOrder_byDailyChangePerCent().get(lTickers_1.size()-1);
+	public synchronized ITicker getTickerWorse() {
+		ITicker z =getListOrder_byDailyChangePerCent().get(lTickers_1.size()-1);
 		return z;
+	}
+
+	public double getLastPrice( String currency) {
+		for(Z_1_Currency  zcurrency : this.lTickers_1){
+			if (zcurrency.getShortName().equalsIgnoreCase(currency)){
+				double lastPrice = zcurrency.getLastPrice();
+				return lastPrice;
+			}
+		}
+		return 0;
+	}
+	
+	public double getDaylyChangePerCent( String currency) {
+		for(Z_1_Currency  zcurrency : this.lTickers_1){
+			if (zcurrency.getShortName().equalsIgnoreCase(currency)){
+				double daylyChangePerCent = zcurrency.getDaylyChangePerCent();
+				return daylyChangePerCent;
+			}
+		}
+		return 0;
 	}
 }
