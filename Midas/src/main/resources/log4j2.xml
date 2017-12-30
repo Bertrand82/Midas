@@ -11,17 +11,30 @@
      <File name="tradeComparaison" fileName="logs/tradeComparaison.log" immediateFlush="true" append="true">
             <PatternLayout pattern="%d{yyy-MM-dd HH:mm:ss}|  %msg%n"/>
      </File>
+     <File name="tradeBalance" fileName="logs/tradeBalance.log" immediateFlush="true" append="true">
+            <PatternLayout pattern="%d{yyy-MM-dd HH:mm:ss}|  %msg%n"/>
+     </File>
+     <File name="orders" fileName="logs/orders.log" immediateFlush="true" append="true">
+            <PatternLayout pattern="%d{yyy-MM-dd HH:mm:ss}|[%t]|  %msg%n"/>
+     </File>
   </Appenders>
   <Loggers>
     <Root level="error">
       <AppenderRef ref="Console"/>
     </Root>
-     <Logger name="trade" level="trace">
+     <Logger name="trade" level="trace" additivity="false">
         <AppenderRef ref="trade"/>
     </Logger>
-    <Logger name="tradeComparaison" level="trace">
+    <Logger name="tradeComparaison" level="trace" additivity="false">
         <AppenderRef ref="tradeComparaison"/>
     </Logger>
+     <Logger name="tradeBalance" level="trace" additivity="false">
+        <AppenderRef ref="tradeBalance"/>
+    </Logger>
+    <Logger name="orders" level="trace" additivity="false">
+        <AppenderRef ref="orders"/>
+    </Logger>
+    
     
   </Loggers>
 </Configuration>

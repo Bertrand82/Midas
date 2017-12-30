@@ -5,33 +5,19 @@ import java.io.File;
 import org.junit.Test;
 
 import btc.BitfinexClient.EnumService;
+import btc.model.Balances;
 import btc.swing.ProtectedConfigFile;
 
 public class BitfinexTest {
-	static final File defaultFile = new File("config2.properties");
-	String password = "mypassword";
 	
-	ProtectedConfigFile pcf  ;
-	String keyApi ;
-	String keySecret ;
+	public static String passwordDefault = "mypassword";
+	
+	
 	BitfinexClient bfnx;
 	public BitfinexTest() {
-		if (!defaultFile.exists()){
-			System.err.println("Pas de fichier de config de test!!!!!");
-			throw new RuntimeException("PAs de fichier de config crypte pour keys");
-		}
-		
-		 try {
-			 pcf  = new ProtectedConfigFile(password,defaultFile);
-			 keyApi = pcf.get(ProtectedConfigFile.keyBitfinexSecretKey);
-			 keySecret = pcf.get(ProtectedConfigFile.keyBifinexApiKey);
-			 bfnx = new BitfinexClient(keyApi, keySecret);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
+		bfnx = BitfinexClientFactory.getBitfinexClient(passwordDefault);
 	}
+	
 	
 	@Test
 	public void test() throws Exception{
@@ -40,13 +26,16 @@ public class BitfinexTest {
 	
 	@Test
 	public void testBitfinexV1_Balance() throws Exception{
-		bfnx.serviceProcessV1(EnumService.balances);
+		
+			//bfnx.serviceProcessV1(EnumService.balances);
+			Balances balances =   (Balances) bfnx.serviceProcess(EnumService.balances,"",null);
+
+		System.out.println("Balances :"+balances);
 	}
 
 	@Test
 	public  void testBitfinexV1_AccountInfo() throws Exception {
 		bfnx.serviceProcessV1(EnumService.account_infos);
-		
 	}
 	
 	@Test
@@ -123,7 +112,7 @@ public class BitfinexTest {
 
 	@Test
 	public  void testBitfinexV1_walletV2() throws Exception {
-		bfnx.serviceProcess(EnumService.walletV2,"","");
+		Object o = bfnx.serviceProcess(EnumService.walletV2,"","");
 	}
 
 	

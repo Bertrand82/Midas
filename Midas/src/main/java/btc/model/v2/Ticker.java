@@ -31,12 +31,6 @@ public class Ticker implements Comparable<Ticker>, ITicker{
 	
 	
 	public Ticker(JSONArray jsonArray) throws Exception{
-		System.out.println("jsonArray.length() "+jsonArray.length());
-		
-		System.out.println("jsonArray.length:: "+jsonArray.length());
-		for(int i=0 ; i<jsonArray.length();i++){
-			System.out.print("  :::["+i+"] "+jsonArray.get(i));
-		}
 		
 		this.name= jsonArray.getString(0);
 		this.daylyChange = jsonArray.getDouble(5);
@@ -45,7 +39,6 @@ public class Ticker implements Comparable<Ticker>, ITicker{
 		this.volumeDaily = jsonArray.getDouble(8);
 		this.highDaily = jsonArray.getDouble(9);
 		this.lowDaily = jsonArray.getDouble(10);
-
 	}
 
 

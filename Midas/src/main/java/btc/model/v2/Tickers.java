@@ -17,11 +17,9 @@ public class Tickers {
 	List<ITicker> lTickers = new ArrayList<ITicker>();
 	List<ITicker> lTickersOrdered = new ArrayList<ITicker>();
 	public Tickers(JSONObject jo) throws Exception{
-		System.out.println("Constructeur Tickers");
 		try {
 			JSONArray array = jo.getJSONArray(EnumService.tickersV2.key);
 			for (int i = 0; i < array.length(); i++) {
-				System.out.println(i+" Tickers -----> " + array.get(i).getClass());
 				Ticker ticker = new Ticker((JSONArray )array.get(i));
 				this.lTickers.add(ticker);
 			}

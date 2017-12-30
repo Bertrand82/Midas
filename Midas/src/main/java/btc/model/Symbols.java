@@ -26,7 +26,6 @@ public class Symbols {
 		try {
 			JSONArray array = jo.getJSONArray(EnumService.symbols.key);
 			for (int i = 0; i < array.length(); i++) {
-				System.out.println(i+" -----> " + array.get(i));
 				list.add("" + array.get(i));
 			}
 		} catch (JSONException e) {
@@ -75,6 +74,10 @@ public class Symbols {
 			}
 		}
 		return listFiltred;
+	}
+
+	public boolean contains(String symbol) {
+		return this.list.contains(symbol);
 	}
 	
 	

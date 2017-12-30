@@ -22,6 +22,8 @@ public class ThreadTrading implements Runnable{
 
 	private static final Logger loggerTrade= LogManager.getLogger("trade");
 	private static final Logger loggerTradeComparaison= LogManager.getLogger("tradeComparaison");
+	private static final Logger loggerTradeBalance= LogManager.getLogger("tradeBalance");
+	
 	long timeSleeping = 60l * 1000l;
 	Thread t = new Thread(this);
 	String symbolsCurrenciesSelected;

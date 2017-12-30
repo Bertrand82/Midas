@@ -26,8 +26,11 @@ import org.json.JSONObject;
 
 import btc.model.Balances;
 import btc.model.Symbols;
+import btc.model.TickerV1;
 import btc.model.v2.Tickers;
+import btc.trading.first.Order;
 
+import static btc.UtilBtc.*;
 /**
  * Pour générer key : https://www.bitfinex.com/api
  * 
@@ -61,22 +64,26 @@ public class BitfinexClient {
 			this.key = key;
 		}
 	}
+	private final static boolean rArrayTrue =true;
 	public enum EnumService {
-		balances("balances",Type.Authenticated ,true,Balances.class),
-		account_infos("account_infos",Type.Authenticated ,true),
-		summary("summary",Type.Authenticated ,true),
-		deposit_new("deposit/new",Type.Authenticated ,true),
-		key_info("key_info",Type.Authenticated ,true),
-		margin_infos("margin_infos",Type.Authenticated ,true),
-		transfer("transfer",Type.Authenticated ,true),
-		withdraw("withdraw",Type.Authenticated ,true)	,
-		symbols("symbols",Type.Public ,true,Symbols.class),
+		balances("balances",Type.Authenticated ,rArrayTrue,Balances.class),
+		account_infos("account_infos",Type.Authenticated ,rArrayTrue),
+		summary("summary",Type.Authenticated ,rArrayTrue),
+		deposit_new("deposit/new",Type.Authenticated ,rArrayTrue),
+		key_info("key_info",Type.Authenticated ,rArrayTrue),
+		margin_infos("margin_infos",Type.Authenticated ,rArrayTrue),
+		transfer("transfer",Type.Authenticated ,rArrayTrue),
+		withdraw("withdraw",Type.Authenticated ,rArrayTrue),
+		order("order/new",Type.Authenticated ,rArrayTrue,null,Params.Currency),
+
+		symbols("symbols",Type.Public ,rArrayTrue,Symbols.class),
 		symbols_details("symbols_details",Type.Public ,true),
-		stats("stats",Type.Public ,true,null,Params.Symbol),
-		ticker("pubticker",Type.Public ,true,null,Params.Symbol),
-		orderbook("book",Type.Public ,true,null,Params.Symbol),
-		trades("trades",Type.Public ,true,null,Params.Symbol),
-		lends("lends",Type.Public ,true,null,Params.Currency),
+		stats("stats",Type.Public ,rArrayTrue,null,Params.Symbol),
+		ticker("pubticker",Type.Public ,rArrayTrue,TickerV1.class,Params.Symbol),
+		orderbook("book",Type.Public ,rArrayTrue,null,Params.Symbol),
+		trades("trades",Type.Public ,rArrayTrue,null,Params.Symbol),
+		lends("lends",Type.Public ,rArrayTrue,null,Params.Currency),
+				
 		statusV2("platform/status",Type.Public_V2 ,true,null,Params.No) ,
 		tickerV2("ticker",Type.Public_V2 ,true,null,Params.Symbol),
 		tickersV2("tickers",Type.Public_V2 ,true,Tickers.class,Params.SymbolsGetParams),
@@ -191,7 +198,6 @@ public class BitfinexClient {
 	
 		
 	public Object serviceProcess(EnumService service,String currency, String symbol) throws Exception {
-		System.out.println("\nstart   -------------------------------- "+service+" ----------------------------------------");
 		String r;
 		if(service.isPrivate()){
 			if (service.isV1()){
@@ -202,7 +208,6 @@ public class BitfinexClient {
 		} else {
 			r = this.sendRequest(service,currency, symbol)	;
 		}
-		System.out.println("sendRequestV1 public service :"+service.key+" result :" + r);
 		JSONObject json = traceResult(r, service);
 		Object object = service.instancie(json);
 		return object;
@@ -228,13 +233,10 @@ public class BitfinexClient {
 			}
 			System.out.println(joStr);
 			JSONObject jo = new JSONObject(joStr);
-			
-			System.out.println("sendRequestV1 "+service.key+" result json :" + jo);
 			List<Object> list = new ArrayList<Object>();
 			if (jo.has(service.key)) {
 				JSONArray array = jo.getJSONArray(service.key);
 				for (int i = 0; i < array.length(); i++) {					
-					System.out.println(service.key+" ----->   "+ array.get(i));
 					list.add( array.get(i));
 				}
 			}
@@ -276,7 +278,6 @@ public class BitfinexClient {
 
 		try {
 			URL url = new URL("https://api.bitfinex.com" + urlPath);
-			System.out.println("url "+url);
 			conn = (HttpURLConnection) url.openConnection();
 			conn.setRequestMethod(method);
 			// read the response
@@ -337,7 +338,6 @@ public class BitfinexClient {
 
 		try {
 			URL url = new URL("https://api.bitfinex.com" + urlPath);
-			System.out.println("url "+url);
 			conn = (HttpURLConnection) url.openConnection();
 			conn.setRequestMethod(method);
 
@@ -359,7 +359,6 @@ public class BitfinexClient {
 			// Base64.NO_WRAP);
 			String payload_base64 = Base64.getEncoder().encodeToString(payload.getBytes());
 
-			System.out.println("payload :" + payload);
 			String payload_sha384hmac = hmacDigest(payload_base64, apiKeySecret, ALGORITHM_HMACSHA384);
 
 			conn.setRequestProperty("content-type", "application/json");
@@ -463,7 +462,6 @@ public class BitfinexClient {
 		} catch (NoSuchAlgorithmException e) {
 			Log( "Exception: " + e.getMessage());
 		}
-		System.out.println("digest : " + digest);
 		return digest;
 	}
 
@@ -475,6 +473,89 @@ public class BitfinexClient {
 		}
 		System.out.println(s);
 	}
+	
+	/**
+	 * Creates an authenticated request WITHOUT request parameters. Send a
+	 * request for Balances.
+	 *
+	 * @return Response string if request successfull
+	 * @throws IOException
+	 */
+	public String sendOrder(Order order) throws Exception {
+		String sResponse;
+
+		HttpURLConnection conn = null;
+		EnumService service = EnumService.order;
+		// String urlPath = "/v1/balances";
+		String urlPath = "/"+service.getVersion()+"/"+ service.key;
+		// String method = "GET";
+		String method = "POST";
+
+		try {
+			URL url = new URL("https://api.bitfinex.com" + urlPath);
+			conn = (HttpURLConnection) url.openConnection();
+			conn.setRequestMethod(method);
+
+			conn.setDoOutput(true);
+			conn.setDoInput(true);
+			String nonce = Long.toString(getNonce());
+			JSONObject jo = new JSONObject();
+			jo.put("request", urlPath);			
+			jo.put("nonce", nonce);
+			jo.put("symbol",order.getSymbolWithDirection());
+			jo.put("amount", df.format(order.getAmmountToConvert()));
+			jo.put("price" , df.format(order.getPrice()));
+			jo.put("exchange","bitfinex");
+			jo.put("side", order.getSide());
+			jo.put("type","exchange market");
+			// API v1
+			String payload = jo.toString();
+			System.out.println("paylod "+payload);
+			// this is usage for Base64 Implementation in Android. For pure java
+			// you can use java.util.Base64.Encoder
+			// Base64.NO_WRAP: Base64-string have to be as one line string
+			// String payload_base64 = Base64.encodeToString(payload.getBytes(),
+			// Base64.NO_WRAP);
+			String payload_base64 = Base64.getEncoder().encodeToString(payload.getBytes());
+
+			String payload_sha384hmac = hmacDigest(payload_base64, apiKeySecret, ALGORITHM_HMACSHA384);
+
+			conn.setRequestProperty("content-type", "application/json");
+			conn.setRequestProperty("Accept", "application/json");
+			
+			conn.addRequestProperty("X-BFX-APIKEY", apiKey);
+			conn.addRequestProperty("X-BFX-PAYLOAD", payload_base64);
+			conn.addRequestProperty("X-BFX-SIGNATURE", payload_sha384hmac);
+			
+
+			// read the response
+			InputStream in = new BufferedInputStream(conn.getInputStream());
+			return convertStreamToString(in);
+
+		}  catch (Exception e) {
+			System.out.println("Exception :::: "+e.getMessage());
+			String errMsg = e.getLocalizedMessage();
+
+			if (conn != null) {
+				try {
+					sResponse = convertStreamToString(conn.getErrorStream());
+					errMsg += " -> " + sResponse;
+					Log( errMsg, e);
+					throw new Exception( sResponse,e);
+				} catch (IOException e1) {
+					errMsg += " Error on reading error-stream. -->: " + e1.getLocalizedMessage();
+					Log( errMsg, e);
+					throw new Exception( "mpossible d'obtenir le message d'erreur",e);
+				}
+			} 
+			throw e;
+		}  finally {
+			if (conn != null) {
+				conn.disconnect();
+			}
+		}
+	}
+
 	
 
 }

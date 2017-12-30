@@ -15,9 +15,6 @@ public class Balance {
 	// {"amount":"0.0","available":"0.0","currency":"btc","type":"deposit"}
 	public Balance(JSONObject jsonO) throws Exception{
 		
-		System.out.println("jsonArray.length:: "+jsonO);
-		
-		
 		this.amount= jsonO.getDouble("amount");
 		this.available = jsonO.getDouble("available");
 		this.currency =jsonO.getString("currency");
@@ -38,6 +35,11 @@ public class Balance {
 	
 	public boolean isTypeEchange(){
 		return this.type.equalsIgnoreCase(TYPE_exchange);
+	}
+	@Override
+	public String toString() {
+		return "Balance " + type + " " + currency + " " + amount + " " + available
+				+ "]";
 	}
 
 }
