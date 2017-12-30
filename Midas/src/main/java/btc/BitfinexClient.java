@@ -519,7 +519,7 @@ public class BitfinexClient {
 			String payload_base64 = Base64.getEncoder().encodeToString(payload.getBytes());
 
 			String payload_sha384hmac = hmacDigest(payload_base64, apiKeySecret, ALGORITHM_HMACSHA384);
-
+ 
 			conn.setRequestProperty("content-type", "application/json");
 			conn.setRequestProperty("Accept", "application/json");
 			
