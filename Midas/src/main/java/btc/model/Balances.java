@@ -15,7 +15,8 @@ import btc.BitfinexClient.EnumService;
 import btc.model.v2.ITicker;
 import btc.model.v2.Ticker;
 import btc.trading.first.Order;
-import btc.trading.first.Z_1_listCurrencies;
+import btc.trading.first.SessionCurrencies;
+import btc.trading.first.SessionCurrency;
 
 public class Balances {
 
@@ -42,33 +43,39 @@ public class Balances {
 	}
 	DecimalFormat df = new DecimalFormat("0000000.00");
 	DecimalFormat df2 = new DecimalFormat("00.00");
-	public List<Order> process(Z_1_listCurrencies z) {
+	private double totalDollar =0;
+	
+	
+	
+	public List<Order> process(SessionCurrencies session) {
 		List<Order> orders = new ArrayList<>();
-		double totalDollar =0;
-		ITicker tickerBest = z.getListOrder_byDailyChangePerCent().get(0);
-		for(Balance balance : this.lBalancesExchange){
+		 totalDollar =0;
+		 ITicker tickerBest = session.getBestEligible();
+		 
+		 for(Balance balance : this.lBalancesExchange){
+			 String currency = balance.getCurrency();
+			SessionCurrency tickerCurrent = session.getTickerByCurrency(currency);
 			double available = balance.getAmount();
-			String currency = balance.getCurrency();
-			double lastPrice = z.getLastPrice(currency);
-			double percent = z.getDaylyChangePerCent(currency);
-			double deltaPercent = tickerBest.getDaylyChangePerCent() - percent;
+			
+			double lastPrice = session.getLastPrice(currency);
+			double percent = session.getDaylyChangePerCent(currency);
+			double deltaPercent = (tickerBest.getDaylyChangePerCent() - percent);
 			double availableInDollar = lastPrice * available;
 			loggerTradeBalance.info("Devise :"+currency+"\t|dayly change per cent : "+df2.format(percent*100)+"| available :"+df.format(available)+"\t| daily "+df.format(lastPrice) +"\t| in dollar "+df.format(availableInDollar));
 			totalDollar+= availableInDollar;
-			
+			balance.setLastPrice(lastPrice);
+			balance.setPercent(percent);
+			balance.setAvailableInDollar(availableInDollar);
 			if(tickerBest.getShortName().equals(currency)){
 				//PAs d'ordres
-			}else if(deltaPercent < 0.01){
+			}else if(Math.abs(deltaPercent )< 0.02){
 				//Introduction de stabilité (eviter les yoyo)
+		    }else if(availableInDollar < 50){
+		    	// minimum order size between 10-25 USD
 		    }else {
-		    	if(availableInDollar < 30){
-		    		// minimum order size between 10-25 USD
-		    	}else {
-		    		Order order = new Order(currency, tickerBest.getShortName(),available);
-		    		orders.add(order);
-		    	}
-				
-			}
+		    	Order order = new Order(currency, tickerBest.getShortName(),available);
+		    	orders.add(order);
+		    }
 		}
 		loggerTradeBalance.info("Total available In dollar : " +df.format(totalDollar));
 		loggerTradeBalance.info("List Orders "+orders);
@@ -77,6 +84,20 @@ public class Balances {
 	@Override
 	public String toString() {
 		return "Balances [lBalances=" + lBalances + "]";
+	}
+	public double getTotalDollar() {
+		return totalDollar;
+	}
+	public List<Balance> getlBalancesExchange() {
+		return lBalancesExchange;
+	}
+	public Balance getBalance(String currency) {
+		for(Balance balance : this.lBalancesExchange){
+			if (balance.getCurrency().equalsIgnoreCase(currency)){
+				return balance;
+			}
+		}
+		return null;
 	}
 	
 	

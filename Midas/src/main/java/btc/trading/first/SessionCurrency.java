@@ -5,7 +5,7 @@ import java.util.Date;
 
 import btc.model.v2.ITicker;
 
-public class Z_1_Currency implements ITicker,Serializable{
+public class SessionCurrency implements ITicker,Serializable{
 
 
 	private static final long serialVersionUID = 1L;
@@ -24,8 +24,9 @@ public class Z_1_Currency implements ITicker,Serializable{
 	double daylyChange=0;
 	double daylyChangePerCent=0;
 	private ITicker ticker_Z_1;
+	private boolean isEligible= true;
 	
-	public Z_1_Currency(ITicker ticker) {
+	public SessionCurrency(ITicker ticker) {
 		super();
 		this.name = ticker.getName();
 		this.shortName = ticker.getShortName();
@@ -135,6 +136,14 @@ public class Z_1_Currency implements ITicker,Serializable{
 
 	public ITicker getTicker_Z_1() {
 		return ticker_Z_1;
+	}
+
+	public boolean isEligible() {
+		return isEligible;
+	}
+
+	public void setEligible(boolean isEligible) {
+		this.isEligible = isEligible;
 	}
 	
 	

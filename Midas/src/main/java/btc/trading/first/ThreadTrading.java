@@ -10,9 +10,11 @@ import org.apache.logging.log4j.Logger;
 
 import btc.BitfinexClient;
 import btc.BitfinexClient.EnumService;
+import btc.OrderManager;
 import btc.model.Balances;
 import btc.model.v2.ITicker;
 import btc.model.v2.Tickers;
+import btc.swing.MidasGUI;
 import btc.swing.ProtectedConfigFile;
 import btc.swing.SymbolsConfig;
 
@@ -29,11 +31,13 @@ public class ThreadTrading implements Runnable{
 	String symbolsCurrenciesSelected;
 	boolean isOn = true;
 	BitfinexClient bitfinexClient;
-	Z_1_listCurrencies z_1_listCurrencies;
-	public ThreadTrading(String password)  {		
+	SessionCurrencies sessionCurrencies;
+	Config config;
+	public ThreadTrading(Config config)  {	
+		this.config = config;
 		try {			
 			this.symbolsCurrenciesSelected = SymbolsConfig.getInstance().getSymbolsSelectedRequest();			
-			ProtectedConfigFile pcf  = new ProtectedConfigFile(password);
+			ProtectedConfigFile pcf  = new ProtectedConfigFile(config.password);
 			String key = pcf.get(ProtectedConfigFile.keyBifinexApiKey);
 			String keySecret = pcf.get(ProtectedConfigFile.keyBitfinexSecretKey);
 			bitfinexClient= new BitfinexClient(key, keySecret);
@@ -56,19 +60,23 @@ public class ThreadTrading implements Runnable{
 					Tickers tickers = fetchTickers();
 					Balances balances = fetchBalances();
 					ITicker tickerBest = tickers.getlTickersOrdered().get(0);
-					if (z_1_listCurrencies == null){
-						z_1_listCurrencies = new Z_1_listCurrencies(tickers);
+					if (sessionCurrencies == null){
+						sessionCurrencies = new SessionCurrencies(tickers);
 					}else {
-						z_1_listCurrencies.update(tickers);
+						sessionCurrencies.update(tickers);
 					}
-					ITicker tickerWorse = tickers.getlTickersOrdered().get(tickers.getlTickers().size()-1);
-					ITicker zBest = z_1_listCurrencies.getTickerBest();
-					ITicker zWorse = z_1_listCurrencies.getTickerWorse();
-					
+					ITicker zBest = sessionCurrencies.getTickerBest();
+						
 					loggerTrade.info(""+tickers.toString());
 					loggerTradeComparaison.info("Instantane\t|Best:"+tickerBest.getShortName()+"\t|"+getTrace(tickers.getlTickersOrdered()));
-					loggerTradeComparaison.info("Filtred   \t|Best:"+zBest.getShortName()+"\t|"+getTrace(z_1_listCurrencies.getListOrder_byDailyChangePerCent()));
-					balances.process(z_1_listCurrencies);
+					loggerTradeComparaison.info("Filtred   \t|Best:"+zBest.getShortName()+"\t|"+getTrace(sessionCurrencies.getListOrder_byDailyChangePerCent()));
+					
+					List<Order> orders = balances.process(sessionCurrencies);
+					if(this.config.orderAble){
+						OrderManager.getInstance().sendOrders(this.bitfinexClient,orders);
+					}
+					this.sessionCurrencies.setBalancesCurrent(balances);
+					MidasGUI.getInstance().updateThread();
 				} catch (Exception e) {
 					log("Exception "+e.getClass()+" "+e.getMessage());
 				}
@@ -76,6 +84,7 @@ public class ThreadTrading implements Runnable{
 			}
 			log( "stop thread");
 	}
+	
 	private static DecimalFormat decimalFormat = new DecimalFormat("0.000");
 	
 	private String getTrace(List<ITicker> list){
@@ -126,6 +135,12 @@ public class ThreadTrading implements Runnable{
 		loggerTrade.info( s);
 		loggerTradeComparaison.info(s);
 	}
+
+	public SessionCurrencies getSesionCurrencies() {
+		return sessionCurrencies;
+	}
+
+	
 	
 	
 }

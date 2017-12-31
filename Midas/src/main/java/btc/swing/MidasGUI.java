@@ -1,31 +1,51 @@
 package btc.swing;
 
 import java.awt.BorderLayout;
+import java.awt.Font;
+import java.awt.MenuBar;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
 
 import javax.swing.JButton;
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.UIManager;
 
 import btc.BitfinexClient;
 import btc.BitfinexClient.EnumService;
 import btc.model.Symbols;
+import btc.trading.first.Config;
+import btc.trading.first.SessionCurrencies;
 import btc.trading.first.ThreadTrading;
+
 
 public class MidasGUI {
 
+	
 	JLabel labelLog = new JLabel(" ");
 	DialogInputKey dialogInputKey;
+	
 	DialogSelectSymbols dialogSelectSymbols;
 	ProtectedConfigFile protectedConfigFile;
 	JButton buttonStartThreadThreading = new JButton("Start Thread Trading");
 	String password ;
+	JCheckBoxMenuItem menuItemSaveConfig= new JCheckBoxMenuItem("Save Password");
+	JCheckBoxMenuItem menuItemOrderAble= new JCheckBoxMenuItem("Send Orders");
+	JFrame frame = new JFrame("Midas");
+	JPanel panelGlobal = new JPanel(new BorderLayout()); 
+	private static MidasGUI instance ;
 	public MidasGUI() {
 		super();
+		instance =this;
+		Font font = new Font ("Dialog", Font.BOLD, 18);
+		UIManager.put("Label.font", font);
 		
 		buttonStartThreadThreading.addActionListener(new ActionListener() {
 			
@@ -33,15 +53,15 @@ public class MidasGUI {
 				startThreadTrading();				
 			}
 		});
-		JButton buttonSetSecretKeys = new JButton("Set Secret Keys");
-		buttonSetSecretKeys.addActionListener(new ActionListener() {
+		JMenuItem menuSetSecretKeys = new JMenuItem("Set Secret Keys");
+		menuSetSecretKeys.addActionListener(new ActionListener() {
 			
 			public void actionPerformed(ActionEvent e) {
 				displaySecretKeys();				
 			}
 		});
-		JButton buttonSelectCurrency = new JButton("Select Currency");
-		buttonSelectCurrency.addActionListener(new ActionListener() {
+		JMenuItem menuSelectCurrency = new JMenuItem("Select Currency");
+		menuSelectCurrency.addActionListener(new ActionListener() {
 			
 			public void actionPerformed(ActionEvent e) {
 				selectCurrencyDialog();				
@@ -61,19 +81,28 @@ public class MidasGUI {
 				fetchTickers();				
 			}
 		});
+		
+		JMenu menuFile = new JMenu("File");
+		menuFile.add(menuItemSaveConfig);
+		menuFile.add(menuItemOrderAble);
+		menuFile.add(menuSelectCurrency);
+		menuFile.add(menuSetSecretKeys);
+		JMenuBar menuBar = new JMenuBar();
+		menuBar.add(menuFile);
 		JPanel panelButtons = new JPanel();
-		panelButtons.add(buttonSelectCurrency);
-		panelButtons.add(buttonFetchSymbols);
-		panelButtons.add(buttonFetchTicker);
-		panelButtons.add(buttonSetSecretKeys);
+		
+		//panelButtons.add(buttonFetchSymbols);
+		//panelButtons.add(buttonFetchTicker); // Utile pour des test unitaire
+		
 		panelButtons.add(buttonStartThreadThreading);
 		
-		JPanel panelGlobal = new JPanel(new BorderLayout()); 
+		
 		panelGlobal.add(panelButtons,BorderLayout.NORTH);
 		panelGlobal.add(labelLog,BorderLayout.SOUTH);
-        JFrame frame = new JFrame("Midas");
+        
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().add(panelGlobal, BorderLayout.CENTER);
+		frame.setJMenuBar(menuBar);
 		frame.pack();
 		frame.setVisible(true);
 		dialogSelectSymbols = new DialogSelectSymbols(frame, new ActionListener() {
@@ -89,14 +118,14 @@ public class MidasGUI {
 			}
 		});
 		 password = (String)JOptionPane.showInputDialog(
-                frame,
-                "Password:\n",
-                "Properties Password",
-                JOptionPane.PLAIN_MESSAGE,
-        		
-                null,
-                null,
-                "mypassword");
+	                frame,
+	                "Password:\n",
+	                "Properties Password",
+	                JOptionPane.PLAIN_MESSAGE,
+	        		
+	                null,
+	                null,
+	                "mypassword");
 		try {
 			this.protectedConfigFile = new ProtectedConfigFile(password);
 		} catch (Exception e1) {
@@ -163,11 +192,36 @@ public class MidasGUI {
 		System.out.println("Process Symbol Selected");
 		
 	}
-	
+	ThreadTrading threadTrading ;
 	private void startThreadTrading() {
 		System.out.println("startThreadTrading");
 		buttonStartThreadThreading.setEnabled(false);
-		ThreadTrading threadTrading = new ThreadTrading(password);
+		boolean orderAble = this.menuItemOrderAble.isSelected();
+		Config config = new Config( orderAble,password);
+		threadTrading = new ThreadTrading(config);
+	}
+
+	public static MidasGUI getInstance() {
+		return instance;
+	}
+	PanelCurrencies panelCurrencies;
+	public void updateThread() {
+		try {
+			SessionCurrencies session = this.threadTrading.getSesionCurrencies();
+			if(panelCurrencies == null){
+				panelCurrencies = new PanelCurrencies(session);
+				panelGlobal.removeAll();
+				panelGlobal.add(panelCurrencies);
+				frame.pack();
+				
+			}else {
+				panelCurrencies.update(session);
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
+
 }

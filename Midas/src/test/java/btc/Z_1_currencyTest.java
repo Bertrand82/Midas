@@ -6,7 +6,7 @@ import org.junit.Test;
 
 import btc.model.v2.ITicker;
 import btc.model.v2.Ticker;
-import btc.trading.first.Z_1_Currency;
+import btc.trading.first.SessionCurrency;
 
 public class Z_1_currencyTest {
 
@@ -62,7 +62,7 @@ public class Z_1_currencyTest {
 	};
 	@Test
 	 public  void processTest() throws Exception {
-		Z_1_Currency z = new Z_1_Currency(ticker);
+		SessionCurrency z = new SessionCurrency(ticker);
 		for(int i=0; i<1000;i++){
 			z.update(ticker);
 			assertEquals(ticker.getLastPrice(),z.getLastPrice(),0.000001);

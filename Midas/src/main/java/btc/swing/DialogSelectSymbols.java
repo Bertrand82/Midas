@@ -28,14 +28,15 @@ public class DialogSelectSymbols extends JDialog implements ActionListener {
 		
 		private static final long serialVersionUID = 1L;
 		SymbolsConfig sc = SymbolsConfig.getInstance();
+		@Override
 		public String getColumnName(int col) {
 			return columnNames[col];
 		}
-
+		@Override
 		public int getRowCount() {
 			return sc.gethSymbols().size();
 		}
-
+		@Override
 		public int getColumnCount() {
 			return columnNames.length;
 		}
