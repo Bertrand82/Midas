@@ -11,7 +11,7 @@ import btc.swing.ProtectedConfigFile;
 public class BitfinexTest {
 	
 	public static String passwordDefault = "mypassword";
-	
+	 
 	
 	BitfinexClient bfnx;
 	public BitfinexTest() {
