@@ -1,11 +1,13 @@
 package btc.model;
 
+import java.io.Serializable;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-public class Balance {
+public class Balance implements Serializable{
 
-	
+	private static final long serialVersionUID = 1L;
 	public static String TYPE_exchange ="exchange";
 	public static String TYPE_deposit ="deposit";
 	String type;

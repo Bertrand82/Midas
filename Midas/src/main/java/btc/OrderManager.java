@@ -29,6 +29,29 @@ public class OrderManager {
 
 	public  void sendOrder(BitfinexClient bfnx ,Order order){
 		try {
+			try {
+				System.err.println("AAAAAAAAAAAAAAAAAa");
+				sendOrderPrivate(bfnx, order);
+			} catch (ExceptionNoSymbolForOrder e) {
+				System.err.println("BBBBBBBBBBBBBBBBBB");
+				// Je converti en btc qui est convertible en tout apparament
+				System.err.println("Conversion en btc");
+				order.setCurrencyTo("btc");
+				try {
+					sendOrderPrivate(bfnx, order);
+				} catch (ExceptionNoSymbolForOrder e1) {	
+					System.err.println("Deuxiemme echec for order !!!");
+					loggerOrder.warn("Desesperant! Essayer le usd ?");
+				}
+			}
+		} catch (Throwable e) {
+			System.err.println("cccccccccccccccccccc");
+			e.printStackTrace();
+		}
+	}
+	
+	public  void sendOrderPrivate(BitfinexClient bfnx ,Order order) throws ExceptionNoSymbolForOrder{
+		try {
 			
 			Symbols symbols = (Symbols) bfnx.serviceProcess(EnumService.symbols, null, null);
 			String symbol;
@@ -44,7 +67,8 @@ public class OrderManager {
 				symbol = order.getSymbolInvers();	
 				order.setSide(Order.side_buy);
 			} else {
-				throw new Exception("No simbol for order" + order);
+				loggerOrder.warn("No symbol for order" + order+" try to convert in btc!!");
+				throw new ExceptionNoSymbolForOrder("No symbol for order " + order);
 			}
 			order.setSymbolWithDirection(symbol);
 			TickerV1 ticker =(TickerV1) bfnx.serviceProcess(EnumService.ticker, "", symbol);
@@ -57,10 +81,12 @@ public class OrderManager {
 			
 			String r = bfnx.sendOrder(order);
 			loggerOrder.info(r);
+		} catch (ExceptionNoSymbolForOrder e) {
+			throw e;
 		} catch (Exception e) {
-			loggerOrder.error("sendOrder Exception : ",e);
-			e.printStackTrace();
-			
+			loggerOrder.error("Exception44 sendOrderBB Exception : ",e);
+			System.err.println("Exception44 ");
+			e.printStackTrace();			
 		}
 
 	}

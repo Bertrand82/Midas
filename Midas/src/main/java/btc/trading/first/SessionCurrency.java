@@ -145,6 +145,15 @@ public class SessionCurrency implements ITicker,Serializable{
 	public void setEligible(boolean isEligible) {
 		this.isEligible = isEligible;
 	}
+
+	public void updateWithArchive(SessionCurrency sArchive) {
+		if(sArchive == null){
+			return;
+		}
+		assert(name.equals(sArchive.name));
+		assert(dateStart.after(sArchive.dateStart));
+		isEligible = sArchive.isEligible;
+	}
 	
 	
 }

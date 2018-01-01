@@ -1,7 +1,10 @@
 package btc.trading.first;
 
-public class Config {
-	
+import java.io.Serializable;
+
+public class Config implements Serializable{
+
+	private static final long serialVersionUID = 1L;
 	boolean orderAble = false;
 	String password ="";
 	public Config(boolean orderAble, String password) {

@@ -33,6 +33,7 @@ public class ThreadTrading implements Runnable{
 	BitfinexClient bitfinexClient;
 	SessionCurrencies sessionCurrencies;
 	Config config;
+	private boolean emergencySaveAllRequest = false;
 	public ThreadTrading(Config config)  {	
 		this.config = config;
 		try {			
@@ -51,7 +52,7 @@ public class ThreadTrading implements Runnable{
 			e.printStackTrace();
 		}
 	}
-
+	Balances balances;
 	public void run() {
 		
 			loggerTrade.info( "run  DAILY_CHANGE_PERC	float	Amount that the price has changed expressed in percentage terms");
@@ -78,13 +79,31 @@ public class ThreadTrading implements Runnable{
 					this.sessionCurrencies.setBalancesCurrent(balances);
 					MidasGUI.getInstance().updateThread();
 				} catch (Exception e) {
-					log("Exception "+e.getClass()+" "+e.getMessage());
+					log("Exception22: "+e.getClass()+" "+e.getMessage());
 				}
+				checkEmergencySaveRequest();
 				sleep(timeSleeping);
+				checkEmergencySaveRequest();
 			}
 			log( "stop thread");
 	}
 	
+	private void checkEmergencySaveRequest(){
+		if (emergencySaveAllRequest){
+			List<Order> orders = sessionCurrencies.saveAllInDollar();
+			log("emergencySaveAll orders.size :"+orders.size());
+			log("emergencySaveAll orders.size :"+orders);
+			if(this.config.orderAble){
+				OrderManager.getInstance().sendOrders(this.bitfinexClient,orders);
+			}else{
+				log("Warning Save All in Dollar Order put noOrderable");
+			}
+		}
+		emergencySaveAllRequest=false;
+	}
+	
+	
+
 	private static DecimalFormat decimalFormat = new DecimalFormat("0.000");
 	
 	private String getTrace(List<ITicker> list){
@@ -138,6 +157,12 @@ public class ThreadTrading implements Runnable{
 
 	public SessionCurrencies getSesionCurrencies() {
 		return sessionCurrencies;
+	}
+
+	public void emergencySave(String from) {
+		log("emergy save request from "+from);
+		this.emergencySaveAllRequest=true;
+		awake();
 	}
 
 	

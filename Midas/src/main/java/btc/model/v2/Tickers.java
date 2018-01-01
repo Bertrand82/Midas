@@ -1,5 +1,6 @@
 package btc.model.v2;
 
+import java.io.Serializable;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -12,8 +13,12 @@ import org.json.JSONObject;
 
 import btc.BitfinexClient.EnumService;
 
-public class Tickers {
+public class Tickers implements Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	List<ITicker> lTickers = new ArrayList<ITicker>();
 	List<ITicker> lTickersOrdered = new ArrayList<ITicker>();
 	public Tickers(JSONObject jo) throws Exception{

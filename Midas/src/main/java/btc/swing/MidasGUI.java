@@ -67,6 +67,18 @@ public class MidasGUI {
 				selectCurrencyDialog();				
 			}
 		});
+		
+		JMenuItem menuItemEmergencySave = new JMenuItem("Emergency change In $ ");
+		menuItemEmergencySave.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				emergencySave();
+			}
+
+			
+		});
+		
 		JButton buttonFetchSymbols = new JButton("Fetch symbols");
 		buttonFetchSymbols.addActionListener(new ActionListener() {
 			
@@ -87,8 +99,12 @@ public class MidasGUI {
 		menuFile.add(menuItemOrderAble);
 		menuFile.add(menuSelectCurrency);
 		menuFile.add(menuSetSecretKeys);
+		
+		JMenu menuActions = new JMenu("Actions");
+		menuActions.add(menuItemEmergencySave);
 		JMenuBar menuBar = new JMenuBar();
 		menuBar.add(menuFile);
+		menuBar.add(menuActions);
 		JPanel panelButtons = new JPanel();
 		
 		//panelButtons.add(buttonFetchSymbols);
@@ -223,5 +239,8 @@ public class MidasGUI {
 		}
 	}
 	
-
+	private void emergencySave() {
+		System.out.println("Emergency Save");
+		this.threadTrading.emergencySave("Operator");
+	}
 }

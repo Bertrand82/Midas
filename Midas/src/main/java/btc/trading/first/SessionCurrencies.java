@@ -7,6 +7,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import org.hibernate.SessionFactory;
+
 import btc.model.Balance;
 import btc.model.Balances;
 import btc.model.v2.ITicker;
@@ -27,18 +29,19 @@ public class SessionCurrencies implements Serializable {
 			SessionCurrency z_1_Currency = new SessionCurrency(ticker);
 			lSessionCurrency.add(z_1_Currency);
 		}
+		SessionCurrenciesFactory.synchronizeWithArchive(this);
 
 	}
 
 	public void update(Tickers tickers) {
 		for (ITicker ticker : tickers.getlTickers()) {
-			SessionCurrency z_1_Currency = getZ_1_Currency_byName(ticker.getName());
+			SessionCurrency z_1_Currency = getSessionCurrency_byName(ticker.getName());
 			z_1_Currency.update(ticker);
 
 		}
 	}
 
-	private SessionCurrency getZ_1_Currency_byName(String name) {
+	private SessionCurrency getSessionCurrency_byName(String name) {
 		for (SessionCurrency z : lSessionCurrency) {
 			if (name.equalsIgnoreCase(z.getName())) {
 				return z;
@@ -129,6 +132,24 @@ public class SessionCurrencies implements Serializable {
 		}
 		System.err.println("Pas de currency eligible");
 		return null;
+	}
+
+	public List<Order> saveAllInDollar() {
+		System.err.println("Save All In Dollar start");	
+		return this.balancesCurrent.saveAllInDollar(this);
+	}
+
+	public void saveConfiguration() {
+		System.err.println("saveConfiguration");
+		SessionCurrenciesFactory.saveOnFile(this);
+	}
+
+	public void updateWithArchive(SessionCurrencies sessionArchive) {
+		for(SessionCurrency sc : this.lSessionCurrency){
+			String name = sc.getName();
+			SessionCurrency sArchive = sessionArchive.getSessionCurrency_byName(name);
+			sc.updateWithArchive(sArchive);
+		}
 	}
 
 }

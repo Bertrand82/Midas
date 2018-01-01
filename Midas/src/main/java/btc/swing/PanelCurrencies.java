@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.awt.LayoutManager;
 import java.text.DecimalFormat;
+import java.util.Date;
 import java.util.Hashtable;
 
 import javax.swing.JLabel;
@@ -61,14 +62,18 @@ public class PanelCurrencies extends JPanel {
 			} else if (columnIndex == 1) {
 				if (balance == null) {
 					return "-";
+				}else if (balance.getAvailableInDollar() <=0.01){
+					return "0";
 				} else {
-					return balance.getAvailableInDollar() + " $";
+					return df.format(balance.getAvailableInDollar()) + " $";
 				}
 
 			} else if (columnIndex == 2) {
-				return t.getTicker_Z_1().getDaylyChangePerCent() + " %";
+				double taux =t.getTicker_Z_1().getDaylyChangePerCent();
+				return df2.format( taux)+ " %";
 			} else if (columnIndex == 3) {
-				return t.getDaylyChangePerCent() + " %";
+				double taux = t.getDaylyChangePerCent();
+				return df2.format( taux) + " %";
 			}else if(columnIndex == nSelect){
 				return t.isEligible();
 			}
@@ -79,7 +84,11 @@ public class PanelCurrencies extends JPanel {
 			
 			if (col == nSelect){
 				SessionCurrency t = (SessionCurrency) session.getListOrder_byDailyChangePerCent().get(row);
-				t.setEligible((Boolean) value);
+				Boolean b = (Boolean) value;
+				if (b != t.isEligible()){
+					t.setEligible((Boolean) value);
+					session.saveConfiguration();
+				}
 			}
 			
 		}
@@ -92,25 +101,35 @@ public class PanelCurrencies extends JPanel {
 		}
 
 	};
-	JTable table;
+	private JTable table;
 
 	public PanelCurrencies(SessionCurrencies session) {
 		super(new BorderLayout());
 		this.session = session;
 		table = new JTable(tableModel);
+		//table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+		table.getColumnModel().getColumn(0).setPreferredWidth(60);
+		table.getColumnModel().getColumn(1).setPreferredWidth(170);
+		table.getColumnModel().getColumn(2).setPreferredWidth(80);
+		table.getColumnModel().getColumn(3).setPreferredWidth(80);
+		
 		JScrollPane scrollPane = new JScrollPane(table);
 		this.add(scrollPane, BorderLayout.SOUTH);
 		this.add(labelTitre, BorderLayout.CENTER);
+		this.update(session);
 
 	}
 
-	DecimalFormat df = new DecimalFormat("0000000.00");
+	private static DecimalFormat df = new DecimalFormat("0,000,000.00");
+	private static DecimalFormat df2 = new DecimalFormat(".000");
 
 	public void update(SessionCurrencies session) {
 		this.session = session;
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				table.updateUI();
+				Date date = new Date();
+				labelTitre.setText("Total "+df.format(session.getBalancesCurrent().getTotalDollar())+" $ "+date);
 			}
 		});
 	}

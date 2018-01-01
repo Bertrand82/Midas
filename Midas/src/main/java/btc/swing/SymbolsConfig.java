@@ -41,7 +41,6 @@ public class SymbolsConfig {
 	private List< SymbolConfig> lSymbols = new ArrayList< SymbolConfig>();
 
 	public static SymbolsConfig getInstance() {
-
 		return instance;
 	}
 
@@ -80,13 +79,11 @@ public class SymbolsConfig {
 					this.lSymbols.add(sym);
 				}
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}finally{
 				try {
 					reader.close();
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
@@ -130,10 +127,7 @@ public class SymbolsConfig {
 				p.load(inStream);
 				inStream.close();
 			}
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

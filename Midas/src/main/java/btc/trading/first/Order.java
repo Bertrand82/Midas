@@ -110,6 +110,10 @@ public class Order implements Serializable {
 		return 0;
 	}
 
+	public void setCurrencyTo(String currencyTo) {
+		this.currencyTo = currencyTo;
+	}
+
 	
 
 }

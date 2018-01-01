@@ -1,5 +1,7 @@
 package btc.model.v2;
 
+import java.io.Serializable;
+
 import org.json.JSONArray;
 /*
  * 
@@ -18,8 +20,12 @@ import org.json.JSONArray;
 13 LOW	float	Daily low
 
  */
-public class Ticker implements Comparable<Ticker>, ITicker{
+public class Ticker implements Comparable<Ticker>, ITicker, Serializable{
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	String name ;
 	double volumeDaily;
 	double highDaily;
