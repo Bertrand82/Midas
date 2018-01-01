@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.text.DecimalFormat;
 import java.util.Collection;
 
+import btc.BitfinexClient.OrderType;
+
 public class Order implements Serializable {
 
 	/**
@@ -112,6 +114,15 @@ public class Order implements Serializable {
 
 	public void setCurrencyTo(String currencyTo) {
 		this.currencyTo = currencyTo;
+	}
+	OrderType orderType = OrderType.exchange_limit;
+	public OrderType getOrderType() {
+		
+		return orderType;
+	}
+
+	public void setOrderType(OrderType orderType) {
+		this.orderType = orderType;
 	}
 
 	
