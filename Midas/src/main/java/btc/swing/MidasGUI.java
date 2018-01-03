@@ -35,7 +35,7 @@ public class MidasGUI {
 	
 	DialogSelectSymbols dialogSelectSymbols;
 	ProtectedConfigFile protectedConfigFile;
-	JButton buttonStartThreadThreading = new JButton("Start Thread Trading");
+	JButton buttonStartThreadThreading_OLD = new JButton("Start Thread Trading");
 	String password ;
 	JCheckBoxMenuItem menuItemSaveConfig= new JCheckBoxMenuItem("Save Password");
 	JCheckBoxMenuItem menuItemOrderAble= new JCheckBoxMenuItem("Send Orders");
@@ -48,12 +48,7 @@ public class MidasGUI {
 		Font font = new Font ("Dialog", Font.BOLD, 18);
 		UIManager.put("Label.font", font);
 		
-		buttonStartThreadThreading.addActionListener(new ActionListener() {
-			
-			public void actionPerformed(ActionEvent e) {
-				startThreadTrading();				
-			}
-		});
+		
 		JMenuItem menuSetSecretKeys = new JMenuItem("Set Secret Keys");
 		menuSetSecretKeys.addActionListener(new ActionListener() {
 			
@@ -122,7 +117,7 @@ public class MidasGUI {
 		//panelButtons.add(buttonFetchSymbols);
 		//panelButtons.add(buttonFetchTicker); // Utile pour des test unitaire
 		
-		panelButtons.add(buttonStartThreadThreading);
+	//	panelButtons.add(buttonStartThreadThreading);
 		
 		
 		panelGlobal.add(panelButtons,BorderLayout.NORTH);
@@ -160,7 +155,7 @@ public class MidasGUI {
 			this.labelLog.setText("Exception config");
 			e1.printStackTrace();
 		}
-
+		startThreadTrading();
 	}
 
 	private void fetchTickers(){
@@ -223,7 +218,7 @@ public class MidasGUI {
 	ThreadTrading threadTrading ;
 	private void startThreadTrading() {
 		System.out.println("startThreadTrading");
-		buttonStartThreadThreading.setEnabled(false);
+		//buttonStartThreadThreading.setEnabled(false);
 		boolean orderAble = this.menuItemOrderAble.isSelected();
 		Config config = new Config( orderAble,password);
 		threadTrading = new ThreadTrading(config);

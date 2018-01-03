@@ -239,6 +239,11 @@ public class SessionCurrency implements ITicker,Serializable{
 	    
 	}
 
+	public boolean isInitializing() {
+		
+		return numero <= 1;
+	}
+
 
 
 	

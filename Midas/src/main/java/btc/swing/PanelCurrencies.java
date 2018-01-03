@@ -26,14 +26,19 @@ import btc.trading.first.SessionCurrencies;
 import btc.trading.first.SessionCurrency;
 
 public class PanelCurrencies extends JPanel {
+	private static final DecimalFormat df = new DecimalFormat("0,000,000.00");
+	private static final DecimalFormat df2 = new DecimalFormat("0.000;-.000");
+	private static final DecimalFormat df3 = new DecimalFormat("#######0.000;");
+	
 
 	private static final long serialVersionUID = 1L;
 	SessionCurrencies session;
 	private JLabel labelTitre = new JLabel("Total ");
-	String[] columnNames = { "Symbol", "possesion (dollar)", "% Day", "% Hour f", "% Hour instant","Eligible" ,""};
+	String[] columnNames = { "Symbol","montant" ,"= dollar", "% Day", "% Hour f", "% Hour instant","Eligible" ,""};
     private Hashtable<String, PanelCanvas> hCanvas = new Hashtable<>();
+    int nSelect = 6;
 	AbstractTableModel tableModel = new AbstractTableModel() {
-		int nSelect = 5;
+		
 		private static final long serialVersionUID = 1L;
 
 		@Override
@@ -62,10 +67,19 @@ public class PanelCurrencies extends JPanel {
 		public Object getValueAt(int rowIndex, int columnIndex) {
 			SessionCurrency sessionCurrency = (SessionCurrency) session.getListOrder_byDailyChangePerCent().get(rowIndex);
 			Balance balance = session.getBalance(sessionCurrency.getShortName());
+			
 			if (columnIndex == 0) {
 				return sessionCurrency.getShortName();
 			} else if (columnIndex == 1) {
-				if (balance == null) {
+				if (balance== null){
+					return " - ";
+				}else {
+					double amount = balance.getAmount();
+					return df3.format(amount);
+					
+				}
+			} else if (columnIndex == 2) {
+					if (balance == null) {
 					return "-";
 				}else if (balance.getAvailableInDollar() <=0.01){
 					return "0";
@@ -73,20 +87,26 @@ public class PanelCurrencies extends JPanel {
 					return df.format(balance.getAvailableInDollar()) + " $";
 				}
 
-			} else if (columnIndex == 2) {
+			} else if (columnIndex == 3) {
 				double taux =sessionCurrency.getTicker_Z_1().getDaylyChangePerCent();				
 				return df2.format( taux)+ " %";
-			} else if (columnIndex == 3) {
-				double taux = sessionCurrency.getHourlyChangePerCentByDay();
-			
-				return df2.format( taux) + " %";
 			} else if (columnIndex == 4) {
-				double taux = sessionCurrency.getHourlyChangePerCentByDayInstant();
-				
-				return df2.format(taux) + " %";
+				if(sessionCurrency.isInitializing()){
+					return "initializing";
+				}else {
+					double taux = sessionCurrency.getHourlyChangePerCentByDay();			
+					return df2.format( taux) + " %";
+				}
+			} else if (columnIndex == 5) {
+				if(sessionCurrency.isInitializing()){
+					return "initializing";
+				}else {
+					double taux = sessionCurrency.getHourlyChangePerCentByDayInstant();
+					return df2.format(taux) + " %";
+				}
 			}else if(columnIndex == nSelect){
 				return sessionCurrency.isEligible();
-			}else if(columnIndex == 6){
+			}else if(columnIndex == (nSelect+1)){
 				String key =  sessionCurrency.getShortName();
 				return hCanvas.get(key).getImageIcon();
 			}
@@ -109,7 +129,7 @@ public class PanelCurrencies extends JPanel {
 		public Class<?> getColumnClass(int columnIndex) {
 			if (columnIndex == nSelect){
 				return Boolean.class;
-			}else if(columnIndex == 6){
+			}else if(columnIndex == (nSelect+1)){
 				return ImageIcon.class;
 			}
 			return Object.class;
@@ -128,9 +148,13 @@ public class PanelCurrencies extends JPanel {
 		table.setRowHeight(60);
 		//table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		table.getColumnModel().getColumn(0).setPreferredWidth(60);
+		table.getColumnModel().getColumn(0).setMaxWidth(60);
 		table.getColumnModel().getColumn(1).setPreferredWidth(170);
 		table.getColumnModel().getColumn(2).setPreferredWidth(80);
 		table.getColumnModel().getColumn(3).setPreferredWidth(80);
+		table.getColumnModel().getColumn(nSelect).setPreferredWidth(40);
+		table.getColumnModel().getColumn(nSelect).setMaxWidth(40);
+		
 		table.setAutoCreateRowSorter(true);
 		
 		JScrollPane scrollPane = new JScrollPane(table);
@@ -144,21 +168,21 @@ public class PanelCurrencies extends JPanel {
 	}
 	
 	void initCanvas(){
-		for(SessionCurrency sc : this.session.getListOrder_byHourlyChangePerCent()){
-			
-			
-			int w=199;
-			int h =50;
-			BufferedImage bf =  new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
-					String currency = sc.getShortName();
-					PanelCanvas pc = new PanelCanvas(currency);
-					this.hCanvas.put(currency, pc);
+		try {
+			for(SessionCurrency sc : this.session.getListOrder_byHourlyChangePerCent()){
+					
+				
+						String currency = sc.getShortName();
+						PanelCanvas pc = new PanelCanvas(currency);
+						this.hCanvas.put(currency, pc);
+						System.err.println("initCanvas "+currency);
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 
-	private static DecimalFormat df = new DecimalFormat("0,000,000.00");
-	private static DecimalFormat df2 = new DecimalFormat("0.000;-.000");
-	
 	public void update(SessionCurrencies session) {
 		this.session = session;
 		
