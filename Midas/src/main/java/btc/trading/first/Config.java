@@ -12,5 +12,11 @@ public class Config implements Serializable{
 		this.orderAble = orderAble;
 		this.password = password;
 	}
+	public boolean isOrderAble() {
+		return orderAble;
+	}
+	public void setOrderAble(boolean orderAble) {
+		this.orderAble = orderAble;
+	}
 
 }

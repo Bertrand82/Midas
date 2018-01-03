@@ -4,6 +4,8 @@ import static btc.UtilBtc.df;
 
 import java.util.List;
 
+import javax.persistence.metamodel.Bindable.BindableType;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -30,12 +32,9 @@ public class OrderManager {
 	public  void sendOrder(BitfinexClient bfnx ,Order order){
 		try {
 			try {
-				System.err.println("AAAAAAAAAAAAAAAAAa");
 				sendOrderPrivate(bfnx, order);
 			} catch (ExceptionNoSymbolForOrder e) {
-				System.err.println("BBBBBBBBBBBBBBBBBB");
 				// Je converti en btc qui est convertible en tout apparament
-				System.err.println("Conversion en btc");
 				order.setCurrencyTo("btc");
 				try {
 					sendOrderPrivate(bfnx, order);
@@ -72,7 +71,8 @@ public class OrderManager {
 			}
 			order.setSymbolWithDirection(symbol);
 			TickerV1 ticker =(TickerV1) bfnx.serviceProcess(EnumService.ticker, "", symbol);
-			order.setPrice(ticker.getLast_price());
+			double price = Math.max(ticker.getLast_price(), ticker.getMid());
+			order.setPrice(price);
 			if(order.isBuying()){
 				double amountToConvert = order.getAmountDesired();
 				order.setAmmountToConvert(amountToConvert);

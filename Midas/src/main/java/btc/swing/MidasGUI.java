@@ -1,6 +1,7 @@
 package btc.swing;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.MenuBar;
 import java.awt.event.ActionEvent;
@@ -93,7 +94,18 @@ public class MidasGUI {
 				fetchTickers();				
 			}
 		});
-		
+		menuItemOrderAble.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (threadTrading != null){
+					boolean b = menuItemOrderAble.isSelected();
+					System.err.println("orderAble::  "+b);
+					threadTrading.getConfig().setOrderAble(b);
+				}
+				
+			}
+		});
 		JMenu menuFile = new JMenu("File");
 		menuFile.add(menuItemSaveConfig);
 		menuFile.add(menuItemOrderAble);
@@ -228,6 +240,7 @@ public class MidasGUI {
 				panelCurrencies = new PanelCurrencies(session);
 				panelGlobal.removeAll();
 				panelGlobal.add(panelCurrencies);
+				
 				frame.pack();
 				
 			}else {

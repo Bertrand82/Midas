@@ -1,6 +1,7 @@
 package btc.model.v2;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import org.json.JSONArray;
 /*
@@ -27,31 +28,54 @@ public class Ticker implements Comparable<Ticker>, ITicker, Serializable{
 	 */
 	private static final long serialVersionUID = 1L;
 	String name ;
+	double hourlyPrice;
 	double volumeDaily;
 	double highDaily;
 	double lowDaily;
 	double lastPrice;
 	double daylyChange;
 	double daylyChangePerCent;
-	
-	
+	double hourlyChangePerCent;
+	long deltaTemps_=10000000000000000l;
+	Date date = new Date();
+	int numero ;
+	/*
+	 
+0	["tBTCUSD",
+1	13133,		Flash Return Rate - average of all fixed rate funding over the last hour
+2	34.86896499,
+3	13134,58.
+4	4337667,
+5	-421,		daylyChange
+6	-0.0311,	daylyChangePerCent
+7	13134,		lastPrice
+8	35459.		volumeDaily
+9	46177273,	
+10	13898,		highDaily
+11	12777]		lowDaily
+ 
+	 
+	 
+	 */
 	
 	public Ticker(JSONArray jsonArray) throws Exception{
 		
 		this.name= jsonArray.getString(0);
+		this.hourlyPrice = jsonArray.getDouble(1);
 		this.daylyChange = jsonArray.getDouble(5);
 		this.daylyChangePerCent =jsonArray.getDouble(6);
 		this.lastPrice = jsonArray.getDouble(7);
 		this.volumeDaily = jsonArray.getDouble(8);
 		this.highDaily = jsonArray.getDouble(9);
 		this.lowDaily = jsonArray.getDouble(10);
+		
 	}
 
 
 
 	@Override
 	public String toString() {
-		return "Ticker [name=" + name + ", volumeDaily=" + volumeDaily + ", highDaily=" + highDaily + ", lowDaily="
+		return "Ticker [name=" + name +" hourlyPrice="+hourlyPrice+ ", volumeDaily=" + volumeDaily + ", highDaily=" + highDaily + ", lowDaily="
 				+ lowDaily + ", lastPrice=" + lastPrice + ", daylyChange=" + daylyChange + ", daylyChangePerCent="
 				+ daylyChangePerCent + "]";
 	}
@@ -187,6 +211,65 @@ public class Ticker implements Comparable<Ticker>, ITicker, Serializable{
 
 	public void setDaylyChangePerCent(double daylyChangePerCent) {
 		this.daylyChangePerCent = daylyChangePerCent;
+	}
+
+
+
+	public double getHourlyPrice() {
+		return hourlyPrice;
+	}
+
+
+
+	public void setHourlyPrice(double hourlyPrice) {
+		this.hourlyPrice = hourlyPrice;
+	}
+
+
+
+	@Override
+	public double getHourlyChangePerCent() {
+		return hourlyChangePerCent;
+	}
+
+
+
+	public void setHourlyChangePerCent(double hourlyChangePerCent) {
+		this.hourlyChangePerCent = hourlyChangePerCent;
+	}
+
+
+
+	@Override
+	public long getDeltaTemps_ms() {
+		return deltaTemps_;
+	}
+
+
+
+	@Override
+	public void setDeltaTemps_ms(long delta) {
+		this.deltaTemps_ =delta;
+		
+	}
+
+
+
+	@Override
+	public Date getDate() {
+		return date;
+	}
+
+
+
+	public int getNumero() {
+		return numero;
+	}
+
+
+
+	public void setNumero(int numero) {
+		this.numero = numero;
 	}
 
 

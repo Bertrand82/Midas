@@ -44,7 +44,22 @@ public class Order implements Serializable {
 
 	@Override
 	public String toString() {
-		return "Order From=" + currencyFrom + ", To=" + currencyTo + ", ammont=" + amount + "";
+		String s ="";
+		
+		if(side != null){
+			s += " "+side;
+		}
+		if(symbolWithDirection != null){
+			s+=" "+symbolWithDirection;
+		}
+		if(price != 0){
+			s+=" price "+price;
+			s += " AmountDesired "+getAmountDesired();
+		}
+		if (orderType != null){
+			s += " orderType "+orderType;
+		}
+		return "Order From=" + currencyFrom + ", To=" + currencyTo + ", ammont=" + amount + ""+s;
 	}
 
 	public String getSymbol() {
@@ -105,9 +120,9 @@ public class Order implements Serializable {
 
 	public double getAmountDesired() {
 		if (isSelling()){
-			return getAmmount()*price;
+			return (getAmmount()) *0.999;
 		}else if(isBuying()){
-			return getAmmount()/price;
+			return (getAmmount()/price) *0.9;
 		}
 		return 0;
 	}
@@ -115,7 +130,7 @@ public class Order implements Serializable {
 	public void setCurrencyTo(String currencyTo) {
 		this.currencyTo = currencyTo;
 	}
-	OrderType orderType = OrderType.exchange_limit;
+	OrderType orderType = OrderType.limit;
 	public OrderType getOrderType() {
 		
 		return orderType;

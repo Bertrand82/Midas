@@ -26,7 +26,7 @@ public class SessionCurrencies implements Serializable {
 	public SessionCurrencies(Tickers tickers) {
 		super();
 		for (ITicker ticker : tickers.getlTickers()) {
-			SessionCurrency z_1_Currency = new SessionCurrency(ticker);
+			SessionCurrency z_1_Currency = new SessionCurrency((Ticker) ticker);
 			lSessionCurrency.add(z_1_Currency);
 		}
 		SessionCurrenciesFactory.synchronizeWithArchive(this);
@@ -36,7 +36,7 @@ public class SessionCurrencies implements Serializable {
 	public void update(Tickers tickers) {
 		for (ITicker ticker : tickers.getlTickers()) {
 			SessionCurrency z_1_Currency = getSessionCurrency_byName(ticker.getName());
-			z_1_Currency.update(ticker);
+			z_1_Currency.update((Ticker) ticker);
 
 		}
 	}
@@ -58,6 +58,15 @@ public class SessionCurrencies implements Serializable {
 
 	public List<ITicker> getListOrder_byDailyChangePerCent() {
 		List<ITicker> listNew = new ArrayList<ITicker>();
+		listNew.addAll(lSessionCurrency);
+		Collections.sort(listNew, ITicker.comparatorDailyChangePercent);
+		return listNew;
+
+	}
+	
+
+	public List<SessionCurrency> getListOrder_byHourlyChangePerCent() {
+		List<SessionCurrency> listNew = new ArrayList<SessionCurrency>();
 		listNew.addAll(lSessionCurrency);
 		Collections.sort(listNew, ITicker.comparatorDailyChangePercent);
 		return listNew;

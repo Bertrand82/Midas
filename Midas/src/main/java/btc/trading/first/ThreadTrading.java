@@ -165,6 +165,10 @@ public class ThreadTrading implements Runnable{
 		awake();
 	}
 
+	public Config getConfig() {
+		return config;
+	}
+
 	
 	
 	
