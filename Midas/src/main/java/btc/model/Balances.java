@@ -76,8 +76,10 @@ public class Balances implements Serializable{
 				// Introduction de stabilité (eviter les yoyo)
 			} else if (availableInDollar < 50) {
 				// minimum order size between 10-25 USD
+			} else if (session.getNumero() < 10) {
+				// Pas d'ordre: les filtres ne sont pas initialisés
 			} else {
-				Order order = new Order(currency, tickerBest.getShortName(), available);
+				Order order = new Order(currency, tickerBest.getShortName(), available*0.9);
 				orders.add(order);
 			}
 		}

@@ -249,7 +249,6 @@ public class BitfinexClient {
 			} else {
 				joStr = "{" + service.getKeyCanonique() + ":" + result + "}";
 			}
-			System.out.println(joStr);
 			JSONObject jo = new JSONObject(joStr);
 			List<Object> list = new ArrayList<Object>();
 			if (jo.has(service.key)) {

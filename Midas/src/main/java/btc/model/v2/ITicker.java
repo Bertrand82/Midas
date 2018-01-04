@@ -7,22 +7,8 @@ import java.util.Date;
 
 public interface ITicker{
 
-	public static final Comparator<ITicker> comparatorDailyChangePercent = new Comparator<ITicker>() {
+	
 
-		@Override
-		public int compare(ITicker o1, ITicker o2) {
-			Double d = o2.getDaylyChangePerCent();
-			return d.compareTo(o1.getDaylyChangePerCent());
-		}
-	};
-	public static final Comparator<ITicker> comparatorHourlyChangePercent = new Comparator<ITicker>() {
-
-		@Override
-		public int compare(ITicker o1, ITicker o2) {
-			Double d = o2.getHourlyChangePerCent();
-			return d.compareTo(o1.getHourlyChangePerCent());
-		}
-	};
 	String getShortName();
 	
 	

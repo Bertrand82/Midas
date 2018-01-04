@@ -8,8 +8,11 @@ import java.awt.GridLayout;
 import java.awt.LayoutManager;
 import java.awt.image.BufferedImage;
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Hashtable;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
@@ -29,7 +32,8 @@ public class PanelCurrencies extends JPanel {
 	private static final DecimalFormat df = new DecimalFormat("0,000,000.00");
 	private static final DecimalFormat df2 = new DecimalFormat("0.000;-.000");
 	private static final DecimalFormat df3 = new DecimalFormat("#######0.000;");
-	
+	private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd  HH:mm:ss");
+
 
 	private static final long serialVersionUID = 1L;
 	SessionCurrencies session;
@@ -38,7 +42,9 @@ public class PanelCurrencies extends JPanel {
     private Hashtable<String, PanelCanvas> hCanvas = new Hashtable<>();
     int nSelect = 6;
 	AbstractTableModel tableModel = new AbstractTableModel() {
-		
+		private List<SessionCurrency> getList() {
+		  return session.getListOrder_byHourlyChangePerCentByDay();
+		}
 		private static final long serialVersionUID = 1L;
 
 		@Override
@@ -48,7 +54,7 @@ public class PanelCurrencies extends JPanel {
 
 		@Override
 		public int getRowCount() {
-			return session.getListOrder_byDailyChangePerCent().size();
+			return getList().size();
 		}
 
 		@Override
@@ -65,7 +71,7 @@ public class PanelCurrencies extends JPanel {
 
 		@Override
 		public Object getValueAt(int rowIndex, int columnIndex) {
-			SessionCurrency sessionCurrency = (SessionCurrency) session.getListOrder_byDailyChangePerCent().get(rowIndex);
+			SessionCurrency sessionCurrency = (SessionCurrency) getList().get(rowIndex);
 			Balance balance = session.getBalance(sessionCurrency.getShortName());
 			
 			if (columnIndex == 0) {
@@ -116,7 +122,7 @@ public class PanelCurrencies extends JPanel {
 		public void setValueAt(Object value, int row, int col) {
 			
 			if (col == nSelect){
-				SessionCurrency t = (SessionCurrency) session.getListOrder_byDailyChangePerCent().get(row);
+				SessionCurrency t = (SessionCurrency) getList().get(row);
 				Boolean b = (Boolean) value;
 				if (b != t.isEligible()){
 					t.setEligible((Boolean) value);
@@ -161,29 +167,25 @@ public class PanelCurrencies extends JPanel {
 		Dimension dim = new Dimension(1200, 400);
 		scrollPane.setPreferredSize(dim);
 		scrollPane.setMinimumSize(dim);
-		this.add(scrollPane, BorderLayout.SOUTH);
-		this.add(labelTitre, BorderLayout.CENTER);
+		this.add(scrollPane, BorderLayout.CENTER);
+		this.add(labelTitre, BorderLayout.NORTH);
 		this.update(session);
 
 	}
 	
 	void initCanvas(){
 		try {
-			for(SessionCurrency sc : this.session.getListOrder_byHourlyChangePerCent()){
-					
-				
+			for(SessionCurrency sc : this.session.getListOrder_byHourlyChangePerCentByDay()){	
 						String currency = sc.getShortName();
 						PanelCanvas pc = new PanelCanvas(currency);
 						this.hCanvas.put(currency, pc);
-						System.err.println("initCanvas "+currency);
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
-
-	public void update(SessionCurrencies session) {
+ 	public void update(SessionCurrencies session) {
 		this.session = session;
 		
 		Runnable runable = new Runnable() {
@@ -193,10 +195,10 @@ public class PanelCurrencies extends JPanel {
 					PanelCanvas pc = hCanvas.get(key);
 					Color color;
 					String label = key;
-					if (sc.getHourlyChangePerCentByDayInstant() == SessionCurrency.D_default){
+					if (sc.getHourlyChangePerCentByDay() == SessionCurrency.D_default){
 						color = Color.BLUE;
 						label="Initializing "+key;
-					}else if (sc.getHourlyChangePerCentByDayInstant()>0){
+					}else if (sc.getHourlyChangePerCentByDay()>0){
 						color = Color.GREEN;
 					}else {
 						color = Color.RED;
@@ -205,7 +207,18 @@ public class PanelCurrencies extends JPanel {
 				}
 				table.updateUI();
 				Date date = new Date();
-				labelTitre.setText("Total "+df.format(session.getBalancesCurrent().getTotalDollar())+" $ "+date);
+				ITicker best = session.getBestEligible();
+				String bestEligible ;
+				if(best== null){
+					bestEligible=" - ";
+				}else {
+					bestEligible= best.getShortName();
+				}
+				long duree =System.currentTimeMillis() -  session.getTimeStart().getTime(); 
+				String dureeStr = String.format("%02d h  %02d mn", 
+					    TimeUnit.MILLISECONDS.toHours(duree),
+					    TimeUnit.MILLISECONDS.toMinutes(duree) 	);
+				labelTitre.setText("Total :"+df.format(session.getBalancesCurrent().getTotalDollar())+" $ | numero : "+session.getNumero()+" | duree "+dureeStr+" | "+sdf.format(date)+" | best :"+bestEligible);
 				
 			}
 		};

@@ -71,6 +71,7 @@ public class OrderManager {
 			}
 			order.setSymbolWithDirection(symbol);
 			TickerV1 ticker =(TickerV1) bfnx.serviceProcess(EnumService.ticker, "", symbol);
+			System.err.println("LastPrice : "+ticker.getLast_price()+"   MidPrice :  "+ticker.getMid());
 			double price = Math.max(ticker.getLast_price(), ticker.getMid());
 			order.setPrice(price);
 			if(order.isBuying()){

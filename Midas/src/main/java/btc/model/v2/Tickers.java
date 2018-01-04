@@ -33,7 +33,7 @@ public class Tickers implements Serializable {
 			e.printStackTrace();
 		}
 		this.lTickersOrdered.addAll(this.lTickers);
-		Collections.sort(lTickersOrdered, ITicker.comparatorDailyChangePercent);
+		
 
 	}
 	
@@ -50,10 +50,7 @@ public class Tickers implements Serializable {
 		return s ;
 	}
 
-	public List<ITicker> getlTickersOrdered() {
-		Collections.sort(lTickersOrdered, ITicker.comparatorDailyChangePercent);
-		return lTickersOrdered;
-	}
+	
 
 	public List<ITicker> getlTickers() {
 		return lTickers;

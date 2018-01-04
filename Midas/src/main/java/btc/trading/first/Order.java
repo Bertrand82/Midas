@@ -130,7 +130,8 @@ public class Order implements Serializable {
 	public void setCurrencyTo(String currencyTo) {
 		this.currencyTo = currencyTo;
 	}
-	OrderType orderType = OrderType.limit;
+	//OrderType orderType = OrderType.limit;  // I get message":"Invalid order: not enough tradable balance for....
+	OrderType orderType = OrderType.exchange_limit;// Working
 	public OrderType getOrderType() {
 		
 		return orderType;

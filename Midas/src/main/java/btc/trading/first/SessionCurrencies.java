@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 
 import org.hibernate.SessionFactory;
@@ -20,8 +21,9 @@ public class SessionCurrencies implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	private Balances balancesCurrent;
-
+	private final Date timeStart = new Date();
 	List<SessionCurrency> lSessionCurrency = new ArrayList<SessionCurrency>();
+	private int numero =0;
 
 	public SessionCurrencies(Tickers tickers) {
 		super();
@@ -34,6 +36,7 @@ public class SessionCurrencies implements Serializable {
 	}
 
 	public void update(Tickers tickers) {
+		numero++;
 		for (ITicker ticker : tickers.getlTickers()) {
 			SessionCurrency z_1_Currency = getSessionCurrency_byName(ticker.getName());
 			z_1_Currency.update((Ticker) ticker);
@@ -56,30 +59,49 @@ public class SessionCurrencies implements Serializable {
 
 	}
 
-	public List<ITicker> getListOrder_byDailyChangePerCent() {
-		List<ITicker> listNew = new ArrayList<ITicker>();
+	public static final Comparator<SessionCurrency> comparatorDailyChangePercent = new Comparator<SessionCurrency>() {
+
+		@Override
+		public int compare(SessionCurrency o1, SessionCurrency o2) {
+			Double d = o2.getDaylyChangePerCent();
+			return d.compareTo(o1.getDaylyChangePerCent());
+		}
+	};
+	
+	public static final Comparator<SessionCurrency> comparatorHourlyChangePercentByDay = new Comparator<SessionCurrency>() {
+
+		@Override
+		public int compare(SessionCurrency o1, SessionCurrency o2) {
+			Double d = o2.getHourlyChangePerCentByDay();
+			return d.compareTo(o1.getHourlyChangePerCentByDay());
+		}
+	};
+	public List<SessionCurrency> getListOrder_byDailyChangePerCent__DEPRECATED() {
+		List<SessionCurrency> listNew = new ArrayList<SessionCurrency>();
 		listNew.addAll(lSessionCurrency);
-		Collections.sort(listNew, ITicker.comparatorDailyChangePercent);
+		Collections.sort(listNew, comparatorDailyChangePercent);
 		return listNew;
 
 	}
 	
+	
+	
 
-	public List<SessionCurrency> getListOrder_byHourlyChangePerCent() {
+	public List<SessionCurrency> getListOrder_byHourlyChangePerCentByDay() {
 		List<SessionCurrency> listNew = new ArrayList<SessionCurrency>();
 		listNew.addAll(lSessionCurrency);
-		Collections.sort(listNew, ITicker.comparatorDailyChangePercent);
+		Collections.sort(listNew, comparatorHourlyChangePercentByDay);
 		return listNew;
 
 	}
 
 	public synchronized ITicker getTickerBest() {
-		ITicker z = getListOrder_byDailyChangePerCent().get(0);
+		ITicker z = getListOrder_byHourlyChangePerCentByDay().get(0);
 		return z;
 	}
 
 	public synchronized ITicker getTickerWorse() {
-		ITicker z = getListOrder_byDailyChangePerCent().get(lSessionCurrency.size() - 1);
+		ITicker z = getListOrder_byHourlyChangePerCentByDay().get(lSessionCurrency.size() - 1);
 		return z;
 	}
 
@@ -133,13 +155,14 @@ public class SessionCurrencies implements Serializable {
 	}
 
 	public ITicker getBestEligible() {
-		for (int i = 0; i < this.getListOrder_byDailyChangePerCent().size(); i++) {
-			SessionCurrency sc = (SessionCurrency) this.getListOrder_byDailyChangePerCent().get(i);
+		List<SessionCurrency> list = this.getListOrder_byHourlyChangePerCentByDay();
+		for (int i = 0; i < list.size(); i++) {
+			SessionCurrency sc = (SessionCurrency) list.get(i);
 			if (sc.isEligible()) {
 				return sc;
 			}
 		}
-		System.err.println("Pas de currency eligible");
+		System.err.println("getBestEligible Pas de currency eligible");
 		return null;
 	}
 
@@ -159,6 +182,14 @@ public class SessionCurrencies implements Serializable {
 			SessionCurrency sArchive = sessionArchive.getSessionCurrency_byName(name);
 			sc.updateWithArchive(sArchive);
 		}
+	}
+
+	public int getNumero() {
+		return numero;
+	}
+
+	public Date getTimeStart() {
+		return timeStart;
 	}
 
 }

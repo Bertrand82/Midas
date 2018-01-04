@@ -60,7 +60,7 @@ public class ThreadTrading implements Runnable{
 				try {
 					Tickers tickers = fetchTickers();
 					Balances balances = fetchBalances();
-					ITicker tickerBest = tickers.getlTickersOrdered().get(0);
+					
 					if (sessionCurrencies == null){
 						sessionCurrencies = new SessionCurrencies(tickers);
 					}else {
@@ -69,8 +69,8 @@ public class ThreadTrading implements Runnable{
 					ITicker zBest = sessionCurrencies.getTickerBest();
 						
 					loggerTrade.info(""+tickers.toString());
-					loggerTradeComparaison.info("Instantane\t|Best:"+tickerBest.getShortName()+"\t|"+getTrace(tickers.getlTickersOrdered()));
-					loggerTradeComparaison.info("Filtred   \t|Best:"+zBest.getShortName()+"\t|"+getTrace(sessionCurrencies.getListOrder_byDailyChangePerCent()));
+					loggerTradeComparaison.info("Instantane\t|Best:"+zBest.getShortName()+"\t|"+getTrace(tickers.getlTickers()));
+					loggerTradeComparaison.info("Filtred   \t|Best:"+zBest.getShortName()+"\t|"+getTrace2(sessionCurrencies.getListOrder_byHourlyChangePerCentByDay()));
 					
 					List<Order> orders = balances.process(sessionCurrencies);
 					if(this.config.orderAble){
@@ -88,6 +88,10 @@ public class ThreadTrading implements Runnable{
 			log( "stop thread");
 	}
 	
+	
+
+
+
 	private void checkEmergencySaveRequest(){
 		if (emergencySaveAllRequest){
 			List<Order> orders = sessionCurrencies.saveAllInDollar();
@@ -106,6 +110,15 @@ public class ThreadTrading implements Runnable{
 
 	private static DecimalFormat decimalFormat = new DecimalFormat("0.000");
 	
+
+	private String getTrace2(List<SessionCurrency> list) {
+		String s ="";
+		for(SessionCurrency it : list){
+			s+=getTrace(it);
+		}
+		return s;
+	}
+
 	private String getTrace(List<ITicker> list){
 		String s ="";
 		for(ITicker it : list){
