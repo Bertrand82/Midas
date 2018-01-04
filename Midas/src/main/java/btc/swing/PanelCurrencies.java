@@ -2,6 +2,7 @@ package btc.swing;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.GridLayout;
@@ -21,6 +22,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.SwingUtilities;
 import javax.swing.table.AbstractTableModel;
+import javax.swing.table.DefaultTableCellRenderer;
 
 import btc.model.Balance;
 import btc.model.Balances;
@@ -40,7 +42,7 @@ public class PanelCurrencies extends JPanel {
 	private JLabel labelTitre = new JLabel("Total ");
 	String[] columnNames = { "Symbol","montant" ,"= dollar", "% Day", "% Hour f", "% Hour instant","Eligible" ,""};
     private Hashtable<String, PanelCanvas> hCanvas = new Hashtable<>();
-    int nSelect = 6;
+    private static final int nSelect = 6;
 	AbstractTableModel tableModel = new AbstractTableModel() {
 		private List<SessionCurrency> getList() {
 		  return session.getListOrder_byHourlyChangePerCentByDay();
@@ -95,20 +97,20 @@ public class PanelCurrencies extends JPanel {
 
 			} else if (columnIndex == 3) {
 				double taux =sessionCurrency.getTicker_Z_1().getDaylyChangePerCent();				
-				return df2.format( taux)+ " %";
+				return taux;
 			} else if (columnIndex == 4) {
 				if(sessionCurrency.isInitializing()){
-					return "initializing";
+					return 0;
 				}else {
 					double taux = sessionCurrency.getHourlyChangePerCentByDay();			
-					return df2.format( taux) + " %";
+					return  taux;
 				}
 			} else if (columnIndex == 5) {
 				if(sessionCurrency.isInitializing()){
-					return "initializing";
+					return 0;
 				}else {
 					double taux = sessionCurrency.getHourlyChangePerCentByDayInstant();
-					return df2.format(taux) + " %";
+					return taux;
 				}
 			}else if(columnIndex == nSelect){
 				return sessionCurrency.isEligible();
@@ -128,20 +130,44 @@ public class PanelCurrencies extends JPanel {
 					t.setEligible((Boolean) value);
 					session.saveConfiguration();
 				}
-			} 
-			
+			} 			
 		}
 
 		public Class<?> getColumnClass(int columnIndex) {
-			if (columnIndex == nSelect){
-				return Boolean.class;
-			}else if(columnIndex == (nSelect+1)){
-				return ImageIcon.class;
+			switch (columnIndex){
+				case 3:
+				case 4:
+				case 5 :
+					return Double.class;
+				case nSelect:
+					return Boolean.class;
+				case nSelect+1:
+					return ImageIcon.class;
 			}
+			
 			return Object.class;
 		}
 
 	};
+	
+	 public class DoubleTableCellRenderer extends DefaultTableCellRenderer {
+
+
+		private static final long serialVersionUID = 1L;
+
+		public DoubleTableCellRenderer() {
+             setHorizontalAlignment(JLabel.RIGHT);
+         }
+
+         @Override
+         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+             if (value instanceof Number) {
+                 value = df2.format(value);
+             }
+             return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+         }
+
+     }
 	private JTable table;
 
 	public PanelCurrencies(SessionCurrencies session) {
@@ -151,6 +177,9 @@ public class PanelCurrencies extends JPanel {
 		this.session = session;
 		initCanvas();
 		table = new JTable(tableModel);
+		table.getColumnModel().getColumn(3).setCellRenderer(new DoubleTableCellRenderer());
+		table.getColumnModel().getColumn(4).setCellRenderer(new DoubleTableCellRenderer());
+		table.getColumnModel().getColumn(5).setCellRenderer(new DoubleTableCellRenderer());
 		table.setRowHeight(60);
 		//table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		table.getColumnModel().getColumn(0).setPreferredWidth(60);

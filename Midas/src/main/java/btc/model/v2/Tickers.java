@@ -33,8 +33,6 @@ public class Tickers implements Serializable {
 			e.printStackTrace();
 		}
 		this.lTickersOrdered.addAll(this.lTickers);
-		
-
 	}
 	
 
