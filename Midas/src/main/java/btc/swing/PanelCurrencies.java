@@ -232,7 +232,7 @@ public class PanelCurrencies extends JPanel {
 					}else {
 						color = Color.RED;
 					}
-					pc.update(label,color);
+					pc.update(label,color, sc.getHistory());
 				}
 				table.updateUI();
 				Date date = new Date();

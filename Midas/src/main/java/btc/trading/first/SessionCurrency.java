@@ -6,8 +6,9 @@ import java.util.Date;
 
 import btc.model.v2.ITicker;
 import btc.model.v2.Ticker;
+import btc.swing.History;
 
-public class SessionCurrency implements ITicker,Serializable{
+public class SessionCurrency implements ITicker,Serializable,Cloneable{
 
 
 	private static final long serialVersionUID = 1L;
@@ -30,8 +31,9 @@ public class SessionCurrency implements ITicker,Serializable{
 	private boolean isEligible= true;
 	private double hourlyChangePerCent;
 	private long deltaTemps_ms_;
-	private Date dateLastUpdate = new Date();
+	private long dateLastUpdate = System.currentTimeMillis();
 	int numero =0;
+	History history = new History();
 	public SessionCurrency(ITicker ticker) {
 		super();
 		this.name = ticker.getName();
@@ -39,7 +41,12 @@ public class SessionCurrency implements ITicker,Serializable{
 		this.update(ticker);
 	}
 
+	private SessionCurrency() {
+	}
+
 	public void update(ITicker ticker){
+		this.hourlyPrice = tranformZ(this.hourlyPrice,ticker.getHourlyPrice());
+		this.dateLastUpdate = System.currentTimeMillis();
 		if (ticker_Z_1 != null){			
 			double delta = ticker.getHourlyPrice()-ticker_Z_1.getHourlyPrice();
 			//System.err.println("delta : "+delta+" getHourlyPrice "+ticker.getHourlyPrice()+"    ");
@@ -52,7 +59,7 @@ public class SessionCurrency implements ITicker,Serializable{
 		this.ticker_Z_1 =ticker;
 		ticker.setNumero(this.numero);
 		this.numero++;
-		this.hourlyPrice = tranformZ(this.hourlyPrice,ticker.getHourlyPrice());
+		
 		this.volumeDaily = tranformZ(this.volumeDaily,ticker.getVolumeDaily());
 		this.highDaily = tranformZ(this.highDaily,ticker.getHighDaily());
 		this.lowDaily = tranformZ(this.lowDaily,ticker.getLowDaily());
@@ -63,6 +70,12 @@ public class SessionCurrency implements ITicker,Serializable{
 		this.hourlyChangePerCent=this.tranformZ(hourlyChangePerCent,ticker.getHourlyChangePerCent());
 		nombreEchantillon++;
 		this.date=new Date();
+		try {
+			this.history.add((SessionCurrency)this.clone());
+		} catch (CloneNotSupportedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	private double tranformZ(double v, double vNew) {
@@ -201,7 +214,7 @@ public class SessionCurrency implements ITicker,Serializable{
 	@Override
 	public Date getDate() {
 		
-		return this.dateLastUpdate;
+		return new Date(this.dateLastUpdate);
 	}
 
 	public int getNumero() {
@@ -213,7 +226,8 @@ public class SessionCurrency implements ITicker,Serializable{
 	}
 	public double getHourlyChangePerCentByDay() {
 		double delta = getHourlyChangePerCent();
-		return getHourlyChangePerCentByDay(delta);
+		double delta_day = getHourlyChangePerCentByDay(delta,this.getDeltaTemps_ms());
+		return delta_day;
 	}
 	
 
@@ -224,17 +238,25 @@ public class SessionCurrency implements ITicker,Serializable{
 	
 	public static final double D_default= -100000000;
 	private double getHourlyChangePerCentByDay(double delta) {
+		if (this.ticker_Z_1 == null){
+			return D_default;
+		}
 		if (this.ticker_Z_1.getNumero() ==0){
 			return D_default;
 		}
 		long dt_ms = this.ticker_Z_1.getDeltaTemps_ms();
-		
+		return getHourlyChangePerCentByDay(delta,dt_ms);
+	}
+	
+	
+	private double getHourlyChangePerCentByDay(double delta,long dt_ms){
 		if( dt_ms  ==0){
-			return -100;// Ne devrait pas arriver
+			return D_default;// Ne devrait pas arriver
 		}
 	    double delta_t =( 1.0*dt_ms)/DAY_ms;
 	   
 		double chd = delta/delta_t;
+		//System.err.println("getHourlyChangePerCentByDay  "+chd);
 		return chd;
 	    
 	}
@@ -243,7 +265,42 @@ public class SessionCurrency implements ITicker,Serializable{
 		
 		return numero <= 1;
 	}
+	
+	
+	public History getHistory() {		
+		return history;
+	}
 
+	@Override
+	protected Object clone() throws CloneNotSupportedException {
+		
+		SessionCurrency s = new SessionCurrency();
+		s.date = date;
+		s.dateLastUpdate= dateLastUpdate;
+		s.daylyChange = daylyChange;
+		s.daylyChangePerCent=daylyChangePerCent;
+		s.deltaTemps_ms_= deltaTemps_ms_;
+		s.highDaily = s.highDaily;
+		s.hourlyChangePerCent=hourlyChangePerCent;
+		s.hourlyPrice= hourlyPrice;
+		s.lastPrice=lastPrice;
+		s.lowDaily=lowDaily;
+		s.numero=numero;
+		s.shortName= shortName;
+		s.volumeDaily=volumeDaily;
+		
+		return s;
+	}
+
+	public Date getDateLastUpdate_() {
+		return new Date(dateLastUpdate);
+	}
+
+	public double getDateLastUpdateAsLong() {
+		return this.dateLastUpdate;
+	}
+
+	
 
 
 	

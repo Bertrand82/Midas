@@ -15,6 +15,7 @@ import btc.model.Balances;
 import btc.model.v2.ITicker;
 import btc.model.v2.Ticker;
 import btc.model.v2.Tickers;
+import btc.swing.History;
 
 public class SessionCurrencies implements Serializable {
 
@@ -24,7 +25,7 @@ public class SessionCurrencies implements Serializable {
 	private final Date timeStart = new Date();
 	List<SessionCurrency> lSessionCurrency = new ArrayList<SessionCurrency>();
 	private int numero =0;
-
+	
 	public SessionCurrencies(Tickers tickers) {
 		super();
 		for (ITicker ticker : tickers.getlTickers()) {
@@ -38,8 +39,8 @@ public class SessionCurrencies implements Serializable {
 	public void update(Tickers tickers) {
 		numero++;
 		for (ITicker ticker : tickers.getlTickers()) {
-			SessionCurrency z_1_Currency = getSessionCurrency_byName(ticker.getName());
-			z_1_Currency.update((Ticker) ticker);
+			SessionCurrency sessionCurrency = getSessionCurrency_byName(ticker.getName());
+			sessionCurrency.update((Ticker) ticker);
 
 		}
 	}
@@ -191,5 +192,7 @@ public class SessionCurrencies implements Serializable {
 	public Date getTimeStart() {
 		return timeStart;
 	}
+
+
 
 }
