@@ -11,16 +11,16 @@ import java.util.List;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-public class testGUI extends JPanel {
+public class CourbeTestGUI extends JPanel {
 
 	private static final long serialVersionUID = 1L;
 	JFrame frame = new JFrame();
 	int w=420;
 	int h=60;
 	Dimension dim = new Dimension(w, h);
-	List<PointBg> listP = new ArrayList<testGUI.PointBg>();
+	List<PointBg> listP = new ArrayList<CourbeTestGUI.PointBg>();
 	int imax = 1000;
-	public testGUI() {
+	public CourbeTestGUI() {
 		setPreferredSize(dim);
 		for(int i=0; i<imax;i++){
 			double x=i/100.0;
@@ -48,7 +48,7 @@ public class testGUI extends JPanel {
 	}
 	public static void main(String[] args) {
 		System.out.println("MainTest");
-	  new testGUI();
+	  new CourbeTestGUI();
 	}
 
 	Double xMax;
