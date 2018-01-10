@@ -1,5 +1,7 @@
 package btc;
 
+import static btc.UtilBtc.df;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -30,8 +32,6 @@ import btc.model.Symbols;
 import btc.model.TickerV1;
 import btc.model.v2.Tickers;
 import btc.trading.first.Order;
-
-import static btc.UtilBtc.*;
 
 /**
  * Pour générer key : https://www.bitfinex.com/api

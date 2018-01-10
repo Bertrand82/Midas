@@ -3,7 +3,6 @@ package btc.model;
 import java.io.Serializable;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
@@ -13,8 +12,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import btc.BitfinexClient.EnumService;
-import btc.model.v2.ITicker;
-import btc.model.v2.Ticker;
 import btc.swing.SymbolConfig;
 import btc.swing.SymbolsConfig;
 import btc.trading.first.Order;

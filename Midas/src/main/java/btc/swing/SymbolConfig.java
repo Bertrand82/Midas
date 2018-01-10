@@ -1,7 +1,5 @@
 package btc.swing;
 
-import java.util.StringTokenizer;
-
 public class SymbolConfig implements Comparable<SymbolConfig>{
 
 	private String name;

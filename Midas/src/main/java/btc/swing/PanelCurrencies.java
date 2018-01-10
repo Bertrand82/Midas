@@ -1,17 +1,11 @@
 package btc.swing;
 
 import java.awt.BorderLayout;
-import java.awt.Checkbox;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.Graphics2D;
-import java.awt.GridLayout;
-import java.awt.LayoutManager;
-import java.awt.image.BufferedImage;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -30,7 +24,6 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 
 import btc.model.Balance;
-import btc.model.Balances;
 import btc.model.v2.ITicker;
 import btc.swing.heartBeat.HeartBeat;
 import btc.swing.heartBeat.ICheckAlive;

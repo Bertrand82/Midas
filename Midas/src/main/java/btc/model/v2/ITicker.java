@@ -1,8 +1,5 @@
 package btc.model.v2;
 
-import java.io.Serializable;
-import java.sql.Time;
-import java.util.Comparator;
 import java.util.Date;
 
 public interface ITicker{

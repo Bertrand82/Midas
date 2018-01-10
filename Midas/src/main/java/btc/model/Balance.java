@@ -2,7 +2,6 @@ package btc.model;
 
 import java.io.Serializable;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import btc.swing.SymbolConfig;

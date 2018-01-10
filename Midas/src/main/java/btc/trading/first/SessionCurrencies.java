@@ -2,20 +2,16 @@ package btc.trading.first;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
-
-import org.hibernate.SessionFactory;
 
 import btc.model.Balance;
 import btc.model.Balances;
 import btc.model.v2.ITicker;
 import btc.model.v2.Ticker;
 import btc.model.v2.Tickers;
-import btc.swing.History;
 
 public class SessionCurrencies implements Serializable {
 

@@ -1,8 +1,6 @@
 package btc.trading.first;
 
 import java.io.Serializable;
-import java.text.DecimalFormat;
-import java.util.Collection;
 
 import btc.BitfinexClient.OrderType;
 

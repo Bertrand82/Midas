@@ -1,10 +1,6 @@
 package btc;
 
-import static btc.UtilBtc.df;
-
 import java.util.List;
-
-import javax.persistence.metamodel.Bindable.BindableType;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

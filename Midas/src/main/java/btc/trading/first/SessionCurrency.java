@@ -1,11 +1,9 @@
 package btc.trading.first;
 
 import java.io.Serializable;
-
 import java.util.Date;
 
 import btc.model.v2.ITicker;
-import btc.model.v2.Ticker;
 import btc.swing.History;
 
 public class SessionCurrency implements ITicker,Serializable,Cloneable{
