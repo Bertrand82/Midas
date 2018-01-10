@@ -24,6 +24,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import btc.model.ActiveOrders;
 import btc.model.Balances;
 import btc.model.Symbols;
 import btc.model.TickerV1;
@@ -91,19 +92,24 @@ public class BitfinexClient {
 	private final static boolean rArrayTrue = true;
 
 	public enum EnumService {
-		balances("balances", Type.Authenticated, rArrayTrue, Balances.class), account_infos("account_infos",
-				Type.Authenticated, rArrayTrue), summary("summary", Type.Authenticated, rArrayTrue), deposit_new(
-						"deposit/new", Type.Authenticated, rArrayTrue), key_info("key_info", Type.Authenticated,
-								rArrayTrue), margin_infos("margin_infos", Type.Authenticated, rArrayTrue), transfer(
-										"transfer", Type.Authenticated, rArrayTrue), withdraw("withdraw",
-												Type.Authenticated, rArrayTrue), order("order/new", Type.Authenticated,
-														rArrayTrue, null, Params.Currency), positions("positions",
-																Type.Authenticated, rArrayTrue, null),
-
-		symbols("symbols", Type.Public, rArrayTrue, Symbols.class), symbols_details("symbols_details", Type.Public,
-				true), stats("stats", Type.Public, rArrayTrue, null, Params.Symbol), ticker("pubticker", Type.Public,
-						rArrayTrue, TickerV1.class, Params.Symbol), orderbook("book", Type.Public, rArrayTrue, null,
-								Params.Symbol), trades("trades", Type.Public, rArrayTrue, null,
+		balances("balances", Type.Authenticated, rArrayTrue, Balances.class), 
+		account_infos("account_infos",Type.Authenticated, rArrayTrue), 
+		summary("summary", Type.Authenticated, rArrayTrue), 
+		deposit_new("deposit/new", Type.Authenticated, rArrayTrue),
+		key_info("key_info", Type.Authenticated,rArrayTrue), 
+		margin_infos("margin_infos", Type.Authenticated, rArrayTrue), 
+		transfer("transfer", Type.Authenticated, rArrayTrue), 
+		withdraw("withdraw",Type.Authenticated, rArrayTrue), 
+		order("order/new", Type.Authenticated,rArrayTrue, null, Params.Currency),
+		orders("orders", Type.Authenticated,rArrayTrue, ActiveOrders.class),
+		positions("positions",	Type.Authenticated, rArrayTrue, null),
+		cancelAllOrders("order/cancel/all", Type.Authenticated,rArrayTrue, null),
+		symbols("symbols", Type.Public, rArrayTrue, Symbols.class), 
+		symbols_details("symbols_details", Type.Public,true), 
+		stats("stats", Type.Public, rArrayTrue, null, Params.Symbol), 
+		ticker("pubticker", Type.Public,rArrayTrue, TickerV1.class, Params.Symbol), 
+		orderbook("book", Type.Public, rArrayTrue, null,Params.Symbol),
+		trades("trades", Type.Public, rArrayTrue, null,
 										Params.Symbol), lends("lends", Type.Public, rArrayTrue, null, Params.Currency),
 
 		statusV2("platform/status", Type.Public_V2, true, null, Params.No), tickerV2("ticker", Type.Public_V2, true,
@@ -553,8 +559,8 @@ public class BitfinexClient {
 			if (conn != null) {
 				try {
 					sResponse = convertStreamToString(conn.getErrorStream());
-					errMsg += " -> " + sResponse;
-					Log(errMsg, e);
+					errMsg += "Error122 -> " + sResponse;
+					Log(errMsg);
 					throw new Exception(sResponse, e);
 				} catch (IOException e1) {
 					errMsg += " Error on reading error-stream. -->: " + e1.getLocalizedMessage();

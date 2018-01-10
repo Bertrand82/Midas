@@ -15,6 +15,8 @@ import org.json.JSONObject;
 import btc.BitfinexClient.EnumService;
 import btc.model.v2.ITicker;
 import btc.model.v2.Ticker;
+import btc.swing.SymbolConfig;
+import btc.swing.SymbolsConfig;
 import btc.trading.first.Order;
 import btc.trading.first.SessionCurrencies;
 import btc.trading.first.SessionCurrency;
@@ -26,7 +28,8 @@ public class Balances implements Serializable{
 	private static final Logger loggerTradeBalance = LogManager.getLogger("tradeBalance");
 	private List<Balance> lBalances = new ArrayList<>();
 	private List<Balance> lBalancesExchange = new ArrayList<>();
-
+	private double availableUSD;
+	private double amountUSD;
 	public Balances(JSONObject jo) throws Exception {
 		try {
 			JSONArray array = jo.getJSONArray(EnumService.balances.key);
@@ -47,43 +50,77 @@ public class Balances implements Serializable{
 
 	DecimalFormat df = new DecimalFormat("0000000.00");
 	DecimalFormat df2 = new DecimalFormat("00.00");
-	private double totalDollar = 0;
+	private double totalAvailableDollar = 0;
+	private double totalAmountDollar = 0;
 
 	public List<Order> process(SessionCurrencies session) {
-		ITicker tickerBest = session.getBestEligible();
+		
+		SessionCurrency tickerBest = session.getBestEligible(this);
+		String currencyBest = tickerBest.getName();
+		SymbolConfig symbolTickerBest = SymbolsConfig.getInstance().getSymbolConfig(tickerBest.getShortName());
+		Balance balanceBest = getBalance(currencyBest);
 		List<Order> orders = new ArrayList<>();
-		totalDollar = 0;
+		totalAvailableDollar = 0;
+		totalAmountDollar = 0;
 
 		for (Balance balance : this.lBalancesExchange) {
 			String currency = balance.getCurrency();
 			SessionCurrency tickerCurrent = session.getTickerByCurrency(currency);
-			double available = balance.getAmount();
+			
+			if(tickerCurrent == null){
+				if (currency.equalsIgnoreCase("usd")){
+					tickerCurrent = SessionCurrency.SessionCurrencyUSD;
+					this.availableUSD = balance.available;
+					this.amountUSD = balance.amount;
+					System.err.println("USD amount :"+balance.amount+"  available :"+balance.available);
+				}else {
+				System.err.println("No ticker for "+currency);
+				break;
+				}
+			}
+			double available = balance.getAvailable();
+			double amount = balance.getAmount();
 
 			double lastPrice = session.getLastPrice(currency);
-			double percent = session.getDaylyChangePerCent(currency);
-			double deltaPercent = (tickerBest.getDaylyChangePerCent() - percent);
+			double percentDayly_DEPRECATED = session.getDaylyChangePerCent(currency);
+			double percentHourlyByDay = tickerCurrent.getHourlyChangePerCentByDay();
+			double deltaPercent = (tickerBest.getHourlyChangePerCentByDay() - tickerCurrent.getHourlyChangePerCentByDay());
 			double availableInDollar = lastPrice * available;
-			loggerTradeBalance.info("Devise :" + currency + "\t|dayly change per cent : " + df2.format(percent * 100)
+			double amountInDollar = lastPrice * amount;
+			loggerTradeBalance.info("Devise :" + currency + "\t|Hourly change per cent/D : " + df2.format(percentHourlyByDay )
 					+ "| available :" + df.format(available) + "\t| daily " + df.format(lastPrice) + "\t| in dollar "
 					+ df.format(availableInDollar));
-			totalDollar += availableInDollar;
+			totalAvailableDollar += availableInDollar;
+			totalAmountDollar += amountInDollar;
 			balance.setLastPrice(lastPrice);
-			balance.setPercent(percent);
+			balance.setPercentHourlyByDay(percentHourlyByDay);
 			balance.setAvailableInDollar(availableInDollar);
+			
+			
 			if (tickerBest.getShortName().equalsIgnoreCase(currency)) {
-				// PAs d'ordres
+				// PAs d'ordres! evidemment
 			} else if (Math.abs(deltaPercent) < 0.02) {
 				// Introduction de stabilité (eviter les yoyo)
 			} else if (availableInDollar < 50) {
 				// minimum order size between 10-25 USD
 			} else if (session.getNumero() < 10) {
+			
 				// Pas d'ordre: les filtres ne sont pas initialisés
+				// Pas d'ordre: il y a assez d'ordre sur Balance Best
 			} else {
-				Order order = new Order(currency, tickerBest.getShortName(), available*0.9);
+				double amountOrder = ( balance.available)*0.9;
+			    if (symbolTickerBest.getMaxTrade() == 0){
+			    	
+			    }else {
+			    	double amountMAx = balanceBest.getAchatMax();
+			    	amountOrder = Math.min(amountMAx, amountOrder);
+			    }
+			  
+				Order order = new Order(currency, tickerBest.getShortName(), amountOrder);
 				orders.add(order);
 			}
 		}
-		loggerTradeBalance.info("Total available In dollar : " + df.format(totalDollar));
+		loggerTradeBalance.info("Total available In dollar : " + df.format(totalAvailableDollar));
 		loggerTradeBalance.info("List Orders " + orders);
 		return orders;
 	}
@@ -93,8 +130,12 @@ public class Balances implements Serializable{
 		return "Balances [lBalances=" + lBalances + "]";
 	}
 
-	public double getTotalDollar() {
-		return totalDollar;
+	public double getTotalAvailableDollar() {
+		return totalAvailableDollar+availableUSD;
+	}
+
+	public double getTotalAmountDollar() {
+		return totalAmountDollar +amountUSD;
 	}
 
 	public List<Balance> getlBalancesExchange() {
@@ -122,19 +163,30 @@ public class Balances implements Serializable{
 			double percent = session.getDaylyChangePerCent(currency);
 			double availableInDollar = lastPrice * available;
 
-			totalDollar += availableInDollar;
+			totalAvailableDollar += availableInDollar;
 			balance.setLastPrice(lastPrice);
-			balance.setPercent(percent);
+			balance.setPercentHourlyByDay(percent);
 			balance.setAvailableInDollar(availableInDollar);
 			if ("usd".equalsIgnoreCase(currency)) {
 				// PAs d'ordres
 			} else if (availableInDollar < 25) {
 				// minimum order size between 10-25 USD
 			} else {
+				
 				Order order = new Order(currency, "usd", available);
 				orders.add(order);
 			}			
 		}
+		System.err.println(" saveAllInDollar orders "+orders.size());
 		return orders;
 	}
+
+	public double getAvailableUSD() {
+		return availableUSD;
+	}
+
+	public double getAmountUSD() {
+		return amountUSD;
+	}
+	
 }

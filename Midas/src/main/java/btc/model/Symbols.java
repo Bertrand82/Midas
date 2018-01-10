@@ -29,8 +29,7 @@ public class Symbols {
 				list.add("" + array.get(i));
 			}
 		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.err.println("Error B52 JSONException "+e.getMessage()+" | JsdonObject :"+jo);
 		}
 
 	}

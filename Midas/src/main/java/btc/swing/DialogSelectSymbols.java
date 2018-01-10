@@ -20,21 +20,21 @@ import javax.swing.table.AbstractTableModel;
 
 public class DialogSelectSymbols extends JDialog implements ActionListener {
 
-	String[] columnNames = { "Symbol", "comment", "selected" };
+	String[] columnNames = { "Symbol", "comment", "selected" ,"max ($)"};
 	
 	private static final long serialVersionUID = 1L;
 
 	AbstractTableModel tableModel = new AbstractTableModel() {
 		
 		private static final long serialVersionUID = 1L;
-		SymbolsConfig sc = SymbolsConfig.getInstance();
+		SymbolsConfig symConf = SymbolsConfig.getInstance();
 		@Override
 		public String getColumnName(int col) {
 			return columnNames[col];
 		}
 		@Override
 		public int getRowCount() {
-			return sc.gethSymbols().size();
+			return symConf.gethSymbols().size();
 		}
 		@Override
 		public int getColumnCount() {
@@ -42,7 +42,7 @@ public class DialogSelectSymbols extends JDialog implements ActionListener {
 		}
 
 		public Object getValueAt(int row, int col) {
-			SymbolConfig sy = sc.getSymbolConfig(row);
+			SymbolConfig sy = symConf.getSymbolConfig(row);
 			switch(col){
 			case 0:
 				return sy.getName();
@@ -52,6 +52,8 @@ public class DialogSelectSymbols extends JDialog implements ActionListener {
 				
 			case 2: 
 				return sy.isSelected();
+			case 3:
+				return sy.getMaxTrade();
 			}
 			return "";
 		}
@@ -64,9 +66,14 @@ public class DialogSelectSymbols extends JDialog implements ActionListener {
 		}
 
 		public void setValueAt(Object value, int row, int col) {
-			SymbolConfig sy = sc.getSymbolConfig(row);
-			if (col == 2){
+			SymbolConfig sy = symConf.getSymbolConfig(row);
+			switch(col) {
+			case 2 :		
 				sy.setSelected((Boolean) value);
+				break;
+			case 3 :
+				sy.setMaxTrade((int) value);
+				break;
 			}
 			fireTableCellUpdated(row, col);
 		}
@@ -74,6 +81,8 @@ public class DialogSelectSymbols extends JDialog implements ActionListener {
 		public Class<?> getColumnClass(int columnIndex) {
 			if (columnIndex == 2) {
 				return Boolean.class;
+			}else if (columnIndex == 3){
+				return Integer.class;
 			}
 			return Object.class;
 		}

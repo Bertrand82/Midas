@@ -154,12 +154,24 @@ public class SessionCurrencies implements Serializable {
 		}
 		return null;
 	}
+    SessionCurrency sessionCurrencyBestEligible;
+	public SessionCurrency getSessionCurrencyBestEligible() {
+		return sessionCurrencyBestEligible;
+	}
 
-	public ITicker getBestEligible() {
+	public SessionCurrency getBestEligible(Balances balance) {
+		this.balancesCurrent = balance;
 		List<SessionCurrency> list = this.getListOrder_byHourlyChangePerCentByDay();
+		// Liste ordonnée les premieres sont lthe best ... si elles sont eligibles
+		if (this.balancesCurrent == null){
+			return null;
+		}
 		for (int i = 0; i < list.size(); i++) {
+			
 			SessionCurrency sc = (SessionCurrency) list.get(i);
-			if (sc.isEligible()) {
+			Balance b = this.balancesCurrent.getBalance(sc.getShortName());
+			if (sc.isEligible() && !b.isOverLimit()) {
+				this.sessionCurrencyBestEligible =sc;
 				return sc;
 			}
 		}

@@ -15,7 +15,7 @@ public class SessionCurrency implements ITicker,Serializable,Cloneable{
 	
 	private final Date dateStart = new Date();
 	Date date = new Date();
-	double constanteTemps = 60 *60 * 1000;
+	double constanteTemps = 10 *60 * 1000;
 	int nombreEchantillonMini=10;
 	int nombreEchantillon=0;
 	String name ;	
@@ -237,6 +237,11 @@ public class SessionCurrency implements ITicker,Serializable,Cloneable{
 	}
 	
 	public static final double D_default= -100000000;
+
+	public static final SessionCurrency SessionCurrencyUSD = new SessionCurrency();
+	static {
+		SessionCurrencyUSD.lastPrice=1.0;
+	}
 	private double getHourlyChangePerCentByDay(double delta) {
 		if (this.ticker_Z_1 == null){
 			return D_default;
@@ -288,6 +293,7 @@ public class SessionCurrency implements ITicker,Serializable,Cloneable{
 		s.numero=numero;
 		s.shortName= shortName;
 		s.volumeDaily=volumeDaily;
+		s.ticker_Z_1 = ticker_Z_1;
 		
 		return s;
 	}

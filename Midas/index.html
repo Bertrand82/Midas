@@ -1,0 +1,39 @@
+<html>
+<head>
+<script>
+const crypto = require('crypto');
+const request = require('request');
+
+const apiKey = '<Your API key here>'
+const apiSecret = '<Your API secret here>'
+
+const apiPath = 'v2/auth/r/alerts'
+const nonce = Date.now().toString()
+const body = { "type": "price" }
+const rawBody = JSON.stringify(body)
+let signature = `/api/${apiPath}${nonce}${rawBody}`
+
+signature = crypto
+  .createHmac('sha384', apiSecret)
+  .update(signature)
+  .digest('hex')
+
+const options = {
+  url: `https://api.bitfinex.com/${apiPath}`,
+  headers: {
+    'bfx-nonce': nonce,
+    'bfx-apikey': apiKey,
+    'bfx-signature': signature
+  },
+  body: body,
+  json: true
+}
+request.post(options, (error, response, body) => {
+  console.log(body);
+})
+</script>
+</head>
+<body>
+<h1> Test </h1>
+</body>
+</html>

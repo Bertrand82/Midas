@@ -1,6 +1,7 @@
 package btc.swing;
 
 import java.awt.BorderLayout;
+import java.awt.Checkbox;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -15,7 +16,11 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
+import javax.swing.JCheckBox;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -27,22 +32,28 @@ import javax.swing.table.DefaultTableCellRenderer;
 import btc.model.Balance;
 import btc.model.Balances;
 import btc.model.v2.ITicker;
+import btc.swing.heartBeat.HeartBeat;
+import btc.swing.heartBeat.ICheckAlive;
 import btc.trading.first.SessionCurrencies;
 import btc.trading.first.SessionCurrency;
 
-public class PanelCurrencies extends JPanel {
+public class PanelCurrencies extends JPanel implements ICheckAlive {
 	private static final DecimalFormat df = new DecimalFormat("0,000,000.00");
 	private static final DecimalFormat df2 = new DecimalFormat("0.000;-.000");
 	private static final DecimalFormat df3 = new DecimalFormat("#######0.000;");
-	private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd  HH:mm:ss");
+	//private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd  HH:mm:ss");
+	private static final SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
 
 
 	private static final long serialVersionUID = 1L;
 	SessionCurrencies session;
-	private JLabel labelTitre = new JLabel("Total ");
-	String[] columnNames = { "Symbol","montant" ,"= dollar", "% Day", "% Hour f", "% Hour instant","Eligible" ,""};
-    private Hashtable<String, PanelCanvas> hCanvas = new Hashtable<>();
-    private static final int nSelect = 6;
+	private JLabel labelTitre_ = new JLabel("Total ");
+	private JLabel labelMontantTotal = new JLabel("montant Total");
+	private JCheckBox checkBoxDisplayVariationPrice = new JCheckBox("Variation ", true);
+	String[] columnNames = { "Symbol","montant" ,"= dollar", "% Day", "% Hour f", "% Hour instant","Eligible" ,"Variations","Prices"};
+	 private Hashtable<String, PanelCanvasVariations> hCanvasVaritions = new Hashtable<>();
+	 private Hashtable<String, PanelCanvasPrix> hCanvasPrix = new Hashtable<>();
+	    private static final int nSelect = 6;
 	AbstractTableModel tableModel = new AbstractTableModel() {
 		private List<SessionCurrency> getList() {
 		  return session.getListOrder_byHourlyChangePerCentByDay();
@@ -115,8 +126,12 @@ public class PanelCurrencies extends JPanel {
 			}else if(columnIndex == nSelect){
 				return sessionCurrency.isEligible();
 			}else if(columnIndex == (nSelect+1)){
+				String key =  sessionCurrency.getShortName();				
+				return hCanvasVaritions.get(key).getImageIcon();
+			}else if(columnIndex == (nSelect+2)){
 				String key =  sessionCurrency.getShortName();
-				return hCanvas.get(key).getImageIcon();
+				
+				return hCanvasPrix.get(key).getImageIcon();
 			}
 			return "";
 		}
@@ -142,6 +157,8 @@ public class PanelCurrencies extends JPanel {
 				case nSelect:
 					return Boolean.class;
 				case nSelect+1:
+					return ImageIcon.class;
+				case nSelect+2:
 					return ImageIcon.class;
 			}
 			
@@ -173,7 +190,7 @@ public class PanelCurrencies extends JPanel {
 	public PanelCurrencies(SessionCurrencies session) {
 		
 		super(new BorderLayout());
-		
+		HeartBeat.getInstance().add(this);
 		this.session = session;
 		initCanvas();
 		table = new JTable(tableModel);
@@ -182,76 +199,115 @@ public class PanelCurrencies extends JPanel {
 		table.getColumnModel().getColumn(5).setCellRenderer(new DoubleTableCellRenderer());
 		table.setRowHeight(60);
 		//table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-		table.getColumnModel().getColumn(0).setPreferredWidth(60);
-		table.getColumnModel().getColumn(0).setMaxWidth(60);
-		table.getColumnModel().getColumn(1).setPreferredWidth(170);
-		table.getColumnModel().getColumn(2).setPreferredWidth(80);
-		table.getColumnModel().getColumn(3).setPreferredWidth(80);
+		table.getColumnModel().getColumn(0).setPreferredWidth(50);
+		table.getColumnModel().getColumn(0).setMaxWidth(50);
+		table.getColumnModel().getColumn(1).setPreferredWidth(40);
+		table.getColumnModel().getColumn(2).setPreferredWidth(80);//dollar
+		table.getColumnModel().getColumn(3).setPreferredWidth(40);
+		table.getColumnModel().getColumn(4).setPreferredWidth(80);
+		table.getColumnModel().getColumn(5).setPreferredWidth(30);
 		table.getColumnModel().getColumn(nSelect).setPreferredWidth(40);
 		table.getColumnModel().getColumn(nSelect).setMaxWidth(40);
+		table.getColumnModel().getColumn(nSelect+1).setPreferredWidth(300);
+		table.getColumnModel().getColumn(nSelect+1).setMinWidth(300);
+		table.getColumnModel().getColumn(nSelect+2).setPreferredWidth(300);
+		table.getColumnModel().getColumn(nSelect+2).setMinWidth(300);
 		
 		table.setAutoCreateRowSorter(true);
-		
+		labelMontantTotal.setBorder(BorderFactory.createLineBorder(Color.RED));
+		JPanel panelNorth = new JPanel(new BorderLayout());
+		panelNorth.add(labelTitre_,BorderLayout.WEST);
+		panelNorth.add(labelMontantTotal,BorderLayout.CENTER);
+		panelNorth.add(checkBoxDisplayVariationPrice,BorderLayout.EAST);
 		JScrollPane scrollPane = new JScrollPane(table);
 		Dimension dim = new Dimension(1200, 400);
 		scrollPane.setPreferredSize(dim);
 		scrollPane.setMinimumSize(dim);
 		this.add(scrollPane, BorderLayout.CENTER);
-		this.add(labelTitre, BorderLayout.NORTH);
+		this.add(panelNorth, BorderLayout.NORTH);
 		this.update(session);
-
 	}
 	
 	void initCanvas(){
 		try {
 			for(SessionCurrency sc : this.session.getListOrder_byHourlyChangePerCentByDay()){	
 						String currency = sc.getShortName();
-						PanelCanvas pc = new PanelCanvas(currency);
-						this.hCanvas.put(currency, pc);
+						PanelCanvasVariations pcVariations = new PanelCanvasVariations(currency);
+						PanelCanvasPrix pcPrix = new PanelCanvasPrix(currency);
+						this.hCanvasVaritions.put(currency, pcVariations);
+						this.hCanvasPrix.put(currency, pcPrix);
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
+	
+	private long timeUpdate =0;
  	public void update(SessionCurrencies session) {
 		this.session = session;
-		
+		timeUpdate = System.currentTimeMillis();
 		Runnable runable = new Runnable() {
 			public void run() {
-				for(SessionCurrency sc : session.getlSessionCurrency()){
-					String key = sc.getShortName();
-					PanelCanvas pc = hCanvas.get(key);
-					Color color;
-					String label = key;
-					if (sc.getHourlyChangePerCentByDay() == SessionCurrency.D_default){
-						color = Color.BLUE;
-						label="Initializing "+key;
-					}else if (sc.getHourlyChangePerCentByDay()>0){
-						color = Color.GREEN;
-					}else {
-						color = Color.RED;
+				try {
+					for(SessionCurrency sc : session.getlSessionCurrency()){
+						String key = sc.getShortName();
+						PanelCanvasVariations pcVariations = hCanvasVaritions.get(key);
+						PanelCanvasPrix pcPrix = hCanvasPrix.get(key);
+						Color color;
+						String label = key;
+						if (sc.getHourlyChangePerCentByDay() == SessionCurrency.D_default){
+							color = Color.BLUE;
+							label="Initializing "+key;
+						}else if (sc.getHourlyChangePerCentByDay()>0){
+							color = Color.GREEN;
+						}else {
+							color = Color.RED;
+						}
+						pcVariations.update(label,color, sc.getHistory());
+						pcPrix.update(label,color, sc.getHistory());
 					}
-					pc.update(label,color, sc.getHistory());
+					table.updateUI();
+					ITicker best = session.getSessionCurrencyBestEligible();
+					String bestEligible ;
+					if(best== null){
+						bestEligible=" - ";
+					}else {
+						bestEligible= best.getShortName();
+					}
+					long duree =System.currentTimeMillis() -  session.getTimeStart().getTime(); 
+					String dureeStr = String.format("%02d h  %02d mn", 
+						    TimeUnit.MILLISECONDS.toHours(duree),
+						    TimeUnit.MILLISECONDS.toMinutes(duree) 	);
+					labelTitre_.setText(" n :"+session.getNumero()+" | duree :"+dureeStr+"  | best :"+bestEligible);
+					labelMontantTotal.setText("Total :"+df.format(session.getBalancesCurrent().getTotalAmountDollar())+" $  ");
+				} catch (Throwable e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+					//throw e;
 				}
-				table.updateUI();
-				Date date = new Date();
-				ITicker best = session.getBestEligible();
-				String bestEligible ;
-				if(best== null){
-					bestEligible=" - ";
-				}else {
-					bestEligible= best.getShortName();
-				}
-				long duree =System.currentTimeMillis() -  session.getTimeStart().getTime(); 
-				String dureeStr = String.format("%02d h  %02d mn", 
-					    TimeUnit.MILLISECONDS.toHours(duree),
-					    TimeUnit.MILLISECONDS.toMinutes(duree) 	);
-				labelTitre.setText("Total :"+df.format(session.getBalancesCurrent().getTotalDollar())+" $ | numero : "+session.getNumero()+" | duree "+dureeStr+" | "+sdf.format(date)+" | best :"+bestEligible);
 				
 			}
 		};
 		SwingUtilities.invokeLater(runable);
+	}
+
+ 	JDialog dialogAlertHearBeat;
+	@Override
+	public void checkIsAlive(long period) {
+		if (this.timeUpdate ==0){
+			return;
+		}
+		long d = System.currentTimeMillis()- this.timeUpdate;
+		if(d> 2 * period) {
+			System.err.println("Alert Heart Beat period:"+period+"  "+d);
+			if (dialogAlertHearBeat == null){
+				JFrame frame =(JFrame) SwingUtilities.getWindowAncestor(this);
+				dialogAlertHearBeat = new JDialog(frame, "Heart Beat Alert", true);
+			}
+			dialogAlertHearBeat.setVisible(true);
+			
+		}
 	}
 
 }

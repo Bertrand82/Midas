@@ -63,6 +63,23 @@ public class MidasGUI {
 				selectCurrencyDialog();				
 			}
 		});
+		JMenuItem menuItemDisplayAllOrders = new JMenuItem("Display All Orders  ");
+		menuItemDisplayAllOrders.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				displayActiveOrders();
+			}			
+		});
+		
+		JMenuItem menuItemCancelAllOrders = new JMenuItem("Cancel All Orders  ");
+		menuItemCancelAllOrders.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				cancelAllOrders();
+			}			
+		});
 		
 		JMenuItem menuItemEmergencySave = new JMenuItem("Emergency change In $ ");
 		menuItemEmergencySave.addActionListener(new ActionListener() {
@@ -70,9 +87,7 @@ public class MidasGUI {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				emergencySave();
-			}
-
-			
+			}			
 		});
 		
 		JButton buttonFetchSymbols = new JButton("Fetch symbols");
@@ -108,6 +123,8 @@ public class MidasGUI {
 		menuFile.add(menuSetSecretKeys);
 		
 		JMenu menuActions = new JMenu("Actions");
+		menuActions.add(menuItemCancelAllOrders);
+		menuActions.add(menuItemDisplayAllOrders);
 		menuActions.add(menuItemEmergencySave);
 		JMenuBar menuBar = new JMenuBar();
 		menuBar.add(menuFile);
@@ -128,14 +145,12 @@ public class MidasGUI {
 		frame.setJMenuBar(menuBar);
 		frame.pack();
 		frame.setVisible(true);
-		dialogSelectSymbols = new DialogSelectSymbols(frame, new ActionListener() {
-			
+		dialogSelectSymbols = new DialogSelectSymbols(frame, new ActionListener() {			
 			public void actionPerformed(ActionEvent e) {
 				processSymbolsSelected();
 			}
 		});
-		dialogInputKey = new DialogInputKey(frame, new ActionListener() {
-			
+		dialogInputKey = new DialogInputKey(frame, new ActionListener() {			
 			public void actionPerformed(ActionEvent e) {
 				configureBitFinexKey();
 			}
@@ -217,10 +232,11 @@ public class MidasGUI {
 	}
 	ThreadTrading threadTrading ;
 	private void startThreadTrading() {
-		System.out.println("startThreadTrading");
+		
 		//buttonStartThreadThreading.setEnabled(false);
 		boolean orderAble = this.menuItemOrderAble.isSelected();
 		Config config = new Config( orderAble,password);
+		System.out.println("startThreadTrading isOrderAble :"+config.isOrderAble());
 		threadTrading = new ThreadTrading(config);
 	}
 
@@ -250,5 +266,23 @@ public class MidasGUI {
 	private void emergencySave() {
 		System.out.println("Emergency Save");
 		this.threadTrading.emergencySave("Operator");
+	}
+	
+	private void cancelAllOrders() {
+		try {
+			System.out.println("Cancel Order");
+			this.threadTrading.cancelAllOrders();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private void displayActiveOrders() {
+		try {
+			System.out.println("Cancel Order");
+			this.threadTrading.displayActiveOrders();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 }

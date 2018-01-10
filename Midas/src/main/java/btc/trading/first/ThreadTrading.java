@@ -11,6 +11,8 @@ import org.apache.logging.log4j.Logger;
 import btc.BitfinexClient;
 import btc.BitfinexClient.EnumService;
 import btc.OrderManager;
+import btc.model.ActiveOrder;
+import btc.model.ActiveOrders;
 import btc.model.Balances;
 import btc.model.v2.ITicker;
 import btc.model.v2.Tickers;
@@ -80,6 +82,11 @@ public class ThreadTrading implements Runnable{
 					MidasGUI.getInstance().updateThread();
 				} catch (Exception e) {
 					log("Exception22: "+e.getClass()+" "+e.getMessage());
+					System.err.println("Exception22 "+e.getClass()+" "+e.getMessage());
+					e.printStackTrace();
+				} catch (Throwable e) {
+					log("Exception23: "+e.getClass()+" "+e.getMessage());
+					e.printStackTrace();
 				}
 				checkEmergencySaveRequest();
 				sleep(timeSleeping);
@@ -92,18 +99,22 @@ public class ThreadTrading implements Runnable{
 
 
 
-	private void checkEmergencySaveRequest(){
-		if (emergencySaveAllRequest){
-			List<Order> orders = sessionCurrencies.saveAllInDollar();
-			log("emergencySaveAll orders.size :"+orders.size());
-			log("emergencySaveAll orders.size :"+orders);
-			if(this.config.orderAble){
+	private void checkEmergencySaveRequest() {
+		try {
+			this.cancelAllOrders();
+			if (emergencySaveAllRequest){
+				List<Order> orders = sessionCurrencies.saveAllInDollar();
+				log("ThreadTrading.emergencySaveAll orders.size :"+orders.size());
+				log("ThreadTrading.emergencySaveAll orders.size :"+orders);
+			
 				OrderManager.getInstance().sendOrders(this.bitfinexClient,orders);
-			}else{
-				log("Warning Save All in Dollar Order put noOrderable");
+				
 			}
+			emergencySaveAllRequest=false;
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-		emergencySaveAllRequest=false;
 	}
 	
 	
@@ -175,6 +186,7 @@ public class ThreadTrading implements Runnable{
 	public void emergencySave(String from) {
 		log("emergy save request from "+from);
 		this.emergencySaveAllRequest=true;
+		
 		awake();
 	}
 
@@ -183,6 +195,39 @@ public class ThreadTrading implements Runnable{
 	}
 
 	
-	
+	public ActiveOrders fetchOrders() throws Exception{
+		ActiveOrders o =(ActiveOrders) this.bitfinexClient.serviceProcess(EnumService.orders,"","");
+		System.out.println("orders :"+o);
+		return o;
+	}
+
+
+
+
+
+	public void displayActiveOrders() throws Exception{
+		ActiveOrders aOrders = fetchOrders();
+		for(ActiveOrder ao: aOrders.getlOrders()){
+			displayActiveOrder(ao);
+		}
+	}
+
+
+
+
+
+	private void displayActiveOrder(ActiveOrder ao) {
+		System.err.println("Cancel Order "+ao+" No Implemented yet");
+	}
+
+
+
+
+
+	public void cancelAllOrders() throws Exception{
+		Object o = this.bitfinexClient.serviceProcess(EnumService.cancelAllOrders,"","");
+		System.out.println("orders :"+o);
+		
+	}
 	
 }

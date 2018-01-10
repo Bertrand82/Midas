@@ -115,6 +115,11 @@ public class BitfinexTest {
 		Object o = bfnx.serviceProcess(EnumService.walletV2,"","");
 	}
 
-	
+	@Test
+	public  void testBitfinexV1_orders() throws Exception {
+		Object o = bfnx.serviceProcess(EnumService.orders,"","");
+		System.out.println("orders orders"+o);
+	}
+
 
 }

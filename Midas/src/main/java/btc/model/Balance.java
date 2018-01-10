@@ -5,6 +5,9 @@ import java.io.Serializable;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import btc.swing.SymbolConfig;
+import btc.swing.SymbolsConfig;
+
 public class Balance implements Serializable{
 
 	private static final long serialVersionUID = 1L;
@@ -16,7 +19,7 @@ public class Balance implements Serializable{
 	double available ;
 	
 	double lastPrice ;
-	double percent ;
+	double percentHourlyByDay ;
 	double availableInDollar;
 	
 	// {"amount":"0.0","available":"0.0","currency":"btc","type":"deposit"}
@@ -54,11 +57,11 @@ public class Balance implements Serializable{
 	public void setLastPrice(double lastPrice) {
 		this.lastPrice = lastPrice;
 	}
-	public double getPercent() {
-		return percent;
+	public double getPercentHourlyByDay() {
+		return percentHourlyByDay;
 	}
-	public void setPercent(double percent) {
-		this.percent = percent;
+	public void setPercentHourlyByDay(double percent) {
+		this.percentHourlyByDay = percent;
 	}
 	public double getAvailableInDollar() {
 		return availableInDollar;
@@ -77,6 +80,35 @@ public class Balance implements Serializable{
 	}
 	public void setAvailable(double available) {
 		this.available = available;
+	}
+	public boolean isOverLimit() {
+		SymbolConfig symbol = SymbolsConfig.getInstance().getSymbolConfig(currency);
+		int maxDollar = symbol.getMaxTrade();
+		if (maxDollar == 0){
+			return false;
+		}else {
+			return ((getAvailableInDollar()+SEUIL_DOLLAR) > maxDollar);
+		}
+	}
+	
+	private static double SEUIL_DOLLAR = 50;
+	/**
+	 * Attention! 0 pas de limite
+	 * @return
+	 */
+	public double getAchatMax() {
+		SymbolConfig symbol = SymbolsConfig.getInstance().getSymbolConfig(currency);
+		int maxDollar = symbol.getMaxTrade();
+		if (maxDollar <= 0){
+			return 0;
+		}else {
+			double maxPossibleInDollard = maxDollar -getAvailableInDollar();
+			if (maxPossibleInDollard <SEUIL_DOLLAR){// j'ecrete .
+				maxPossibleInDollard=0;
+			}
+			double max = maxPossibleInDollard/lastPrice;
+			return  max;
+		}
 	}
 
 }

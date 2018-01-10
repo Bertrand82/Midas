@@ -7,6 +7,7 @@ public class SymbolConfig implements Comparable<SymbolConfig>{
 	private String name;
 	private boolean selected=false;
 	private String comment ="";
+	private int maxTrade =0;
 	
 	private Integer order=10000;
 	
@@ -64,6 +65,27 @@ public class SymbolConfig implements Comparable<SymbolConfig>{
 			
 			e.printStackTrace();
 		}
+	}
+
+	public int getMaxTrade() {
+		return maxTrade;
+	}
+
+	public void setMaxTrade(int maxTrade) {
+		this.maxTrade = maxTrade;
+	}
+
+	public void setMaxTrade(String s) {
+		try {
+			if (s == null){
+				return;
+			}
+			int maxT = Integer.parseInt(s);
+			setMaxTrade(maxT);
+		} catch (NumberFormatException e) {
+			System.err.println("Erarare parsing properties "+s);
+		}
+		
 	}
 	
 	
