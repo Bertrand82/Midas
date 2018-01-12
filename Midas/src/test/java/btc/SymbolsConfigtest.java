@@ -2,7 +2,7 @@ package btc;
 
 import org.junit.Test;
 
-import btc.swing.SymbolsConfig;
+import bg.panama.btc.swing.SymbolsConfig;
 
 
 

@@ -6,9 +6,9 @@ import java.util.Date;
 
 import org.junit.Test;
 
-import btc.model.v2.ITicker;
-import btc.model.v2.Ticker;
-import btc.trading.first.SessionCurrency;
+import bg.panama.btc.model.v2.ITicker;
+import bg.panama.btc.model.v2.Ticker;
+import bg.panama.btc.trading.first.SessionCurrency;
 
 public class Z_1_currencyTest {
 

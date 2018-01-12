@@ -4,9 +4,11 @@ import java.io.File;
 
 import org.junit.Test;
 
-import btc.BitfinexClient.EnumService;
-import btc.model.Balances;
-import btc.swing.ProtectedConfigFile;
+import bg.panama.btc.BitfinexClient;
+import bg.panama.btc.BitfinexClientFactory;
+import bg.panama.btc.BitfinexClient.EnumService;
+import bg.panama.btc.model.Balances;
+import bg.panama.btc.swing.ProtectedConfigFile;
 
 public class BitfinexTest {
 	

@@ -22,8 +22,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Test;
 
-import btc.BitfinexClient.EnumService;
-import btc.swing.ProtectedConfigFile;
+import bg.panama.btc.BitfinexClient.EnumService;
+import bg.panama.btc.swing.ProtectedConfigFile;
 
 public class AuthentificationV2Test {
 
