@@ -16,6 +16,7 @@ import btc.model.ActiveOrders;
 import btc.model.Balances;
 import btc.model.v2.ITicker;
 import btc.model.v2.Tickers;
+import btc.model.v2.TickersFactory;
 import btc.swing.MidasGUI;
 import btc.swing.ProtectedConfigFile;
 import btc.swing.SymbolsConfig;
@@ -55,6 +56,7 @@ public class ThreadTrading implements Runnable{
 		}
 	}
 	Balances balances;
+	TickersFactory tickersFactory = TickersFactory.getInstance();
 	public void run() {
 		
 			loggerTrade.info( "run  DAILY_CHANGE_PERC	float	Amount that the price has changed expressed in percentage terms");
@@ -71,7 +73,7 @@ public class ThreadTrading implements Runnable{
 					ITicker zBest = sessionCurrencies.getTickerBest();
 						
 					loggerTrade.info(""+tickers.toString());
-					loggerTradeComparaison.info("Instantane\t|Best:"+zBest.getShortName()+"\t|"+getTrace(tickers.getlTickers()));
+					loggerTradeComparaison.info("Instantane\t|Best:"+zBest.getShortName()+"\t|"+getTrace( tickers.getlTickers()));
 					loggerTradeComparaison.info("Filtred   \t|Best:"+zBest.getShortName()+"\t|"+getTrace2(sessionCurrencies.getListOrder_byHourlyChangePerCentByDay()));
 					
 					List<Order> orders = balances.process(sessionCurrencies);
@@ -80,6 +82,7 @@ public class ThreadTrading implements Runnable{
 					}
 					this.sessionCurrencies.setBalancesCurrent(balances);
 					MidasGUI.getInstance().updateThread();
+					tickersFactory.persists(tickers);
 				} catch (Exception e) {
 					log("Exception22: "+e.getClass()+" "+e.getMessage());
 					System.err.println("Exception22 "+e.getClass()+" "+e.getMessage());
@@ -130,7 +133,7 @@ public class ThreadTrading implements Runnable{
 		return s;
 	}
 
-	private String getTrace(List<ITicker> list){
+	private String getTrace(List<? extends ITicker> list){
 		String s ="";
 		for(ITicker it : list){
 			s+=getTrace(it);

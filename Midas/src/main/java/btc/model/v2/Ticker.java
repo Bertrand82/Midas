@@ -3,6 +3,12 @@ package btc.model.v2;
 import java.io.Serializable;
 import java.util.Date;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+
 import org.json.JSONArray;
 /*
  * 
@@ -21,12 +27,16 @@ import org.json.JSONArray;
 13 LOW	float	Daily low
 
  */
+@Entity
 public class Ticker implements Comparable<Ticker>, ITicker, Serializable{
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	@Id
+	@GeneratedValue
+	private long id ;
 	String name ;
 	double hourlyPrice;
 	double volumeDaily;
@@ -39,6 +49,9 @@ public class Ticker implements Comparable<Ticker>, ITicker, Serializable{
 	long deltaTemps_=10000000000000000l;
 	Date date = new Date();
 	int numero ;
+	@ManyToOne
+	@JoinColumn(name="tickers_id", nullable=false)
+	Tickers tickers;
 	/*
 	 
 0	["tBTCUSD",
@@ -58,7 +71,7 @@ public class Ticker implements Comparable<Ticker>, ITicker, Serializable{
 	 
 	 */
 	
-	public Ticker(JSONArray jsonArray) throws Exception{
+	public Ticker(JSONArray jsonArray,Tickers tickers) throws Exception{
 		
 		this.name= jsonArray.getString(0);
 		this.hourlyPrice = jsonArray.getDouble(1);
@@ -68,7 +81,7 @@ public class Ticker implements Comparable<Ticker>, ITicker, Serializable{
 		this.volumeDaily = jsonArray.getDouble(8);
 		this.highDaily = jsonArray.getDouble(9);
 		this.lowDaily = jsonArray.getDouble(10);
-		
+		this.tickers =tickers;
 	}
 
 
@@ -270,6 +283,48 @@ public class Ticker implements Comparable<Ticker>, ITicker, Serializable{
 
 	public void setNumero(int numero) {
 		this.numero = numero;
+	}
+
+
+
+	public long getDeltaTemps_() {
+		return deltaTemps_;
+	}
+
+
+
+	public void setDeltaTemps_(long deltaTemps_) {
+		this.deltaTemps_ = deltaTemps_;
+	}
+
+
+
+	public void setDate(Date date) {
+		this.date = date;
+	}
+
+
+
+	public long getId() {
+		return id;
+	}
+
+
+
+	public void setId(long id) {
+		this.id = id;
+	}
+
+
+
+	public Tickers getTickers() {
+		return tickers;
+	}
+
+
+
+	public void setTickers(Tickers tickers) {
+		this.tickers = tickers;
 	}
 
 
