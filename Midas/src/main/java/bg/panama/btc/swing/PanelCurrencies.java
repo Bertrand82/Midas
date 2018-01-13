@@ -26,11 +26,11 @@ import javax.swing.table.DefaultTableCellRenderer;
 import bg.panama.btc.model.Balance;
 import bg.panama.btc.model.Balances;
 import bg.panama.btc.model.v2.ITicker;
-import bg.panama.btc.swing.heartBeat.HeartBeat;
-import bg.panama.btc.swing.heartBeat.ICheckAlive;
 import bg.panama.btc.trading.first.AlgoProcessCurrencies;
 import bg.panama.btc.trading.first.SessionCurrencies;
 import bg.panama.btc.trading.first.SessionCurrency;
+import bg.util.heartBeat.HeartBeat;
+import bg.util.heartBeat.ICheckAlive;
 
 public class PanelCurrencies extends JPanel implements ICheckAlive {
 	private static final DecimalFormat df = new DecimalFormat("0,000,000.00");
@@ -273,7 +273,7 @@ public class PanelCurrencies extends JPanel implements ICheckAlive {
 						pcPrix.update(label,color, sc.getHistory());
 					}
 					table.updateUI();
-					ITicker best = session.getSessionCurrencyBestEligible();
+					SessionCurrency best = session.getSessionCurrencyBestEligible();
 					String bestEligible ;
 					if(best== null){
 						bestEligible=" - ";

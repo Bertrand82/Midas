@@ -104,6 +104,9 @@ public class Ticker implements Comparable<Ticker>, ITicker, Serializable{
 	 */
 	@Override
 	public String getShortName() {
+		if (name == null){
+			return "NO_NAME";
+		}
 		if (name.length() > 4){
 			return name.substring(1, 4);
 		}else {

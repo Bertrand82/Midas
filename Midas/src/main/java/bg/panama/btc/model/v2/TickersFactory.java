@@ -7,7 +7,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Query;
 
-import bg.panama.btc.util.HibernateUtil;
+import bg.util.HibernateUtil;
 
 public class TickersFactory {
 
@@ -23,11 +23,15 @@ public class TickersFactory {
 	}
 	public void persists(Tickers tickers) {
 		EntityManager em = emf.createEntityManager();
+		persists(em,tickers);
+		em.close();
+		
+	}
+	
+	public void persists(EntityManager em,Tickers tickers) {
 		em.getTransaction().begin();
 		em.persist(tickers);
 		em.getTransaction().commit();
-		em.close();
-		
 	}
 	public Tickers getLasTickers() {
 		EntityManager em = emf.createEntityManager();
@@ -52,10 +56,7 @@ public class TickersFactory {
 		 query.setMaxResults(n);
 		 List<Tickers> list =(List<Tickers>) query.getResultList();
 		 System.out.println("getLastTickers size :"+list.size()+"  : ");
-		 if (list.size() >0){
-			 Tickers lastT = list.get(0);
-			 System.out.println("lastT datec :"+lastT.getDate());
-		 }
+		
 		
 		 return list;
 		  

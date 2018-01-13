@@ -7,28 +7,46 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+
 import bg.panama.btc.model.Balance;
 import bg.panama.btc.model.Balances;
 import bg.panama.btc.model.v2.ITicker;
 import bg.panama.btc.model.v2.Ticker;
 import bg.panama.btc.model.v2.Tickers;
 
+
+@Entity
 public class SessionCurrencies implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	private Balances balancesCurrent;
+	
+	@Id
+	@GeneratedValue
+	private long id;
+
 	private final Date timeStart = new Date();
+	
+	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL,mappedBy="sessionCurrencies")
 	List<SessionCurrency> lSessionCurrency = new ArrayList<SessionCurrency>();
 	private int numero =0;
+	
+	public SessionCurrencies() {
+		
+	}
 	
 	public SessionCurrencies(Tickers tickers) {
 		super();
 		for (ITicker ticker : tickers.getlTickers()) {
-			SessionCurrency z_1_Currency = new SessionCurrency((Ticker) ticker);
+			SessionCurrency z_1_Currency = new SessionCurrency((Ticker) ticker,this);
 			lSessionCurrency.add(z_1_Currency);
-		}
-		
+		}		
 	}
 
 	public void update(Tickers tickers) {
@@ -36,7 +54,6 @@ public class SessionCurrencies implements Serializable {
 		for (ITicker ticker : tickers.getlTickers()) {
 			SessionCurrency sessionCurrency = getSessionCurrency_byName(ticker.getName());
 			sessionCurrency.update((Ticker) ticker);
-
 		}
 	}
 
@@ -59,8 +76,8 @@ public class SessionCurrencies implements Serializable {
 
 		@Override
 		public int compare(SessionCurrency o1, SessionCurrency o2) {
-			Double d = o2.getDaylyChangePerCent();
-			return d.compareTo(o1.getDaylyChangePerCent());
+			Double d = o2.getHourlyChangePerCentByDay();
+			return d.compareTo(o1.getHourlyChangePerCentByDay());
 		}
 	};
 	
@@ -91,13 +108,13 @@ public class SessionCurrencies implements Serializable {
 
 	}
 
-	public synchronized ITicker getTickerBest() {
-		ITicker z = getListOrder_byHourlyChangePerCentByDay().get(0);
+	public synchronized SessionCurrency getTickerBest() {
+		SessionCurrency z = getListOrder_byHourlyChangePerCentByDay().get(0);
 		return z;
 	}
 
-	public synchronized ITicker getTickerWorse() {
-		ITicker z = getListOrder_byHourlyChangePerCentByDay().get(lSessionCurrency.size() - 1);
+	public synchronized SessionCurrency getTickerWorse() {
+		SessionCurrency z = getListOrder_byHourlyChangePerCentByDay().get(lSessionCurrency.size() - 1);
 		return z;
 	}
 
@@ -111,10 +128,10 @@ public class SessionCurrencies implements Serializable {
 		return 0;
 	}
 
-	public double getDaylyChangePerCent(String currency) {
+	public double getHourlyChangePerCentByDay(String currency) {
 		for (SessionCurrency zcurrency : this.lSessionCurrency) {
 			if (zcurrency.getShortName().equalsIgnoreCase(currency)) {
-				double daylyChangePerCent = zcurrency.getDaylyChangePerCent();
+				double daylyChangePerCent = zcurrency.getHourlyChangePerCentByDay();
 				return daylyChangePerCent;
 			}
 		}
@@ -125,20 +142,6 @@ public class SessionCurrencies implements Serializable {
 		return lSessionCurrency;
 	}
 
-	public Balances getBalancesCurrent() {
-		return balancesCurrent;
-	}
-
-	public void setBalancesCurrent(Balances balancesCurrent) {
-		this.balancesCurrent = balancesCurrent;
-	}
-
-	public Balance getBalance(String currency) {
-		if (this.balancesCurrent == null) {
-			return null;
-		}
-		return balancesCurrent.getBalance(currency);
-	}
 
 	public SessionCurrency getTickerByCurrency(String currency) {
 		for (SessionCurrency zcurrency : this.lSessionCurrency) {
@@ -154,17 +157,17 @@ public class SessionCurrencies implements Serializable {
 		return sessionCurrencyBestEligible;
 	}
 
-	public SessionCurrency getBestEligible(Balances balance) {
-		this.balancesCurrent = balance;
+	
+	public SessionCurrency getBestEligible(Balances balancesCurrent) {
 		List<SessionCurrency> list = this.getListOrder_byHourlyChangePerCentByDay();
 		// Liste ordonnée les premieres sont lthe best ... si elles sont eligibles
-		if (this.balancesCurrent == null){
+		if (balancesCurrent == null){
 			return null;
 		}
 		for (int i = 0; i < list.size(); i++) {
 			
 			SessionCurrency sc = (SessionCurrency) list.get(i);
-			Balance b = this.balancesCurrent.getBalance(sc.getShortName());
+			Balance b = balancesCurrent.getBalance(sc.getShortName());
 			if (sc.isEligible() && !b.isOverLimit()) {
 				this.sessionCurrencyBestEligible =sc;
 				return sc;
@@ -174,9 +177,9 @@ public class SessionCurrencies implements Serializable {
 		return null;
 	}
 
-	public List<Order> saveAllInDollar() {
+	public List<Order> saveAllInDollar(Balances balancesCurrent) {
 		System.err.println("Save All In Dollar start");	
-		return this.balancesCurrent.saveAllInDollar(this);
+		return balancesCurrent.saveAllInDollar(this);
 	}
 
 	public void saveConfiguration() {
@@ -199,6 +202,28 @@ public class SessionCurrencies implements Serializable {
 		return timeStart;
 	}
 
+	@Override
+	public Object clone() throws CloneNotSupportedException {
+		
+		SessionCurrencies s = new SessionCurrencies();
+		s.numero = numero;
+		s.sessionCurrencyBestEligible = sessionCurrencyBestEligible;
+		for(SessionCurrency sc : lSessionCurrency){
+			SessionCurrency sc2 =(SessionCurrency) sc.clone();
+			s.lSessionCurrency.add(sc2);
+			sc2.setSessionCurrencies(s);
+		}		
+		return s;
+	}
 
+	public long getId() {
+		return id;
+	}
+
+	public void setId(long id) {
+		this.id = id;
+	}
+
+	
 
 }

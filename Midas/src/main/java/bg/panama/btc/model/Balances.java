@@ -88,7 +88,6 @@ public class Balances implements Serializable{
 			double amount = balance.getAmount();
 
 			double lastPrice = session.getLastPrice(currency);
-			double percentDayly_DEPRECATED = session.getDaylyChangePerCent(currency);
 			double percentHourlyByDay = tickerCurrent.getHourlyChangePerCentByDay();
 			double deltaPercent = (tickerBest.getHourlyChangePerCentByDay() - tickerCurrent.getHourlyChangePerCentByDay());
 			double availableInDollar = lastPrice * available;
@@ -166,7 +165,7 @@ public class Balances implements Serializable{
 			double available = balance.getAmount();
 
 			double lastPrice = session.getLastPrice(currency);
-			double percent = session.getDaylyChangePerCent(currency);
+			double percent = session.getHourlyChangePerCentByDay(currency);
 			double availableInDollar = lastPrice * available;
 
 			totalAvailableDollar += availableInDollar;

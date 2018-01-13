@@ -2,47 +2,70 @@ package bg.panama.btc.trading.first;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
+import javax.persistence.Transient;
 
 import bg.panama.btc.model.v2.ITicker;
+import bg.panama.btc.model.v2.Ticker;
 import bg.panama.btc.swing.History;
 
-public class SessionCurrency implements ITicker,Serializable,Cloneable{
+
+@Entity
+public class SessionCurrency implements Serializable,Cloneable{
 
 
 	private static final long serialVersionUID = 1L;
-	
+	@Id
+	@GeneratedValue
+	private long id;
 	private final Date dateStart = new Date();
-	Date date = new Date();
-	double constanteTemps = 10 *60 * 1000;
-	int nombreEchantillonMini=10;
-	int nombreEchantillon=0;
-	String name ;	
-	String shortName;
-	double hourlyPrice =0;
-	double volumeDaily=0;
-	double highDaily=0;
-	double lowDaily=0;
+	private Date date = new Date();
+	private double constanteTemps = 10 *60 * 1000;
+	private int nombreEchantillon=0;
+	private String name ;	
+	private String shortName;
+	private double hourlyPrice =0;
+	private double volumeDaily=0;
+	private double highDaily=0;
+	private double lowDaily=0;
 	double lastPrice=0;
-	double daylyChange=0;
-	double daylyChangePerCent=0;
-	private ITicker ticker_Z_1;
+	
+	@OneToOne
+	private Ticker ticker_Z_1;
 	private boolean isEligible= true;
 	private double hourlyChangePerCent;
 	private long deltaTemps_ms_;
 	private long dateLastUpdate = System.currentTimeMillis();
-	int numero =0;
-	History history = new History();
-	public SessionCurrency(ITicker ticker) {
+	private int numero =0;
+	@ManyToOne
+	@JoinColumn(name="sessionCurrencies_id", nullable=false)
+	private SessionCurrencies sessionCurrencies;
+	
+	@Transient
+	private History history;
+	
+	public SessionCurrency(Ticker ticker, SessionCurrencies sessionCurrencies) {
 		super();
+		this.sessionCurrencies = sessionCurrencies;
 		this.name = ticker.getName();
 		this.shortName = ticker.getShortName();
 		this.update(ticker);
+		history = new History(this);
 	}
 
-	private SessionCurrency() {
+	public  SessionCurrency() {
 	}
 
-	public void update(ITicker ticker){
+	public void update(Ticker ticker){
 		this.hourlyPrice = tranformZ(this.hourlyPrice,ticker.getHourlyPrice());
 		this.dateLastUpdate = System.currentTimeMillis();
 		if (ticker_Z_1 != null){			
@@ -62,18 +85,11 @@ public class SessionCurrency implements ITicker,Serializable,Cloneable{
 		this.highDaily = tranformZ(this.highDaily,ticker.getHighDaily());
 		this.lowDaily = tranformZ(this.lowDaily,ticker.getLowDaily());
 		this.lastPrice = this.tranformZ(this.lastPrice, ticker.getLastPrice());
-		this.daylyChange = this.tranformZ(daylyChange, ticker.getDaylyChange());
-		this.daylyChangePerCent = this.tranformZ(daylyChangePerCent,ticker. getDaylyChangePerCent());
-			
 		this.hourlyChangePerCent=this.tranformZ(hourlyChangePerCent,ticker.getHourlyChangePerCent());
 		nombreEchantillon++;
 		this.date=new Date();
-		try {
-			this.history.add((SessionCurrency)this.clone());
-		} catch (CloneNotSupportedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+			//this.history.add((SessionCurrency)this.clone());
+	
 	}
 
 	private double tranformZ(double v, double vNew) {
@@ -141,23 +157,8 @@ public class SessionCurrency implements ITicker,Serializable,Cloneable{
 		this.lastPrice = lastPrice;
 	}
 
-	public double getDaylyChange() {
-		return daylyChange;
-	}
-
-	public void setDaylyChange(double daylyChange) {
-		this.daylyChange = daylyChange;
-	}
-
-	public double getDaylyChangePerCent() {
-		return daylyChangePerCent;
-	}
-
-	public void setDaylyChangePerCent(double daylyChangePerCent) {
-		this.daylyChangePerCent = daylyChangePerCent;
-	}
-
-	@Override
+	
+	
 	public String getShortName() {
 		// TODO Auto-generated method stub
 		return shortName;
@@ -197,19 +198,19 @@ public class SessionCurrency implements ITicker,Serializable,Cloneable{
 	private static final double DAY_ms = 24 * 60*60*10000;
 	
 	
-	@Override
+
 	public long getDeltaTemps_ms() {
 		
 		return this.deltaTemps_ms_;
 	}
 
-	@Override
+	
 	public void setDeltaTemps_ms(long delta) {
 		this.deltaTemps_ms_ =delta;
 		
 	}
 
-	@Override
+	
 	public Date getDate() {
 		
 		return new Date(this.dateLastUpdate);
@@ -280,8 +281,6 @@ public class SessionCurrency implements ITicker,Serializable,Cloneable{
 		SessionCurrency s = new SessionCurrency();
 		s.date = date;
 		s.dateLastUpdate= dateLastUpdate;
-		s.daylyChange = daylyChange;
-		s.daylyChangePerCent=daylyChangePerCent;
 		s.deltaTemps_ms_= deltaTemps_ms_;
 		s.highDaily = s.highDaily;
 		s.hourlyChangePerCent=hourlyChangePerCent;
@@ -292,7 +291,8 @@ public class SessionCurrency implements ITicker,Serializable,Cloneable{
 		s.shortName= shortName;
 		s.volumeDaily=volumeDaily;
 		s.ticker_Z_1 = ticker_Z_1;
-		
+		s.name = name;
+		s.history = new History(this);
 		return s;
 	}
 
@@ -302,6 +302,14 @@ public class SessionCurrency implements ITicker,Serializable,Cloneable{
 
 	public double getDateLastUpdateAsLong() {
 		return this.dateLastUpdate;
+	}
+
+	public SessionCurrencies getSessionCurrencies() {
+		return sessionCurrencies;
+	}
+
+	public void setSessionCurrencies(SessionCurrencies sessionCurrencies) {
+		this.sessionCurrencies = sessionCurrencies;
 	}
 
 	

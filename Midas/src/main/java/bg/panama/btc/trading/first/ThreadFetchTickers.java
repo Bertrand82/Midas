@@ -5,6 +5,9 @@ package bg.panama.btc.trading.first;
 import java.text.DecimalFormat;
 import java.util.List;
 
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -20,6 +23,7 @@ import bg.panama.btc.model.v2.TickersFactory;
 import bg.panama.btc.swing.MidasGUI;
 import bg.panama.btc.swing.ConfigFileProtected;
 import bg.panama.btc.swing.SymbolsConfig;
+import bg.util.HibernateUtil;
 
 
 
@@ -43,10 +47,8 @@ public class ThreadFetchTickers implements Runnable{
 			this.symbolsCurrenciesSelected = SymbolsConfig.getInstance().getSymbolsSelectedRequest();
 			String pwd = config.getPassword();
 			ConfigFileProtected pcf  = new ConfigFileProtected(pwd);
-			//String key = pcf.get(ProtectedConfigFile.keyBifinexApiKey);
-			//String keySecret = pcf.get(ProtectedConfigFile.keyBitfinexSecretKey);
-			//bitfinexClient= new BitfinexClient(key, keySecret);
 			bitfinexClient= new BitfinexClient();
+			t.setName("FetchTickersBitfinex");
 			t.setDaemon(true);
 			t.start();
 			
@@ -57,7 +59,7 @@ public class ThreadFetchTickers implements Runnable{
 			e.printStackTrace();
 		}
 	}
-	Balances balances_;
+	
 	TickersFactory tickersFactory = TickersFactory.getInstance();
 	public void run() {
 		
@@ -66,26 +68,23 @@ public class ThreadFetchTickers implements Runnable{
 				try {
 					Tickers tickers = fetchTickers();
 					ServiceCurrencies.getInstance().setTickersCurrent(tickers);
-					//Balances balances_ = fetchBalances();
 					
 					if (sessionCurrencies == null){
 						sessionCurrencies = new SessionCurrencies(tickers);
 					}else {
+						sessionCurrencies = (SessionCurrencies) sessionCurrencies.clone();
 						sessionCurrencies.update(tickers);
 					}
-					ITicker zBest = sessionCurrencies.getTickerBest();
-						
 					loggerTrade.info(""+tickers.toString());
-					loggerTradeComparaison.info("Instantane\t|Best:"+zBest.getShortName()+"\t|"+getTrace( tickers.getlTickers()));
-					loggerTradeComparaison.info("Filtred   \t|Best:"+zBest.getShortName()+"\t|"+getTrace2(sessionCurrencies.getListOrder_byHourlyChangePerCentByDay()));
 					
-					//List<Order> orders = balances.process(sessionCurrencies);
 					if(this.config.isOrderAble()){
 						//OrderManager.getInstance().sendOrders(this.bitfinexClient,orders);
 					}
-					//this.sessionCurrencies.setBalancesCurrent(balances);
 					MidasGUI.getInstance().updateThread();
-					tickersFactory.persists(tickers);
+					EntityManagerFactory emf = HibernateUtil.getEntityManagerFactory();
+					EntityManager em = emf.createEntityManager();
+					SessionCurrenciesFactory.instance.persists(em,sessionCurrencies,tickers);
+					em.close();
 				} catch (Exception e) {
 					log("Exception22: "+e.getClass()+" "+e.getMessage());
 					System.err.println("Exception22 "+e.getClass()+" "+e.getMessage());
@@ -105,26 +104,6 @@ public class ThreadFetchTickers implements Runnable{
 
 
 
-	private void checkEmergencySaveRequest() {
-		try {
-			this.cancelAllOrders();
-			if (emergencySaveAllRequest){
-				List<Order> orders = sessionCurrencies.saveAllInDollar();
-				log("ThreadTrading.emergencySaveAll orders.size :"+orders.size());
-				log("ThreadTrading.emergencySaveAll orders.size :"+orders);
-			
-				OrderManager.getInstance().sendOrders(this.bitfinexClient,orders);
-				
-			}
-			emergencySaveAllRequest=false;
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-	
-	
-
 	private static DecimalFormat decimalFormat = new DecimalFormat("0.000");
 	
 
@@ -136,15 +115,15 @@ public class ThreadFetchTickers implements Runnable{
 		return s;
 	}
 
-	private String getTrace(List<? extends ITicker> list){
+	private String getTrace(List<SessionCurrency> list){
 		String s ="";
-		for(ITicker it : list){
+		for(SessionCurrency it : list){
 			s+=getTrace(it);
 		}
 		return s;
 	}
-	private String getTrace(ITicker x){
-		return x.getShortName()+" ["+decimalFormat.format(x.getDaylyChangePerCent())+"]";
+	private String getTrace(SessionCurrency x){
+		return x.getShortName()+" ["+decimalFormat.format(x.getHourlyChangePerCentByDay())+"]";
 	}
 	private Tickers fetchTickers(){
 		try {
@@ -154,12 +133,7 @@ public class ThreadFetchTickers implements Runnable{
 			return null;
 		}
 	}
-	
-	private Balances fetchBalances() throws Exception{
-		//return (Balances) bitfinexClient.serviceProcess(EnumService.balances,"",null);
-		return   (Balances) bitfinexClient.serviceProcess(EnumService.balances,"",null);
 
-	}
 	
 	public void stop(String from){
 		log( "stop request from "+from);

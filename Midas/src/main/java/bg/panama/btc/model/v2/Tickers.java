@@ -32,7 +32,7 @@ public class Tickers implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL,mappedBy="tickers")
+	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL,mappedBy="tickers")
 	List<Ticker> lTickers = new ArrayList<Ticker>();
 	
 

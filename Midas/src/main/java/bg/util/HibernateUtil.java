@@ -1,4 +1,4 @@
-package bg.panama.btc.util;
+package bg.util;
 
 
 

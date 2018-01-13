@@ -23,7 +23,7 @@ import bg.panama.btc.model.v2.TickersFactory;
 import bg.panama.btc.swing.MidasGUI;
 import bg.panama.btc.swing.ConfigFileProtected;
 import bg.panama.btc.swing.SymbolsConfig;
-import bg.panama.btc.util.HibernateUtil;
+import bg.util.HibernateUtil;
 
 
 

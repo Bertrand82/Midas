@@ -6,7 +6,7 @@ import java.awt.image.BufferedImage;
 
 import javax.swing.ImageIcon;
 
-import bg.panama.btc.util.PointBtc;
+import bg.util.PointDouble;
 
 public class PanelCanvasPrix {
 
@@ -42,12 +42,12 @@ public class PanelCanvasPrix {
 
 	private void initFromHistory(History h) {
 		xMax = null;
-		for (PointBtc p : h.getListPointsPrixBrut()) {
+		for (PointDouble p : h.getListPointsPrixBrut()) {
 			initMinMax(p);
 		}
 	}
 
-	void initMinMax(PointBtc p) {
+	void initMinMax(PointDouble p) {
 
 		if (xMax == null) {
 			xMax = p.x;
@@ -92,7 +92,7 @@ public class PanelCanvasPrix {
 		g2.setColor(Color.gray);
 		g2.drawLine(0, h / 2, w, h / 2);
 
-		for (PointBtc p : history.getListPointsPrixBrut()) {
+		for (PointDouble p : history.getListPointsPrixBrut()) {
 			if ((dx > 0.000000001) && (dy > 0.000000001)) {
 				int x = (int) ((((p.x - xMin) / dx)) * w);
 				int y = (int) ((((-p.y) / dy * h) + h / 2) * 0.9);
@@ -100,7 +100,7 @@ public class PanelCanvasPrix {
 				g2.fillOval(x, y, 4, 4);
 			}
 		}
-		for (PointBtc p : history.getListPointsPrixFiltre()) {
+		for (PointDouble p : history.getListPointsPrixFiltre()) {
 			if ((dx > 0.000000001) && (dy > 0.000000001)) {
 				int x = (int) ((((p.x - xMin) / dx)) * w);
 				int y = (int) ((((-p.y) / dy * h) + h / 2) * 0.9);

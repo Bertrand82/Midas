@@ -1,4 +1,4 @@
-package bg.panama.btc.swing.heartBeat;
+package bg.util.heartBeat;
 
 import java.util.HashSet;
 import java.util.Set;

@@ -6,7 +6,7 @@ import java.awt.image.BufferedImage;
 
 import javax.swing.ImageIcon;
 
-import bg.panama.btc.util.PointBtc;
+import bg.util.PointDouble;
 
 public class PanelCanvasVariations {
 	int w = 300;
@@ -41,13 +41,13 @@ public class PanelCanvasVariations {
 
 	private void initFromHistory(History h) {
 		xMax= null;
-		for (PointBtc p : h.getListPointsVariation()) {
+		for (PointDouble p : h.getListPointsVariation()) {
 			initMinMax(p);
 
 		}
 	}
 
-	void initMinMax(PointBtc p) {
+	void initMinMax(PointDouble p) {
 		
 		if (xMax == null) {
 			xMax = p.x;
@@ -87,7 +87,7 @@ public class PanelCanvasVariations {
 		g2.drawString(str, 10, 20);
 		
 		
-		for (PointBtc p : history.getListPointsVariation()) {
+		for (PointDouble p : history.getListPointsVariation()) {
 			if ((dx > 0.000000001) && (dy > 0.000000001)) {
 				int x = (int) ((((p.x - xMin) / dx)) * w) ;
 				int y = (int) (  (((-p.y ) / dy * h)+h/2)*0.9);

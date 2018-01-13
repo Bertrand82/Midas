@@ -1,4 +1,4 @@
-package bg.panama.btc.swing.heartBeat;
+package bg.util.heartBeat;
 
 public interface ICheckAlive {
 

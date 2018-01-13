@@ -43,7 +43,6 @@ public class AlgoProcessCurrencies {
 		Comparator<AlgoProcessCurrency> comparator = AlgoProcessCurrency.COMPARATOR_MOYENNE;
 		Collections.sort(listAlgoProcessCurrency, comparator );
 		Ticker zBest =  listAlgoProcessCurrency.get(0).getLastTicker();
-		System.err.println("getTickerBest");
 		return zBest;
 	}
 

@@ -1,11 +1,11 @@
-package bg.panama.btc.util;
+package bg.util;
 
-public class PointBtc {
+public class PointDouble {
 
 	
 	public double x;
 	public double y;
-	public PointBtc(double x, double y) {
+	public PointDouble(double x, double y) {
 		super();
 		this.x = x;
 		this.y = y;
