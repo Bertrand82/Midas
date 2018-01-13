@@ -119,5 +119,16 @@ public class Tickers implements Serializable {
 		this.date = date;
 	}
 
+
+
+	public Ticker getTickerByName(String name) {
+		for(Ticker t : this.lTickers){
+			if (t.getName().equalsIgnoreCase(name)){
+				return t;
+			}
+		}
+		return null;
+	}
+
 	
 }

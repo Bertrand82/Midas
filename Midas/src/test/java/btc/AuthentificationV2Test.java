@@ -23,14 +23,14 @@ import org.json.JSONObject;
 import org.junit.Test;
 
 import bg.panama.btc.BitfinexClient.EnumService;
-import bg.panama.btc.swing.ProtectedConfigFile;
+import bg.panama.btc.swing.ConfigFileProtected;
 
 public class AuthentificationV2Test {
 
 	static final File defaultFile = new File("p_configTest.properties");
 	String password = "mypassword";
 	
-	ProtectedConfigFile pcf  ;
+	ConfigFileProtected pcf  ;
 	String keyApi ;
 	String keySecret ;
 	private static final String ALGORITHM_HMACSHA384 = "HmacSHA384";
@@ -42,9 +42,9 @@ public class AuthentificationV2Test {
 		}
 		
 		 try {
-			 pcf  = new ProtectedConfigFile(password,defaultFile);
-			 keyApi = pcf.get(ProtectedConfigFile.keyBifinexApiKey);
-			 keySecret = pcf.get(ProtectedConfigFile.keyBitfinexSecretKey);
+			 pcf  = new ConfigFileProtected(password,defaultFile);
+			 keyApi = pcf.get(ConfigFileProtected.keyBifinexApiKey);
+			 keySecret = pcf.get(ConfigFileProtected.keyBitfinexSecretKey);
 			 
 			 System.err.println("Key API :"+keyApi);	 System.err.println("Key API :"+keyApi);
 			 System.err.println("Key Secret :"+keySecret);	 System.err.println("Key API :"+keyApi);

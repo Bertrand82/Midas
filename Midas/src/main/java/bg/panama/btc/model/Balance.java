@@ -4,8 +4,10 @@ import java.io.Serializable;
 
 import org.json.JSONObject;
 
+import bg.panama.btc.model.v2.Ticker;
 import bg.panama.btc.swing.SymbolConfig;
 import bg.panama.btc.swing.SymbolsConfig;
+import bg.panama.btc.trading.first.ServiceCurrencies;
 
 public class Balance implements Serializable{
 
@@ -20,15 +22,24 @@ public class Balance implements Serializable{
 	double lastPrice ;
 	double percentHourlyByDay ;
 	double availableInDollar;
+	double amountInDollar;
 	
 	// {"amount":"0.0","available":"0.0","currency":"btc","type":"deposit"}
 	public Balance(JSONObject jsonO) throws Exception{
 		
 		this.amount= jsonO.getDouble("amount");
 		this.available = jsonO.getDouble("available");
+		
 		this.currency =jsonO.getString("currency");
 		this.type = jsonO.getString("type");
+		double lastPriceDollar = ServiceCurrencies.getInstance().getPriceInDollar(currency);
+		this.availableInDollar = this.available * lastPriceDollar;
+		this.amountInDollar = this.amount * lastPriceDollar;
+		
+		System.out.println(" Balance33 "+this);
 	}
+	
+	
 	public String getType() {
 		return type;
 	}
@@ -47,7 +58,7 @@ public class Balance implements Serializable{
 	}
 	@Override
 	public String toString() {
-		return "Balance " + type + " " + currency + " " + amount + " " + available
+		return "Balance " + type + " " + currency + " " + amount + " avalaible " + available+"  $:"+availableInDollar
 				+ "]";
 	}
 	public double getLastPrice() {
@@ -71,6 +82,18 @@ public class Balance implements Serializable{
 	public void setType(String type) {
 		this.type = type;
 	}
+	
+	
+	public double getAmountInDollar() {
+		return amountInDollar;
+	}
+
+
+	public void setAmountInDollar(double amountInDollar) {
+		this.amountInDollar = amountInDollar;
+	}
+
+
 	public void setCurrency(String currency) {
 		this.currency = currency;
 	}

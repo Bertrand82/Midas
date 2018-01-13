@@ -42,7 +42,16 @@ public class Balances implements Serializable{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		calculTotaux();
+	}
 
+	private void calculTotaux() {
+		this.totalAmountDollar = amountUSD;
+		this.totalAvailableDollar=availableUSD;
+		for (Balance balance : this.lBalancesExchange) {
+			this.totalAmountDollar += balance.getAmountInDollar();
+			this.totalAvailableDollar += balance.getAvailableInDollar();
+		}
 	}
 
 	DecimalFormat df = new DecimalFormat("0000000.00");

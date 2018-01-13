@@ -5,8 +5,10 @@ import java.io.Serializable;
 public class Config implements Serializable{
 
 	private static final long serialVersionUID = 1L;
-	boolean orderAble = false;
-	String password ="";
+	private boolean orderAble = false;
+	
+	private transient String password =null;
+	
 	public Config(boolean orderAble, String password) {
 		super();
 		this.orderAble = orderAble;
@@ -17,6 +19,12 @@ public class Config implements Serializable{
 	}
 	public void setOrderAble(boolean orderAble) {
 		this.orderAble = orderAble;
+	}
+	public String getPassword() {
+		return password;
+	}
+	public void setPassword(String password) {
+		this.password = password;
 	}
 
 }

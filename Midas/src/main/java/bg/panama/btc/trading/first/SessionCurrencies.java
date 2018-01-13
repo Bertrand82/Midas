@@ -28,8 +28,7 @@ public class SessionCurrencies implements Serializable {
 			SessionCurrency z_1_Currency = new SessionCurrency((Ticker) ticker);
 			lSessionCurrency.add(z_1_Currency);
 		}
-		SessionCurrenciesFactory.synchronizeWithArchive(this);
-
+		
 	}
 
 	public void update(Tickers tickers) {
@@ -182,7 +181,6 @@ public class SessionCurrencies implements Serializable {
 
 	public void saveConfiguration() {
 		System.err.println("saveConfiguration");
-		SessionCurrenciesFactory.saveOnFile(this);
 	}
 
 	public void updateWithArchive(SessionCurrencies sessionArchive) {

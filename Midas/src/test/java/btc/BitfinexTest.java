@@ -8,7 +8,7 @@ import bg.panama.btc.BitfinexClient;
 import bg.panama.btc.BitfinexClientFactory;
 import bg.panama.btc.BitfinexClient.EnumService;
 import bg.panama.btc.model.Balances;
-import bg.panama.btc.swing.ProtectedConfigFile;
+import bg.panama.btc.swing.ConfigFileProtected;
 
 public class BitfinexTest {
 	

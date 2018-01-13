@@ -217,6 +217,9 @@ public class BitfinexClient {
 	 * @param apiKey
 	 * @param apiKeySecret
 	 */
+	public BitfinexClient() {
+		
+	}
 	public BitfinexClient(String apiKey, String apiKeySecret) {
 		this.apiKey = apiKey;
 		this.apiKeySecret = apiKeySecret;

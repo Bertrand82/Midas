@@ -16,13 +16,20 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.UIManager;
+import javax.swing.event.MenuEvent;
+import javax.swing.event.MenuListener;
 
 import bg.panama.btc.BitfinexClient;
 import bg.panama.btc.BitfinexClient.EnumService;
+import bg.panama.btc.model.Balance;
+import bg.panama.btc.model.Balances;
 import bg.panama.btc.model.Symbols;
+import bg.panama.btc.trading.first.AlgoProcessCurrencies;
 import bg.panama.btc.trading.first.Config;
 import bg.panama.btc.trading.first.SessionCurrencies;
-import bg.panama.btc.trading.first.ThreadTrading;
+import bg.panama.btc.trading.first.ThreadBalance;
+import bg.panama.btc.trading.first.ThreadFetchTickers;
+import bg.panama.btc.trading.first.ThreadProcessTickers;
 
 
 public class MidasGUI {
@@ -32,13 +39,16 @@ public class MidasGUI {
 	DialogInputKey dialogInputKey;
 	
 	DialogSelectSymbols dialogSelectSymbols;
-	ProtectedConfigFile protectedConfigFile;
+	ConfigFileProtected configFileProtected;
 	JButton buttonStartThreadThreading_OLD = new JButton("Start Thread Trading");
 	String password ;
 	JCheckBoxMenuItem menuItemSaveConfig= new JCheckBoxMenuItem("Save Password");
 	JCheckBoxMenuItem menuItemOrderAble= new JCheckBoxMenuItem("Send Orders");
 	JFrame frame = new JFrame("Midas");
 	JPanel panelGlobal = new JPanel(new BorderLayout()); 
+	ThreadFetchTickers threadFetchTickers ;
+	ThreadProcessTickers threadProcessTickers;
+	ThreadBalance threadBalance;
 	private static MidasGUI instance ;
 	public MidasGUI() {
 		super();
@@ -51,7 +61,7 @@ public class MidasGUI {
 		menuSetSecretKeys.addActionListener(new ActionListener() {
 			
 			public void actionPerformed(ActionEvent e) {
-				displaySecretKeys();				
+				displayDialogInputKey();				
 			}
 		});
 		JMenuItem menuSelectCurrency = new JMenuItem("Select Currency");
@@ -106,14 +116,40 @@ public class MidasGUI {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if (threadTrading != null){
+				if (threadFetchTickers != null){
 					boolean b = menuItemOrderAble.isSelected();
 					System.err.println("orderAble::  "+b);
-					threadTrading.getConfig().setOrderAble(b);
+					threadFetchTickers.getConfig().setOrderAble(b);
 				}
 				
 			}
 		});
+		
+		JMenuItem menuSetPassword = new JMenuItem("setPassword2");
+		menuSetPassword.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				System.err.println("setpassword start");
+				 password = (String)JOptionPane.showInputDialog(
+			                frame,
+			                "Password:\n",
+			                "Properties Password",
+			                JOptionPane.PLAIN_MESSAGE,
+			        		
+			                null,
+			                null,
+			                "mypassword");
+				try {
+					MidasGUI.this.configFileProtected = new ConfigFileProtected(password);
+				} catch (Exception e1) {
+					MidasGUI.this.labelLog.setText("Exception config");
+					e1.printStackTrace();
+				}	
+				startAuthenticatedThread();
+			}
+		});
+		
 		JMenu menuFile = new JMenu("File");
 		menuFile.add(menuItemSaveConfig);
 		menuFile.add(menuItemOrderAble);
@@ -127,6 +163,7 @@ public class MidasGUI {
 		JMenuBar menuBar = new JMenuBar();
 		menuBar.add(menuFile);
 		menuBar.add(menuActions);
+		menuBar.add(menuSetPassword);
 		JPanel panelButtons = new JPanel();
 		
 		//panelButtons.add(buttonFetchSymbols);
@@ -153,22 +190,8 @@ public class MidasGUI {
 				configureBitFinexKey();
 			}
 		});
-		 password = (String)JOptionPane.showInputDialog(
-	                frame,
-	                "Password:\n",
-	                "Properties Password",
-	                JOptionPane.PLAIN_MESSAGE,
-	        		
-	                null,
-	                null,
-	                "mypassword");
-		try {
-			this.protectedConfigFile = new ProtectedConfigFile(password);
-		} catch (Exception e1) {
-			this.labelLog.setText("Exception config");
-			e1.printStackTrace();
-		}
-		startThreadTrading();
+		
+		startThreads();
 	}
 
 	private void fetchTickers(){
@@ -189,8 +212,8 @@ public class MidasGUI {
 		try {
 			String apiKey = this.dialogInputKey.getApiKey();
 			String secretKey = this.dialogInputKey.getSecretKey();
-			protectedConfigFile.set(ProtectedConfigFile.keyBifinexApiKey, apiKey);
-			protectedConfigFile.set(ProtectedConfigFile.keyBitfinexSecretKey, secretKey);
+			configFileProtected.set(ConfigFileProtected.keyBifinexApiKey, apiKey);
+			configFileProtected.set(ConfigFileProtected.keyBitfinexSecretKey, secretKey);
 		} catch (Exception e) {
 			this.labelLog.setText("Exception "+e.getMessage());
 			e.printStackTrace();
@@ -198,7 +221,7 @@ public class MidasGUI {
 		
 	}
 	
-	private void displaySecretKeys() {
+	private void displayDialogInputKey() {
 		this.dialogInputKey.setVisible(true);
 	}
 	
@@ -228,14 +251,16 @@ public class MidasGUI {
 		System.out.println("Process Symbol Selected");
 		
 	}
-	ThreadTrading threadTrading ;
-	private void startThreadTrading() {
-		
-		//buttonStartThreadThreading.setEnabled(false);
+	
+	private void startThreads() {
+		threadFetchTickers = new ThreadFetchTickers(getConfig());
+		threadProcessTickers = new ThreadProcessTickers();
+	}
+	
+	private Config getConfig() {
 		boolean orderAble = this.menuItemOrderAble.isSelected();
 		Config config = new Config( orderAble,password);
-		System.out.println("startThreadTrading isOrderAble :"+config.isOrderAble());
-		threadTrading = new ThreadTrading(config);
+		return config;
 	}
 
 	public static MidasGUI getInstance() {
@@ -244,7 +269,7 @@ public class MidasGUI {
 	PanelCurrencies panelCurrencies;
 	public void updateThread() {
 		try {
-			SessionCurrencies session = this.threadTrading.getSesionCurrencies();
+			SessionCurrencies session = this.threadFetchTickers.getSesionCurrencies();
 			if(panelCurrencies == null){
 				panelCurrencies = new PanelCurrencies(session);
 				panelGlobal.removeAll();
@@ -263,13 +288,13 @@ public class MidasGUI {
 	
 	private void emergencySave() {
 		System.out.println("Emergency Save");
-		this.threadTrading.emergencySave("Operator");
+		this.threadFetchTickers.emergencySave("Operator");
 	}
 	
 	private void cancelAllOrders() {
 		try {
 			System.out.println("Cancel Order");
-			this.threadTrading.cancelAllOrders();
+			this.threadFetchTickers.cancelAllOrders();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -278,9 +303,30 @@ public class MidasGUI {
 	private void displayActiveOrders() {
 		try {
 			System.out.println("Cancel Order");
-			this.threadTrading.displayActiveOrders();
+			this.threadFetchTickers.displayActiveOrders();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
+
+	public void updateBestCurrencies(AlgoProcessCurrencies algoProcess) {
+		if (this.panelCurrencies== null){
+			
+		}else {
+			this.panelCurrencies.updateAlgo(algoProcess);
+		}
+	}
+	
+	public void updateThreadBalance(Balances balances) {
+		this.panelCurrencies.updateBalances(balances);
+	}
+	
+	private void startAuthenticatedThread(){
+		if (this.threadBalance != null){
+			threadBalance.stop("GUI");
+		}		
+		this.threadBalance = new ThreadBalance(getConfig());
+	}
+
+
 }

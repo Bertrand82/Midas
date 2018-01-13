@@ -71,6 +71,10 @@ public class Ticker implements Comparable<Ticker>, ITicker, Serializable{
 	 
 	 */
 	
+	public Ticker() {
+		
+	}
+	
 	public Ticker(JSONArray jsonArray,Tickers tickers) throws Exception{
 		
 		this.name= jsonArray.getString(0);
