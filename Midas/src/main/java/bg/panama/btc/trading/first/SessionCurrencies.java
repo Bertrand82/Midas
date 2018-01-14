@@ -32,7 +32,10 @@ public class SessionCurrencies implements Serializable {
 	private long id;
 
 	private final Date timeStart = new Date();
-	
+	/**
+	 * Utile pour faire des tris
+	 */
+	private Date date = new Date();
 	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL,mappedBy="sessionCurrencies")
 	List<SessionCurrency> lSessionCurrency = new ArrayList<SessionCurrency>();
 	private int numero =0;
@@ -222,6 +225,14 @@ public class SessionCurrencies implements Serializable {
 
 	public void setId(long id) {
 		this.id = id;
+	}
+
+	public Date getDate() {
+		return date;
+	}
+
+	public void setDate(Date date) {
+		this.date = date;
 	}
 
 	

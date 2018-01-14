@@ -52,6 +52,8 @@ public class Ticker implements Comparable<Ticker>, ITicker, Serializable{
 	@ManyToOne
 	@JoinColumn(name="tickers_id", nullable=false)
 	Tickers tickers;
+	
+	
 	/*
 	 
 0	["tBTCUSD",
@@ -146,7 +148,6 @@ public class Ticker implements Comparable<Ticker>, ITicker, Serializable{
 	public double getVolumeDaily() {
 		return volumeDaily;
 	}
-
 
 
 	public void setVolumeDaily(double volumeDaily) {

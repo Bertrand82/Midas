@@ -68,7 +68,9 @@ public class ThreadFetchTickers implements Runnable{
 				try {
 					Tickers tickers = fetchTickers();
 					ServiceCurrencies.getInstance().setTickersCurrent(tickers);
-					
+					if (sessionCurrencies == null){
+						sessionCurrencies = SessionCurrenciesFactory.instance.getLastSessionCurrencies();
+					}
 					if (sessionCurrencies == null){
 						sessionCurrencies = new SessionCurrencies(tickers);
 					}else {

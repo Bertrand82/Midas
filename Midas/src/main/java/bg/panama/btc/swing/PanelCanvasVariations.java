@@ -58,24 +58,15 @@ public class PanelCanvasVariations {
 		if (p.x > xMax) {
 			xMax = p.x;
 		}
-		if (p.y > yMax) {
-			yMax = p.y;
-		}
-		if (p.x < xMin) {
-			xMin = p.x;
-		}
-		if (p.y < yMin) {
-			yMin = p.y;
-		}
-
-		//dx = xMax - xMin;
 		dx = 2*60*60*1000;
-		//dy = yMax - yMin;
 		dy = 20;
-		xM = (xMax + xMin) / 2;
-		yM = (yMax + yMin) / 2;
+		xMin = xMax -dx;
+		
 		yMax=10.0;
 		yMin =-10.0;
+		
+		xM = (xMax + xMin) / 2;
+		yM = (yMax + yMin) / 2;
 	}
    public static final Color GREEN = new Color(0xB0FF70);
  public static final Color RED = new Color(0xFF70A0);

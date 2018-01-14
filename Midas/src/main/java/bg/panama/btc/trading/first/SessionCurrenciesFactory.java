@@ -31,7 +31,6 @@ public class SessionCurrenciesFactory {
 
 	public  void persists(EntityManager em, SessionCurrencies sessionCurrencies, Tickers tickers) throws Exception{
 		
-		
 		em.getTransaction().begin();
 		em.persist(tickers);
 		em.persist(sessionCurrencies);
@@ -39,18 +38,31 @@ public class SessionCurrenciesFactory {
 	}
 
 	public List<SessionCurrency> getSessionsCurrency(int n, String name) {
-		EntityManager em = emf.createEntityManager();
+		 EntityManager em = emf.createEntityManager();
 		 String hql = "FROM SessionCurrency f WHERE f.name =:name  ORDER BY f.date DESC";// DESC  ASC
 		 Query query = em.createQuery(hql);
 		 query.setParameter("name", name);
 		 query.setMaxResults(120);
 		 List<SessionCurrency> list =(List<SessionCurrency>) query.getResultList();
-		 System.out.println("getListSessionCurrency size :"+list.size()+"  : ");
-		
-		  em.close();
+		 
+		 em.close();
 		 return list;
 		  
 		
+	}
+
+	public SessionCurrencies getLastSessionCurrencies() {
+		EntityManager em = emf.createEntityManager();
+		String hql = "FROM SessionCurrencies f   ORDER BY f.id DESC";// DESC  ASC
+		 Query query = em.createQuery(hql);
+		 query.setMaxResults(1);
+		 List<SessionCurrencies> list =(List<SessionCurrencies>) query.getResultList();
+		 if (list .isEmpty()){
+			 return null;
+		 }
+		 SessionCurrencies sc = list.get(0);
+		 em.close();
+		return sc;
 	}
 
 	

@@ -11,6 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 
 import bg.panama.btc.model.v2.ITicker;
+import bg.panama.btc.model.v2.Ticker;
 import bg.panama.btc.trading.first.SessionCurrencies;
 import bg.panama.btc.trading.first.SessionCurrenciesFactory;
 import bg.panama.btc.trading.first.SessionCurrency;
@@ -31,9 +32,11 @@ public class History implements Serializable {
 	
 	private List<SessionCurrency> listSessionCurrency_ = null;
 	private SessionCurrency sessionCurrency;
+	private String name;
 
 	public History( SessionCurrency sessionCurrency ) {		
 		this.sessionCurrency=sessionCurrency;
+		this.name = sessionCurrency.getName();
 	}
 
 	public List<PointDouble> getListPointsVariation() {
@@ -62,13 +65,17 @@ public class History implements Serializable {
 		//double lastPriceReference = listSessionCurrency.get(listSessionCurrency.size() - 1).getLastPrice();
 		double lastPriceReference = getListSessionCurrency().get(0).getLastPrice();
 		for (SessionCurrency s : getListSessionCurrency()) {
-			ITicker t = s.getTicker_Z_1();
+			Ticker t = s.getTicker_Z_1();
+			
 			double lastPrice ;
 			if(t != null){
 				lastPrice = t.getLastPrice();
+				
 			}else {
 				lastPrice = 0; 
 			}
+			double delta = Math.abs(lastPrice - s.getLastPrice());
+			//System.out.println("LastPrice Brut "+name+"  K :"+s.getK()+"  Ticker Last Price:\t"+lastPrice+"\t  Session Last Price\t "+s.getLastPrice()+" \tdelta : "+delta);
 			double chd = 100 * (lastPrice - lastPriceReference) / lastPriceReference;
 			PointDouble p = new PointDouble(s.getDateLastUpdateAsLong(), chd);
 			list.add(p);
@@ -103,8 +110,9 @@ public class History implements Serializable {
 
 	public List<SessionCurrency> getListSessionCurrency() {
 		if (this.listSessionCurrency_ == null){
-			this.listSessionCurrency_  = SessionCurrenciesFactory.instance.getSessionsCurrency(SIZE_MAX,this.sessionCurrency.getName());
+			this.listSessionCurrency_  = SessionCurrenciesFactory.instance.getSessionsCurrency(SIZE_MAX,this.name);
 			this.listSessionCurrency_.add(0, this.sessionCurrency);
+			//System.out.println("getListSessionCurrency2 "+this.name+"  "+listSessionCurrency_);
 		}
 		return listSessionCurrency_;
 	}

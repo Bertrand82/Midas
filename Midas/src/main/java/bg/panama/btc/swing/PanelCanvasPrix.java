@@ -70,6 +70,7 @@ public class PanelCanvasPrix {
 
 		// dx = xMax - xMin;
 		dx = 2 * 60 * 60 * 1000;
+		xMin = xMax -dx;
 		// dy = yMax - yMin;
 		yMax = 0.75d;
 		yMin = -0.75d;

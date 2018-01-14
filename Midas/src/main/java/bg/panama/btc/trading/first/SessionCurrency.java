@@ -27,7 +27,7 @@ public class SessionCurrency implements Serializable,Cloneable{
 	@Id
 	@GeneratedValue
 	private long id;
-	private final Date dateStart = new Date();
+	private  Date dateStart = new Date();
 	private Date date = new Date();
 	private double constanteTemps = 10 *60 * 1000;
 	private int nombreEchantillon=0;
@@ -39,7 +39,7 @@ public class SessionCurrency implements Serializable,Cloneable{
 	private double lowDaily=0;
 	double lastPrice=0;
 	
-	@OneToOne
+	@OneToOne ()
 	private Ticker ticker_Z_1;
 	private boolean isEligible= true;
 	private double hourlyChangePerCent;
@@ -79,32 +79,34 @@ public class SessionCurrency implements Serializable,Cloneable{
 		}	
 		this.ticker_Z_1 =ticker;
 		ticker.setNumero(this.numero);
-		this.numero++;
+		
 		
 		this.volumeDaily = tranformZ(this.volumeDaily,ticker.getVolumeDaily());
 		this.highDaily = tranformZ(this.highDaily,ticker.getHighDaily());
 		this.lowDaily = tranformZ(this.lowDaily,ticker.getLowDaily());
 		this.lastPrice = this.tranformZ(this.lastPrice, ticker.getLastPrice());
 		this.hourlyChangePerCent=this.tranformZ(hourlyChangePerCent,ticker.getHourlyChangePerCent());
+		System.err.println("getK3AAAA :  "+getK()+"   numero "+numero+"  "+name);
 		nombreEchantillon++;
 		this.date=new Date();
 			//this.history.add((SessionCurrency)this.clone());
-	
+		this.numero++;
 	}
 
 	private double tranformZ(double v, double vNew) {
 		double k = getK();
+		
 		return ( (k * v) +  vNew)/(k+1);
 	}
 
-	private double getK() {
+	public double getK() {
 		double k;
 		long duree = System.currentTimeMillis() - this.date.getTime();
 		long dureeFromStart = System.currentTimeMillis() - this.dateStart.getTime();
 		if (nombreEchantillon == 0){
 			k = 0;
 		}else if(dureeFromStart < this.constanteTemps){					
-			k=nombreEchantillon;
+			k = nombreEchantillon;
 		}else {
 			k = (this.constanteTemps)/duree;
 		}
@@ -164,7 +166,7 @@ public class SessionCurrency implements Serializable,Cloneable{
 		return shortName;
 	}
 
-	public ITicker getTicker_Z_1() {
+	public Ticker getTicker_Z_1() {
 		return ticker_Z_1;
 	}
 
@@ -279,8 +281,10 @@ public class SessionCurrency implements Serializable,Cloneable{
 	protected Object clone() throws CloneNotSupportedException {
 		
 		SessionCurrency s = new SessionCurrency();
+		s.nombreEchantillon = nombreEchantillon;
 		s.date = date;
 		s.dateLastUpdate= dateLastUpdate;
+		s.dateStart =dateStart;
 		s.deltaTemps_ms_= deltaTemps_ms_;
 		s.highDaily = s.highDaily;
 		s.hourlyChangePerCent=hourlyChangePerCent;
@@ -310,6 +314,12 @@ public class SessionCurrency implements Serializable,Cloneable{
 
 	public void setSessionCurrencies(SessionCurrencies sessionCurrencies) {
 		this.sessionCurrencies = sessionCurrencies;
+	}
+
+	@Override
+	public String toString() {
+		return "SessionCurrency [id=" + id + ", date=" + date + ", shortName=" + shortName + ", hourlyPrice="
+				+ hourlyPrice + ", lastPrice=" + lastPrice + "]";
 	}
 
 	
