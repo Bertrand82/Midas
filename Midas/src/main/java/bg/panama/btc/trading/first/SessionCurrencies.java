@@ -185,7 +185,7 @@ public class SessionCurrencies implements Serializable {
 		return balancesCurrent.saveAllInDollar(this);
 	}
 
-	public void saveConfiguration() {
+	public void saveConfiguration_______________DEPRECATED() {
 		System.err.println("saveConfiguration");
 	}
 

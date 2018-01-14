@@ -46,23 +46,27 @@ public class SessionCurrency implements Serializable,Cloneable{
 	private long deltaTemps_ms_;
 	private long dateLastUpdate = System.currentTimeMillis();
 	private int numero =0;
+	private double stochastique_1heure;
+	private double stochastique_10mn;
+	double bg =0;
 	@ManyToOne
 	@JoinColumn(name="sessionCurrencies_id", nullable=false)
 	private SessionCurrencies sessionCurrencies;
-	
+
 	@Transient
 	private History history;
+	
+	public SessionCurrency(){		
+	}
 	
 	public SessionCurrency(Ticker ticker, SessionCurrencies sessionCurrencies) {
 		super();
 		this.sessionCurrencies = sessionCurrencies;
 		this.name = ticker.getName();
 		this.shortName = ticker.getShortName();
-		this.update(ticker);
 		history = new History(this);
-	}
-
-	public  SessionCurrency() {
+		this.update(ticker);
+		
 	}
 
 	public void update(Ticker ticker){
@@ -86,11 +90,12 @@ public class SessionCurrency implements Serializable,Cloneable{
 		this.lowDaily = tranformZ(this.lowDaily,ticker.getLowDaily());
 		this.lastPrice = this.tranformZ(this.lastPrice, ticker.getLastPrice());
 		this.hourlyChangePerCent=this.tranformZ(hourlyChangePerCent,ticker.getHourlyChangePerCent());
-		System.err.println("getK3AAAA :  "+getK()+"   numero "+numero+"  "+name);
 		nombreEchantillon++;
 		this.date=new Date();
 			//this.history.add((SessionCurrency)this.clone());
 		this.numero++;
+		this.stochastique_1heure=this.history.calculStochastique(60*60000l, this.date, ticker);
+		this.stochastique_10mn=this.history.calculStochastique(10*60000l, this.date, ticker);
 	}
 
 	private double tranformZ(double v, double vNew) {
@@ -161,6 +166,18 @@ public class SessionCurrency implements Serializable,Cloneable{
 
 	
 	
+	public double getStochastique_1heure() {
+		return stochastique_1heure;
+	}
+	public void setStochastique_1heure(double stochastique_1heure) {
+		this.stochastique_1heure = stochastique_1heure;
+	}
+	public double getStochastique_10mn() {
+		return stochastique_10mn;
+	}
+	public void setStochastique_10mn(double stochastique_10mn) {
+		this.stochastique_10mn = stochastique_10mn;
+	}
 	public String getShortName() {
 		// TODO Auto-generated method stub
 		return shortName;
@@ -213,6 +230,12 @@ public class SessionCurrency implements Serializable,Cloneable{
 	}
 
 	
+	public double getBg() {
+		return bg;
+	}
+	public void setBg(double bg) {
+		this.bg = bg;
+	}
 	public Date getDate() {
 		
 		return new Date(this.dateLastUpdate);
@@ -286,7 +309,7 @@ public class SessionCurrency implements Serializable,Cloneable{
 		s.dateLastUpdate= dateLastUpdate;
 		s.dateStart =dateStart;
 		s.deltaTemps_ms_= deltaTemps_ms_;
-		s.highDaily = s.highDaily;
+		s.highDaily = highDaily;
 		s.hourlyChangePerCent=hourlyChangePerCent;
 		s.hourlyPrice= hourlyPrice;
 		s.lastPrice=lastPrice;
@@ -296,7 +319,7 @@ public class SessionCurrency implements Serializable,Cloneable{
 		s.volumeDaily=volumeDaily;
 		s.ticker_Z_1 = ticker_Z_1;
 		s.name = name;
-		s.history = new History(this);
+		s.history = new History(s);
 		return s;
 	}
 

@@ -35,8 +35,6 @@ public class Balance implements Serializable{
 		double lastPriceDollar = ServiceCurrencies.getInstance().getPriceInDollar(currency);
 		this.availableInDollar = this.available * lastPriceDollar;
 		this.amountInDollar = this.amount * lastPriceDollar;
-		
-		System.out.println(" Balance33 "+this);
 	}
 	
 	

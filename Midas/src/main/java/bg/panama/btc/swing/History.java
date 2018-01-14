@@ -98,14 +98,79 @@ public class History implements Serializable {
 		}
 		return list;
 	}
-
-	public void add____DEPRECATED(SessionCurrency clone) {
-		this.getListSessionCurrency().add(0, clone);
-		if (this.getListSessionCurrency().size() > SIZE_MAX) {
-			this.getListSessionCurrency().remove(SIZE_MAX);
+	/**
+	 * 
+	 * @return
+	 */
+	public List<PointDouble> getListPointsStochastiques_1heure() {
+		List<PointDouble> list = new ArrayList<>();
+		if (getListSessionCurrency().isEmpty()) {
+			return list;
 		}
+		
+		for (SessionCurrency s : getListSessionCurrency()) {
+			double stochas  = s.getStochastique_1heure(); 
+			PointDouble p = new PointDouble(s.getDateLastUpdateAsLong(), stochas);
+			list.add(p);
+		}
+		return list;
+	}
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public List<PointDouble> getListPointsStochastiques_10mn() {
+		List<PointDouble> list = new ArrayList<>();
+		if (getListSessionCurrency().isEmpty()) {
+			return list;
+		}
+		
+		for (SessionCurrency s : getListSessionCurrency()) {
+			double stochas  = s.getStochastique_10mn(); 
+			PointDouble p = new PointDouble(s.getDateLastUpdateAsLong(), stochas);
+			list.add(p);
+		}
+		return list;
 	}
 
+	/**
+	 * K =100 * (Prix - B)/(H-B)
+	 * @return le stochastique calcullé sur l'intervalle de temps dt
+	 */
+
+	public double calculStochastique(long dt, Date date, Ticker ticker){
+		long timeMin = date.getTime() - dt;
+		double hh = -1;
+		double bb = -1;
+		for (SessionCurrency s : getListSessionCurrency()) {
+			Ticker t = s.getTicker_Z_1();
+			if (t == null){				
+			}else {
+				if (t.getDate().getTime() > timeMin) {
+					double price = t.getLastPrice();
+					if (bb < 0){
+						bb = price;
+					}else if (price < bb){
+						bb = price;
+					}
+					if (hh <0){
+						hh = price;
+					}else if (price > hh ){
+						hh = price;
+					}					
+				}
+			}
+		}
+		double delta = (hh - bb);
+		double k;
+		if (delta < 0.000000000000001){
+			k= 0;
+		}else {
+			k = 100 * (ticker.getLastPrice() - bb) /(hh - bb);
+		}
+		return k;
+	}
 	
 
 	public List<SessionCurrency> getListSessionCurrency() {

@@ -4,8 +4,11 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -41,17 +44,20 @@ public class PanelCurrencies extends JPanel implements ICheckAlive {
 
 
 	private static final long serialVersionUID = 1L;
+	private HashMap<String,Boolean > hDetail = new HashMap<>();
 	SessionCurrencies session;
 	private JLabel labelTitre_ = new JLabel("Total ");
 	private JLabel labelBest_ = new JLabel("Best ");
 	private JLabel labelMontantTotal = new JLabel("montant Total");
 	private JCheckBox checkBoxDisplayVariationPrice = new JCheckBox("Variation ", true);
-	String[] columnNames = { "Symbol","montant" ,"= dollar", "% Day", "% Hour f", "% Hour instant","Eligible" ,"Variations","Prices"};
+	String[] columnNames = { "Symbol","montant" ,"= dollar", "% Day", "% Hour f", "% Hour instant","Eligible","detail" ,"Variations","Prices"};
 	 private Hashtable<String, PanelCanvasVariations> hCanvasVaritions = new Hashtable<>();
 	 private Hashtable<String, PanelCanvasPrix> hCanvasPrix = new Hashtable<>();
 	 private static final int nSelect = 6;
 	 Balances balances ;
+	 
 	AbstractTableModel tableModel = new AbstractTableModel() {
+		
 		private List<SessionCurrency> getList() {
 		  return session.getListOrder_byHourlyChangePerCentByDay();
 		}
@@ -74,7 +80,11 @@ public class PanelCurrencies extends JPanel implements ICheckAlive {
 		}
 
 		public boolean isCellEditable(int row, int col) {
+			
 			if(col == nSelect){
+				return true;
+			}
+			if(col == nSelect+1){
 				return true;
 			}
 			return false;
@@ -127,10 +137,12 @@ public class PanelCurrencies extends JPanel implements ICheckAlive {
 				}
 			}else if(columnIndex == nSelect){
 				return sessionCurrency.isEligible();
-			}else if(columnIndex == (nSelect+1)){
+			}else if(columnIndex == nSelect+1){
+				return hDetail.getOrDefault(sessionCurrency.getName(), false);
+			}else if(columnIndex == (nSelect+2)){
 				String key =  sessionCurrency.getShortName();				
 				return hCanvasVaritions.get(key).getImageIcon();
-			}else if(columnIndex == (nSelect+2)){
+			}else if(columnIndex == (nSelect+3)){
 				String key =  sessionCurrency.getShortName();
 				
 				return hCanvasPrix.get(key).getImageIcon();
@@ -138,16 +150,24 @@ public class PanelCurrencies extends JPanel implements ICheckAlive {
 			return "";
 		}
 		
-		public void setValueAt(Object value, int row, int col) {
-			
+		public void setValueAt(Object value, int row, int col) {			
 			if (col == nSelect){
 				SessionCurrency t = (SessionCurrency) getList().get(row);
 				Boolean b = (Boolean) value;
 				if (b != t.isEligible()){
 					t.setEligible((Boolean) value);
-					session.saveConfiguration();
+					
 				}
-			} 			
+			} 
+			if (col == nSelect+1){
+				SessionCurrency t = (SessionCurrency) getList().get(row);
+				Boolean b = (Boolean) value;
+				Boolean b_Z_1 = hDetail.getOrDefault(t.getName(), false);
+				if (b != b_Z_1){
+					hDetail.put(t.getName(), b);
+					showDetail(t,b);
+				}
+			} 	
 		}
 
 		public Class<?> getColumnClass(int columnIndex) {
@@ -159,8 +179,10 @@ public class PanelCurrencies extends JPanel implements ICheckAlive {
 				case nSelect:
 					return Boolean.class;
 				case nSelect+1:
-					return ImageIcon.class;
+					return Boolean.class;
 				case nSelect+2:
+					return ImageIcon.class;
+				case nSelect+3:
 					return ImageIcon.class;
 			}
 			
@@ -195,6 +217,7 @@ public class PanelCurrencies extends JPanel implements ICheckAlive {
 		HeartBeat.getInstance().add(this);
 		this.session = session;
 		initCanvas();
+		
 		table = new JTable(tableModel);
 		table.getColumnModel().getColumn(3).setCellRenderer(new DoubleTableCellRenderer());
 		table.getColumnModel().getColumn(4).setCellRenderer(new DoubleTableCellRenderer());
@@ -210,10 +233,12 @@ public class PanelCurrencies extends JPanel implements ICheckAlive {
 		table.getColumnModel().getColumn(5).setPreferredWidth(30);
 		table.getColumnModel().getColumn(nSelect).setPreferredWidth(40);
 		table.getColumnModel().getColumn(nSelect).setMaxWidth(40);
-		table.getColumnModel().getColumn(nSelect+1).setPreferredWidth(300);
-		table.getColumnModel().getColumn(nSelect+1).setMinWidth(300);
+		table.getColumnModel().getColumn(nSelect+1).setPreferredWidth(40);
+		table.getColumnModel().getColumn(nSelect+1).setMaxWidth(40);
 		table.getColumnModel().getColumn(nSelect+2).setPreferredWidth(300);
 		table.getColumnModel().getColumn(nSelect+2).setMinWidth(300);
+		table.getColumnModel().getColumn(nSelect+3).setPreferredWidth(300);
+		table.getColumnModel().getColumn(nSelect+3).setMinWidth(300);
 		
 		table.setAutoCreateRowSorter(true);
 		labelMontantTotal.setBorder(BorderFactory.createLineBorder(Color.RED));
@@ -343,4 +368,7 @@ public class PanelCurrencies extends JPanel implements ICheckAlive {
 		SwingUtilities.invokeLater(runable);
 	}
 
+	private void showDetail(SessionCurrency session, boolean b){
+		MidasGUI.getInstance().showDetail(session,b);
+	}
 }

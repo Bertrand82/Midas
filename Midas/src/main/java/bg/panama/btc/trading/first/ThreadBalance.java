@@ -27,7 +27,6 @@ public class ThreadBalance implements Runnable{
 
 	private static final Logger loggerTrade= LogManager.getLogger("trade");
 	private static final Logger loggerTradeComparaison= LogManager.getLogger("tradeComparaison");
-	private static final Logger loggerTradeBalance= LogManager.getLogger("tradeBalance");
 	
 	private long timeSleeping = 60l * 1000l;
 	private Thread t = new Thread(this);
@@ -65,7 +64,6 @@ public class ThreadBalance implements Runnable{
 				try {
 					Balances balances_ = fetchBalances();
 					
-					System.err.println("ThreadBalance balances "+balances_);
 					//List<Order> orders = balances.process(sessionCurrencies);
 					if(this.config.isOrderAble()){
 						//OrderManager.getInstance().sendOrders(this.bitfinexClient,orders);

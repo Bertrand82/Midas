@@ -18,7 +18,8 @@
          <!-- property name="hibernate.ejb.cfgfile" value="/org/hibernate/ejb/test/hibernate.cfg.xml"/ -->
           <property name="hibernate.show_sql" value="false"/>
       <!-- EclipseLink should create the database schema automatically -->
-      	  <property name="hibernate.hbm2ddl.auto" value="create-drop" />
+		<!-- <property name="hibernate.hbm2ddl.auto" value="create-drop" />  -->
+      	   <property name="hibernate.hbm2ddl.auto" value="update" /> 
       </properties>
    </persistence-unit>
 </persistence>

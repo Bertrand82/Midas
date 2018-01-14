@@ -55,8 +55,6 @@ public class TickersFactory {
 		 Query query = em.createQuery(hql);
 		 query.setMaxResults(n);
 		 List<Tickers> list =(List<Tickers>) query.getResultList();
-		 System.out.println("getLastTickers size :"+list.size()+"  : ");
-		
 		
 		 return list;
 		  

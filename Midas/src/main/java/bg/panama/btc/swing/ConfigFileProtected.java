@@ -25,7 +25,8 @@ public class ConfigFileProtected {
 	public static String keyBifinexApiKey ="kbfapik1";
 	public static String keyBitfinexSecretKey ="kbfsk2";
 	Properties properties = new Properties();
-	static final File defaultFile = new File("p_config.properties");
+	static final File dirPrivate = new File("private");
+	static final File defaultFile = new File(dirPrivate,"p_config_private.properties");
 	File file ;
 	
 	private  char[] password;
@@ -100,6 +101,7 @@ public class ConfigFileProtected {
 		this.properties.setProperty(key1, crypted);
 		Writer w = null;
 		try {
+			 dirPrivate.mkdirs();
 			 w = new FileWriter(file);
 			this.properties.store(w, "store "+key1);
 		} finally {

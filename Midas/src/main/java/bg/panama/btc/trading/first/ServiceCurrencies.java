@@ -1,5 +1,7 @@
 package bg.panama.btc.trading.first;
 
+import java.util.Currency;
+
 import bg.panama.btc.model.v2.Ticker;
 import bg.panama.btc.model.v2.Tickers;
 
@@ -32,7 +34,11 @@ public class ServiceCurrencies {
 		}
 		Ticker t = tickersCurrent.getTickerByName("t"+currency+"usd");
 		if (t == null){
-			System.err.println("No Ticker for "+currency);
+			if (currency.equalsIgnoreCase("usd")){
+				
+			}else {
+				System.err.println("No Ticker- for >>>"+currency);
+			}
 			return 0;
 		}
 		return t.getLastPrice();

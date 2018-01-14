@@ -74,13 +74,13 @@ public class Balances implements Serializable{
 			SessionCurrency tickerCurrent = session.getTickerByCurrency(currency);
 			
 			if(tickerCurrent == null){
-				if (currency.equalsIgnoreCase("usd")){
+				if (currency.trim().equalsIgnoreCase("usd")){
 					tickerCurrent = SessionCurrency.SessionCurrencyUSD;
 					this.availableUSD = balance.available;
 					this.amountUSD = balance.amount;
 					System.err.println("USD amount :"+balance.amount+"  available :"+balance.available);
 				}else {
-				System.err.println("No ticker for "+currency);
+				System.err.println("!No ticker! for >"+currency+"<");
 				break;
 				}
 			}

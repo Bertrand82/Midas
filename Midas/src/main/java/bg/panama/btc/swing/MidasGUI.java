@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.swing.JButton;
@@ -27,6 +28,7 @@ import bg.panama.btc.model.Symbols;
 import bg.panama.btc.trading.first.AlgoProcessCurrencies;
 import bg.panama.btc.trading.first.Config;
 import bg.panama.btc.trading.first.SessionCurrencies;
+import bg.panama.btc.trading.first.SessionCurrency;
 import bg.panama.btc.trading.first.ThreadBalance;
 import bg.panama.btc.trading.first.ThreadFetchTickers;
 import bg.panama.btc.trading.first.ThreadProcessTickers;
@@ -326,6 +328,23 @@ public class MidasGUI {
 			threadBalance.stop("GUI");
 		}		
 		this.threadBalance = new ThreadBalance(getConfig());
+	}
+
+	HashMap<String, DialogShowCurrency> hDetails = new HashMap<>();
+	public void showDetail(SessionCurrency session, boolean b) {
+		String name = session.getName();
+		System.err.println("Show Detail "+name);
+		DialogShowCurrency dialogShowCurrency = hDetails.get(name);
+		if ( dialogShowCurrency== null){
+			 dialogShowCurrency = new DialogShowCurrency(session);
+			hDetails.put(name, dialogShowCurrency);
+		}else {
+			 dialogShowCurrency.setVisible(b);
+		}
+	}
+
+	public void removeDetail(String name) {
+		hDetails.remove(name);
 	}
 
 
