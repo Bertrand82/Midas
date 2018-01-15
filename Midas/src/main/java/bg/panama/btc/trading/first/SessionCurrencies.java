@@ -60,7 +60,7 @@ public class SessionCurrencies implements Serializable {
 		}
 	}
 
-	private SessionCurrency getSessionCurrency_byName(String name) {
+	public SessionCurrency getSessionCurrency_byName(String name) {
 		for (SessionCurrency z : lSessionCurrency) {
 			if (name.equalsIgnoreCase(z.getName())) {
 				return z;

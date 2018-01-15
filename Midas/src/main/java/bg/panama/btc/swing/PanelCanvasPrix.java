@@ -1,14 +1,20 @@
 package bg.panama.btc.swing;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 
+import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 
+import bg.panama.btc.trading.first.SessionCurrency;
 import bg.util.PointDouble;
 
-public class PanelCanvasPrix {
+public class PanelCanvasPrix extends PanelCancasAbstract{
 
 	int w = 300;
 	int h = 50;
@@ -84,12 +90,14 @@ public class PanelCanvasPrix {
 	public static final Color GREEN = new Color(0x99FF66);
 	public static final Color RED = new Color(0xFF0066);
 
-	public void update(String str, Color color, History history) {
+	public void update(SessionCurrency sc) {
+		update( sc.getHistory());
+	}
+	public void update(History history) {
 		initFromHistory(history);
 		g2.setColor(Color.white);
 		g2.fillRect(0, 0, w, h);
-		g2.setColor(Color.black);
-		g2.drawString(str, 10, 20);
+		
 		g2.setColor(Color.gray);
 		g2.drawLine(0, h / 2, w, h / 2);
 
@@ -111,5 +119,12 @@ public class PanelCanvasPrix {
 			}
 		}
 	}
+
+	
+	public String getTitre() {
+		return "Prix vs $";
+	}
+
+	
 
 }

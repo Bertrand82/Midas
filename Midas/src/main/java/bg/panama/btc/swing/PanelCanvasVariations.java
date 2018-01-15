@@ -6,9 +6,10 @@ import java.awt.image.BufferedImage;
 
 import javax.swing.ImageIcon;
 
+import bg.panama.btc.trading.first.SessionCurrency;
 import bg.util.PointDouble;
 
-public class PanelCanvasVariations {
+public class PanelCanvasVariations  extends PanelCancasAbstract{
 	int w = 300;
 	int h = 50;
 	String currency;
@@ -70,12 +71,15 @@ public class PanelCanvasVariations {
 	}
    public static final Color GREEN = new Color(0xB0FF70);
  public static final Color RED = new Color(0xFF70A0);
-   public void update(String str, Color color, History history) {
+ 
+ public void update(SessionCurrency sc) {
+	update(sc.getHistory());
+	}
+   public void update(  History history) {
 		initFromHistory(history);
-		g2.setColor(color);
+		g2.setColor(Color.white);
 		g2.fillRect(0, 0, w, h);
-		g2.setColor(Color.black);
-		g2.drawString(str, 10, 20);
+		
 		
 		
 		for (PointDouble p : history.getListPointsVariation()) {
@@ -99,5 +103,13 @@ public class PanelCanvasVariations {
 		g2.drawLine(0, h / 2, w, h / 2);
 
 	}
+
+@Override
+public String getTitre() {
+	
+	return "Variations";
+}
+
+
 
 }

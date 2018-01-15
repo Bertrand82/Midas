@@ -104,6 +104,7 @@ public class History implements Serializable {
 	 */
 	public List<PointDouble> getListPointsStochastiques_1heure() {
 		List<PointDouble> list = new ArrayList<>();
+		
 		if (getListSessionCurrency().isEmpty()) {
 			return list;
 		}
@@ -113,6 +114,7 @@ public class History implements Serializable {
 			PointDouble p = new PointDouble(s.getDateLastUpdateAsLong(), stochas);
 			list.add(p);
 		}
+		System.out.println("ListStochastique list.size :"+list.size()+"  "+list);
 		return list;
 	}
 	

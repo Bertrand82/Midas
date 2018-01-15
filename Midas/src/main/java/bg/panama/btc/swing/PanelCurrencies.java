@@ -284,18 +284,9 @@ public class PanelCurrencies extends JPanel implements ICheckAlive {
 						String key = sc.getShortName();
 						PanelCanvasVariations pcVariations = hCanvasVaritions.get(key);
 						PanelCanvasPrix pcPrix = hCanvasPrix.get(key);
-						Color color;
-						String label = key;
-						if (sc.getHourlyChangePerCentByDay() == SessionCurrency.D_default){
-							color = Color.BLUE;
-							label="Initializing "+key;
-						}else if (sc.getHourlyChangePerCentByDay()>0){
-							color = Color.GREEN;
-						}else {
-							color = Color.RED;
-						}
-						pcVariations.update(label,color, sc.getHistory());
-						pcPrix.update(label,color, sc.getHistory());
+					
+						pcVariations.update( sc.getHistory());
+						pcPrix.update( sc.getHistory());
 					}
 					table.updateUI();
 					SessionCurrency best = session.getSessionCurrencyBestEligible();
