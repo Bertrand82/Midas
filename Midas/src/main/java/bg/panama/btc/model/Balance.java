@@ -4,7 +4,6 @@ import java.io.Serializable;
 
 import org.json.JSONObject;
 
-import bg.panama.btc.model.v2.Ticker;
 import bg.panama.btc.swing.SymbolConfig;
 import bg.panama.btc.swing.SymbolsConfig;
 import bg.panama.btc.trading.first.ServiceCurrencies;

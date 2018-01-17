@@ -1,15 +1,10 @@
 package bg.panama.btc.swing;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 
-import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
 
 import bg.panama.btc.trading.first.SessionCurrency;
 import bg.util.PointDouble;

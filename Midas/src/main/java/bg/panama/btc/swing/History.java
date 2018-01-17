@@ -5,14 +5,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-
-import bg.panama.btc.model.v2.ITicker;
 import bg.panama.btc.model.v2.Ticker;
-import bg.panama.btc.trading.first.SessionCurrencies;
 import bg.panama.btc.trading.first.SessionCurrenciesFactory;
 import bg.panama.btc.trading.first.SessionCurrency;
 import bg.util.PointDouble;
@@ -182,6 +175,11 @@ public class History implements Serializable {
 			//System.out.println("getListSessionCurrency2 "+this.name+"  "+listSessionCurrency_);
 		}
 		return listSessionCurrency_;
+	}
+
+	public double getStochastiqueDerivee() {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 
 	

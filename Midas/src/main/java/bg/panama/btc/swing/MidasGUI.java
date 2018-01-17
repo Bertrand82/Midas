@@ -17,14 +17,12 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.UIManager;
-import javax.swing.event.MenuEvent;
-import javax.swing.event.MenuListener;
 
 import bg.panama.btc.BitfinexClient;
 import bg.panama.btc.BitfinexClient.EnumService;
-import bg.panama.btc.model.Balance;
 import bg.panama.btc.model.Balances;
 import bg.panama.btc.model.Symbols;
+import bg.panama.btc.simu.DialogSimuGUI;
 import bg.panama.btc.trading.first.AlgoProcessCurrencies;
 import bg.panama.btc.trading.first.Config;
 import bg.panama.btc.trading.first.SessionCurrencies;
@@ -89,6 +87,15 @@ public class MidasGUI {
 			}
 		});
 
+		JMenuItem menuItemStartSimu = new JMenuItem("Start Simu ");
+		menuItemStartSimu.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				startSimu();
+			}
+		});
+		
 		JMenuItem menuItemEmergencySave = new JMenuItem("Emergency change In $ ");
 		menuItemEmergencySave.addActionListener(new ActionListener() {
 
@@ -97,6 +104,7 @@ public class MidasGUI {
 				emergencySave();
 			}
 		});
+
 
 		JButton buttonFetchSymbols = new JButton("Fetch symbols");
 		buttonFetchSymbols.addActionListener(new ActionListener() {
@@ -155,6 +163,7 @@ public class MidasGUI {
 		menuActions.add(menuItemCancelAllOrders);
 		menuActions.add(menuItemDisplayAllOrders);
 		menuActions.add(menuItemEmergencySave);
+		menuActions.add(menuItemStartSimu);
 		JMenuBar menuBar = new JMenuBar();
 		menuBar.add(menuFile);
 		menuBar.add(menuActions);
@@ -275,7 +284,6 @@ public class MidasGUI {
 				panelCurrencies.update(session);
 			}
 			for (String name : hDetails.keySet()) {
-				System.err.println("UpdateThread !!!! " + name);
 				DialogShowCurrencyDetail dscd = hDetails.get(name);
 				SessionCurrency sc = session.getSessionCurrency_byName(name);
 				dscd.updateThread(sc);
@@ -346,4 +354,8 @@ public class MidasGUI {
 		hDetails.remove(name);
 	}
 
+	private void startSimu() {
+		new DialogSimuGUI();
+		
+	}
 }

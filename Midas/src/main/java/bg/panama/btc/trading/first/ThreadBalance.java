@@ -3,22 +3,16 @@ package bg.panama.btc.trading.first;
 
 
 import java.text.DecimalFormat;
-import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import bg.panama.btc.BitfinexClient;
-import bg.panama.btc.OrderManager;
 import bg.panama.btc.BitfinexClient.EnumService;
-import bg.panama.btc.model.ActiveOrder;
-import bg.panama.btc.model.ActiveOrders;
 import bg.panama.btc.model.Balances;
-import bg.panama.btc.model.v2.ITicker;
-import bg.panama.btc.model.v2.Tickers;
 import bg.panama.btc.model.v2.TickersFactory;
-import bg.panama.btc.swing.MidasGUI;
 import bg.panama.btc.swing.ConfigFileProtected;
+import bg.panama.btc.swing.MidasGUI;
 import bg.panama.btc.swing.SymbolsConfig;
 
 

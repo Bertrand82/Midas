@@ -14,8 +14,6 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
-import javax.persistence.Transient;
-
 
 import org.json.JSONArray;
 import org.json.JSONException;

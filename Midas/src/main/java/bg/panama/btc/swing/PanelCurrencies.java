@@ -4,8 +4,6 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
@@ -28,7 +26,6 @@ import javax.swing.table.DefaultTableCellRenderer;
 
 import bg.panama.btc.model.Balance;
 import bg.panama.btc.model.Balances;
-import bg.panama.btc.model.v2.ITicker;
 import bg.panama.btc.trading.first.AlgoProcessCurrencies;
 import bg.panama.btc.trading.first.SessionCurrencies;
 import bg.panama.btc.trading.first.SessionCurrency;

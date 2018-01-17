@@ -2,11 +2,8 @@ package bg.panama.btc.trading.first;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -14,7 +11,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Transient;
 
-import bg.panama.btc.model.v2.ITicker;
 import bg.panama.btc.model.v2.Ticker;
 import bg.panama.btc.swing.History;
 
@@ -343,6 +339,14 @@ public class SessionCurrency implements Serializable,Cloneable{
 	public String toString() {
 		return "SessionCurrency [id=" + id + ", date=" + date + ", shortName=" + shortName + ", hourlyPrice="
 				+ hourlyPrice + ", lastPrice=" + lastPrice + "]";
+	}
+
+	public boolean getStochastique_1heure_ok() {
+		if (this.stochastique_1heure > 95){
+			return true;
+		}
+		double derivee_stochastique = this.history.getStochastiqueDerivee();
+		return false;
 	}
 
 	

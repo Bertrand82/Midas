@@ -1,14 +1,10 @@
 package bg.panama.btc.swing;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
 import java.awt.GridLayout;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 
-import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -62,14 +58,6 @@ public class DialogShowCurrencyDetail {
 		update(session);
 	}
 	
-	private Component getJPanel(ImageIcon imageIcon,String titre) {
-		JPanel panel = new JPanel(new BorderLayout());
-		JLabel label = new JLabel(imageIcon);
-		panel.setBorder(BorderFactory.createLineBorder(Color.RED, 2));
-		panel.add(label, BorderLayout.CENTER);
-		panel.add(new JLabel(titre), BorderLayout.WEST);
-		return panel;
-	}
 
 	public void update(SessionCurrency sc){
 		this.panelCanvasPrix.update(sc);

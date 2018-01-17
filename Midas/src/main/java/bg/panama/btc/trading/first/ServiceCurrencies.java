@@ -1,7 +1,5 @@
 package bg.panama.btc.trading.first;
 
-import java.util.Currency;
-
 import bg.panama.btc.model.v2.Ticker;
 import bg.panama.btc.model.v2.Tickers;
 
@@ -9,6 +7,7 @@ public class ServiceCurrencies {
 
 	
 	private Tickers tickersCurrent;
+	private SessionCurrencies sessionCurrencies;
 	
 	private static ServiceCurrencies instance = new ServiceCurrencies();
 
@@ -43,5 +42,13 @@ public class ServiceCurrencies {
 		}
 		return t.getLastPrice();
 	}
-	
+
+	public SessionCurrencies getSessionCurrencies() {
+		return sessionCurrencies;
+	}
+
+	public void setSessionCurrencies(SessionCurrencies sessionCurrencies) {
+		this.sessionCurrencies = sessionCurrencies;
+	}
+
 }
