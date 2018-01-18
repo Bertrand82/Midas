@@ -58,7 +58,7 @@ public class SimuProcess implements Runnable{
 	
 
 	private void process(SessionCurrencies sc) {
-		System.out.println("simu sc date :"+sc.getDate()+"  "+sc.getTickerBest());
+		//System.out.println("simu sc date :"+sc.getDate()+"  "+sc.getTickerBest());
 		List<SessionCurrency> list = sc.getlSessionCurrency();
 		Collections.sort(list, comparatorBestEligible);
 		SessionCurrency sessionCurrency = getFirstEligible(list);

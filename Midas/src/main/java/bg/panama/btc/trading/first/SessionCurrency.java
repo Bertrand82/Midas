@@ -11,8 +11,11 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Transient;
 
+import org.hibernate.annotations.CascadeType;
+
 import bg.panama.btc.model.v2.Ticker;
 import bg.panama.btc.swing.History;
+import bg.panama.btc.trading.commun.Value;
 
 
 @Entity
@@ -42,8 +45,10 @@ public class SessionCurrency implements Serializable,Cloneable{
 	private long deltaTemps_ms_;
 	private long dateLastUpdate = System.currentTimeMillis();
 	private int numero =0;
-	private double stochastique_1heure;
-	private double stochastique_10mn;
+	@OneToOne (cascade=javax.persistence.CascadeType.ALL)
+	private Value stochastique_1heure;
+	@OneToOne (cascade=javax.persistence.CascadeType.ALL)
+	private Value stochastique_10mn;
 	double bg =0;
 	@ManyToOne
 	@JoinColumn(name="sessionCurrencies_id", nullable=false)
@@ -90,9 +95,13 @@ public class SessionCurrency implements Serializable,Cloneable{
 		this.date=new Date();
 			//this.history.add((SessionCurrency)this.clone());
 		this.numero++;
-		this.stochastique_1heure=this.history.calculStochastique(60*60000l, this.date, ticker);
-		this.stochastique_10mn=this.history.calculStochastique(10*60000l, this.date, ticker);
+		this.stochastique_1heure=this.history.calculStochastique(60*60000l, this.date, ticker, this.stochastique_1heure);
+		this.stochastique_10mn=this.history.calculStochastique(10*60000l, this.date, ticker,this.stochastique_10mn);
 	}
+
+	
+
+	
 
 	private double tranformZ(double v, double vNew) {
 		double k = getK();
@@ -162,16 +171,16 @@ public class SessionCurrency implements Serializable,Cloneable{
 
 	
 	
-	public double getStochastique_1heure() {
+	public Value getStochastique_1heure() {
 		return stochastique_1heure;
 	}
-	public void setStochastique_1heure(double stochastique_1heure) {
+	public void setStochastique_1heure(Value stochastique_1heure) {
 		this.stochastique_1heure = stochastique_1heure;
 	}
-	public double getStochastique_10mn() {
+	public Value getStochastique_10mn() {
 		return stochastique_10mn;
 	}
-	public void setStochastique_10mn(double stochastique_10mn) {
+	public void setStochastique_10mn(Value stochastique_10mn) {
 		this.stochastique_10mn = stochastique_10mn;
 	}
 	public String getShortName() {
@@ -316,6 +325,8 @@ public class SessionCurrency implements Serializable,Cloneable{
 		s.ticker_Z_1 = ticker_Z_1;
 		s.name = name;
 		s.history = new History(s);
+		s.stochastique_1heure=(Value) stochastique_1heure.clone();
+		s.stochastique_10mn = (Value) stochastique_10mn.clone();
 		return s;
 	}
 
@@ -340,12 +351,43 @@ public class SessionCurrency implements Serializable,Cloneable{
 		return "SessionCurrency [id=" + id + ", date=" + date + ", shortName=" + shortName + ", hourlyPrice="
 				+ hourlyPrice + ", lastPrice=" + lastPrice + "]";
 	}
+	public enum Etat_stochastique {
+		up_up,
+		down_up,
+		down_down,
+		up_down,
+		unknow
+	};
+	
+	
+	public static Etat_stochastique getStochastique(Value st) {
+		if (st.getV() > 80){
+			if (st.getDerivee()<= 0)
+			return Etat_stochastique.up_down;
+		}
+		if (st.getV() < 5){
+			if (st.getDerivee()> 0)
+			return Etat_stochastique.down_up;
+		}
+		if (st.getV() < 5){
+			if (st.getDerivee()< 0)
+			return Etat_stochastique.down_down;
+		}
+		if (st.getV() >95){
+			if (st.getDerivee()>0)
+			return Etat_stochastique.up_up;
+		}
+		;
+		return Etat_stochastique.unknow;
+	}
+
+	public boolean getStochastique_ok() {
+		
+		return false;
+	}
 
 	public boolean getStochastique_1heure_ok() {
-		if (this.stochastique_1heure > 95){
-			return true;
-		}
-		double derivee_stochastique = this.history.getStochastiqueDerivee();
+		// TODO Auto-generated method stub
 		return false;
 	}
 
