@@ -101,28 +101,32 @@ public class PanelCanvasAchatVente extends PanelCancasAbstract {
 		g2.setColor(Color.gray);
 		g2.drawLine(0, h / 2, w, h / 2);
 
-		for (Value p : this.listVAlues) {
-			if ((dx > 0.000000001) && (dy > 0.000000001)) {
-				SessionCurrency.Etat_stochastique etat= SessionCurrency.getStochastique(p);
+		for (Value vStochas : this.listVAlues) {
+			
+				SessionCurrency.EtatSTOCHASTIQUE etat= SessionCurrency.getStochastique(vStochas);
 				boolean draw = false;
-				if (etat == SessionCurrency.Etat_stochastique.down_up) {
-					g2.setColor(Color.GREEN);
+				Color color = Color.MAGENTA;
+				if (etat == SessionCurrency.EtatSTOCHASTIQUE.down_up) {
+					color = Color.GREEN;
 					draw = true;
-				}else if (etat == SessionCurrency.Etat_stochastique.up_down) {
-					g2.setColor(Color.RED);
+				}else if (etat == SessionCurrency.EtatSTOCHASTIQUE.up_down) {
+					color = Color.RED;
 					draw = true;
-				}else if (etat == SessionCurrency.Etat_stochastique.up_up) {
-					g2.setColor(Color.YELLOW);
+				}else if (etat == SessionCurrency.EtatSTOCHASTIQUE.down_down) {
+					draw = true;
+				}else if (etat == SessionCurrency.EtatSTOCHASTIQUE.up_up) {
+					color = Color.YELLOW;
 					draw = true;
 				}
 				if (draw){
-					int x = (int) ((p.time - xMin)*w/dx);
+					g2.setColor(color);
+					int x = (int) ((vStochas.time - xMin)*w/dx);
 					g2.drawLine(x, 0, x, 20);
-					System.err.println("drawLine   x:"+x+"  ");
+					System.err.println("drawLine   x:"+x+"  etat: "+etat+"   color :"+color);
 				}
 				// System.out.println("Prix Filtre:\t"+str+"\t x: " + x + " y :"
 				// + y);
-			}
+			
 		}
 	}
 

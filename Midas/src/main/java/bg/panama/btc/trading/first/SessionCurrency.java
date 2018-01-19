@@ -351,7 +351,7 @@ public class SessionCurrency implements Serializable,Cloneable{
 		return "SessionCurrency [id=" + id + ", date=" + date + ", shortName=" + shortName + ", hourlyPrice="
 				+ hourlyPrice + ", lastPrice=" + lastPrice + "]";
 	}
-	public enum Etat_stochastique {
+	public enum EtatSTOCHASTIQUE {
 		up_up,
 		down_up,
 		down_down,
@@ -360,25 +360,18 @@ public class SessionCurrency implements Serializable,Cloneable{
 	};
 	
 	
-	public static Etat_stochastique getStochastique(Value st) {
+	public static EtatSTOCHASTIQUE getStochastique(Value st) {
+		EtatSTOCHASTIQUE etat =  EtatSTOCHASTIQUE.unknow;
 		if (st.getV() > 80){
-			if (st.getDerivee()<= 0)
-			return Etat_stochastique.up_down;
+			if (st.getDerivee()<= 0.0) etat = EtatSTOCHASTIQUE.up_down;
+			if (st.getDerivee()>0.0) etat= EtatSTOCHASTIQUE.up_up;
+			
+		}else if (st.getV() <= 80){
+			if (st.getDerivee()> 0.02) etat=  EtatSTOCHASTIQUE.down_up;
+			if (st.getDerivee()<= 0.01) etat = EtatSTOCHASTIQUE.down_down;
 		}
-		if (st.getV() < 5){
-			if (st.getDerivee()> 0)
-			return Etat_stochastique.down_up;
-		}
-		if (st.getV() < 5){
-			if (st.getDerivee()< 0)
-			return Etat_stochastique.down_down;
-		}
-		if (st.getV() >95){
-			if (st.getDerivee()>0)
-			return Etat_stochastique.up_up;
-		}
-		;
-		return Etat_stochastique.unknow;
+		//System.err.println("getStochastique "+etat+"  st :"+st);
+		return etat;
 	}
 
 	public boolean getStochastique_ok() {
