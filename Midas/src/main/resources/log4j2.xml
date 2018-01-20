@@ -20,6 +20,10 @@
      <File name="jvm" fileName="logs/jvm.log" immediateFlush="true" append="true">
             <PatternLayout pattern="%d{yyy-MM-dd HH:mm:ss}|[%t]|  %msg%n"/>
      </File>
+     <File name="panic" fileName="logs/panic.log" immediateFlush="true" append="true">
+            <PatternLayout pattern="%d{yyy-MM-dd HH:mm:ss}|[%t]|  %msg%n"/>
+     </File>
+     
   </Appenders>
   <Loggers>
     <Root level="error">
@@ -39,6 +43,9 @@
     </Logger>
     <Logger name="jvm" level="trace" additivity="false">
         <AppenderRef ref="jvm"/>
+    </Logger>
+     <Logger name="panic" level="trace" additivity="false">
+        <AppenderRef ref="panic"/>
     </Logger>
     
     

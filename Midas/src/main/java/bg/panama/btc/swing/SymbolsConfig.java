@@ -46,9 +46,10 @@ public class SymbolsConfig {
 	public void store() {
 		storeSelected();
 		storeMaxTrade();
+		storeIndicatorPanic();
 	}
 
-	public void storeMaxTrade() {
+	private void storeMaxTrade() {
 		Properties p = toPropertiesMaxTrade();
 		store(p, file_Symbol_max_trade, "Mis a jour max trade");
 	}

@@ -36,6 +36,8 @@ public class SessionCurrencies implements Serializable {
 	private long id;
 
 	private final Date timeStart = new Date();
+	
+	private boolean isModePanic = false;
 	/**
 	 * Utile pour faire des tris
 	 */
@@ -62,6 +64,7 @@ public class SessionCurrencies implements Serializable {
 			SessionCurrency sessionCurrency = getSessionCurrency_byName(ticker.getName());
 			sessionCurrency.update((Ticker) ticker);
 		}
+		processModePanic();
 	}
 
 	public SessionCurrency getSessionCurrency_byName(String name) {
@@ -239,7 +242,7 @@ public class SessionCurrencies implements Serializable {
 		this.date = date;
 	}
 
-	public boolean isModePanic() {
+	private void processModePanic() {
 		int nNegative=0;
 		int nPositive=0;
 		int nNegativeMoyenne=0;
@@ -277,7 +280,15 @@ public class SessionCurrencies implements Serializable {
 		String trace = "isModePanic :"+isPanic+"| nPositive :"+nPositive+" |  nNegative : "+nNegative+"| nPositiveMoyenne :"+ nPositiveMoyenne+"| nNegativeMoyenne :"+nNegativeMoyenne+"| nStochasAcheter_10mn :"+nStochasAcheter_10mn+"| nStochasVendre_10mn :"+nStochasVendre_10mn;
 		//System.err.println(trace);
 		loggerPanic.info(trace);
-		return isPanic;
+		this.isModePanic = isPanic;
+	}
+
+	public boolean isModePanic() {
+		return isModePanic;
+	}
+
+	public void setModePanic(boolean isModePanic) {
+		this.isModePanic = isModePanic;
 	}
 
 	
