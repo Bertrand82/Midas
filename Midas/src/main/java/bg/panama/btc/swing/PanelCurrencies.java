@@ -287,6 +287,7 @@ public class PanelCurrencies extends JPanel implements ICheckAlive {
 					}
 					table.updateUI();
 					SessionCurrency best = session.getSessionCurrencyBestEligible();
+					
 					String bestEligible ;
 					if(best== null){
 						bestEligible=" - ";

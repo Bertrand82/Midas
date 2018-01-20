@@ -4,6 +4,7 @@ public class SymbolConfig implements Comparable<SymbolConfig>{
 
 	private String name;
 	private boolean selected=false;
+	private boolean isIndicatorPanic = true;
 	private String comment ="";
 	private int maxTrade =0;
 	
@@ -85,6 +86,20 @@ public class SymbolConfig implements Comparable<SymbolConfig>{
 		}
 		
 	}
+
+	public boolean isIndicatorPanic() {
+		return isIndicatorPanic;
+	}
+
+	public void setIndicatorPanic(boolean isIndicatorPanic) {
+		this.isIndicatorPanic = isIndicatorPanic;
+	}
+	public void setIndicatorPanic(String isIndicatorPanicStr) {
+		boolean b = (""+isIndicatorPanicStr).equalsIgnoreCase("true");
+		setIndicatorPanic(b);
+	}
+	
+	
 	
 	
 }

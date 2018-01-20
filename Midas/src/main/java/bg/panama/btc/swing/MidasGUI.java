@@ -1,6 +1,7 @@
 package bg.panama.btc.swing;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Font;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
@@ -17,6 +18,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
 import bg.panama.btc.BitfinexClient;
@@ -49,7 +51,7 @@ public class MidasGUI {
 	ThreadProcessTickers threadProcessTickers;
 	ThreadBalance threadBalance;
 	private static MidasGUI instance;
-
+	JMenuItem menuPanic = new JMenuItem("PANIC");
 	public MidasGUI() {
 		super();
 		instance = this;
@@ -133,8 +135,10 @@ public class MidasGUI {
 
 			}
 		});
+		
+		setPanic (false);
 
-		JMenuItem menuSetPassword = new JMenuItem("setPassword2");
+		JMenuItem menuSetPassword = new JMenuItem("Password");
 		menuSetPassword.addActionListener(new ActionListener() {
 
 			@Override
@@ -159,6 +163,7 @@ public class MidasGUI {
 		menuFile.add(menuItemOrderAble);
 		menuFile.add(menuSelectCurrency);
 		menuFile.add(menuSetSecretKeys);
+		menuFile.add(this.menuPanic);
 
 		JMenu menuActions = new JMenu("Actions");
 		menuActions.add(menuItemCancelAllOrders);
@@ -169,6 +174,7 @@ public class MidasGUI {
 		menuBar.add(menuFile);
 		menuBar.add(menuActions);
 		menuBar.add(menuSetPassword);
+		menuBar.add(this.menuPanic);
 		JPanel panelButtons = new JPanel();
 
 		// panelButtons.add(buttonFetchSymbols);
@@ -196,6 +202,21 @@ public class MidasGUI {
 		});
 
 		startThreads();
+	}
+
+	private void setPanic(boolean isPanic) {
+		Color colorBackGround = Color.GREEN;
+		String text ;
+		if (isPanic){
+			text = "PANIC!";
+			colorBackGround = Color.RED;
+		}else {
+			text = "NO PANIC!";
+			colorBackGround = Color.GREEN;
+		}
+		this.menuPanic.setBackground(colorBackGround);
+		this.menuPanic.setText(text);
+		
 	}
 
 	private void fetchTickers() {
@@ -276,6 +297,16 @@ public class MidasGUI {
 	public void updateThread() {
 		try {
 			SessionCurrencies session = this.threadFetchTickers.getSesionCurrencies();
+			Runnable runnable = new Runnable() {
+				
+				@Override
+				public void run() {
+					boolean  isModePanic = session.isModePanic();
+					setPanic(isModePanic);
+					
+				}
+			};
+			SwingUtilities.invokeLater(runnable);
 			if (panelCurrencies == null) {
 				panelCurrencies = new PanelCurrencies(session);
 				panelGlobal.removeAll();

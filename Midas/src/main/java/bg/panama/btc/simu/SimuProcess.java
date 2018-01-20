@@ -8,6 +8,7 @@ import java.util.List;
 import bg.panama.btc.trading.first.SessionCurrencies;
 import bg.panama.btc.trading.first.SessionCurrenciesFactory;
 import bg.panama.btc.trading.first.SessionCurrency;
+import bg.panama.btc.trading.first.SessionCurrency.EtatSTOCHASTIQUE;
 
 public class SimuProcess implements Runnable{
 	
@@ -74,14 +75,16 @@ public class SimuProcess implements Runnable{
 	}
 
 	private boolean isEligible(SessionCurrency sc) {
-		boolean b = false;
+		boolean b1 = false;
+		boolean b2 = false;
 		if (sc.getHourlyChangePerCentByDayInstant() > 0){
-			b = true;
+			b1 = true;
 		}
-		if (sc.getStochastique_1heure_ok()){
-			b=true;
+		EtatSTOCHASTIQUE etat_10mn = sc.getEtatStochastique_10mn();
+		if (etat_10mn.acheter){
+			b2=true;
 		}
-		return b;
+		return b1 & b2;
 	}
 
 	private void log(String string) {

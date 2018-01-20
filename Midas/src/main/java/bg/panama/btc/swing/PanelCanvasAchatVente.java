@@ -13,6 +13,7 @@ import javax.swing.JPanel;
 
 import org.hibernate.internal.SessionOwnerBehavior;
 
+import bg.panama.btc.swing.History.SimuResult;
 import bg.panama.btc.trading.commun.Value;
 import bg.panama.btc.trading.first.SessionCurrency;
 import bg.util.PointDouble;
@@ -60,8 +61,8 @@ public class PanelCanvasAchatVente extends PanelCancasAbstract {
 		for (Value p : h.getStochastiques_10mn()) {
 			initMinMax(p);
 		}
-		String s0 =  h.getSimuResult(0);
-		String s1 =  h.getSimuResult(0);
+		SimuResult s0 =  h.getSimuResult(0);
+		SimuResult s1 =  h.getSimuResult(0);
 	    System.err.println("Result simu "+s0 +":"+s1);
 	}
 

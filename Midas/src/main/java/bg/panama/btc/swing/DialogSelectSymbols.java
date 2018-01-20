@@ -19,7 +19,7 @@ import javax.swing.table.AbstractTableModel;
 
 public class DialogSelectSymbols extends JDialog implements ActionListener {
 
-	String[] columnNames = { "Symbol", "comment", "selected" ,"max ($)"};
+	String[] columnNames = { "Symbol", "comment", "selected" ,"max ($)", "Panic indicator"};
 	
 	private static final long serialVersionUID = 1L;
 
@@ -53,6 +53,8 @@ public class DialogSelectSymbols extends JDialog implements ActionListener {
 				return sy.isSelected();
 			case 3:
 				return sy.getMaxTrade();
+			case 4:
+				return sy.isIndicatorPanic();
 			}
 			return "";
 		}
@@ -73,6 +75,9 @@ public class DialogSelectSymbols extends JDialog implements ActionListener {
 			case 3 :
 				sy.setMaxTrade((int) value);
 				break;
+			case 4 :
+				sy.setIndicatorPanic((Boolean) value);
+				break;
 			}
 			fireTableCellUpdated(row, col);
 		}
@@ -82,13 +87,15 @@ public class DialogSelectSymbols extends JDialog implements ActionListener {
 				return Boolean.class;
 			}else if (columnIndex == 3){
 				return Integer.class;
+			}else if (columnIndex == 4){
+				return Boolean.class;
 			}
 			return Object.class;
 		}
 	};
 
 	public DialogSelectSymbols(JFrame parent, ActionListener okListener) {
-		super(parent, "Bitfinex", true);
+		super(parent, "Symbols Config", true);
 		
 		
 		if (parent != null) {

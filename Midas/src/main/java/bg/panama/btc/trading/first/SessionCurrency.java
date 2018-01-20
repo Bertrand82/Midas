@@ -16,6 +16,7 @@ import org.hibernate.annotations.CascadeType;
 import bg.panama.btc.model.v2.Ticker;
 import bg.panama.btc.swing.History;
 import bg.panama.btc.trading.commun.Value;
+import bg.panama.btc.trading.first.SessionCurrency.EtatSTOCHASTIQUE;
 
 
 @Entity
@@ -380,15 +381,11 @@ public class SessionCurrency implements Serializable,Cloneable{
 		return etat; 
 	}
 
-	public boolean getStochastique_ok() {
-		
-		return false;
+	public EtatSTOCHASTIQUE getEtatStochastique_10mn() {
+		EtatSTOCHASTIQUE etat = getStochastique(getStochastique_10mn());
+		return etat;
 	}
 
-	public boolean getStochastique_1heure_ok() {
-		// TODO Auto-generated method stub
-		return false;
-	}
 
 	
 

@@ -14,6 +14,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import bg.panama.btc.swing.History.SimuResult;
 import bg.panama.btc.trading.first.SessionCurrency;
 
 public class DialogShowCurrencyDetail extends JPanel{
@@ -38,9 +39,9 @@ public class DialogShowCurrencyDetail extends JPanel{
 		panelCanvasStochastique_10mn = new PanelCanvasStochastique(shortName, PanelCanvasStochastique.TypeStochastique.stoc_10mn);
 		panelCanvasAchatVente = new PanelCanvasAchatVente(shortName);
 		this.session = session;
-		String s0 = session.getHistory().getSimuResult(0);
-		String s1 = session.getHistory().getSimuResult(1);
-		String title = "Detail : "+shortName+"  "+s0+" "+s1;
+		SimuResult s0 = session.getHistory().getSimuResult(0);
+		SimuResult s1 = session.getHistory().getSimuResult(1);
+		String title = "Detail : "+shortName+"  "+s0.toStringShort()+" "+s1.toStringShort();
 		JLabel labelTitle = new JLabel(title);
 		labelTitle.setFont(labelTitle.getFont().deriveFont(30));
 		this.addMouseListener(new MouseAdapter() {

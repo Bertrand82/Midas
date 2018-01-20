@@ -36,6 +36,7 @@ public class SymbolsConfig {
 	private File file_Symbol_comment = new File("p_symbolsComments.properties");
 	private File file_Symbol_sort = new File("p_symbolsSort.properties");
 	private File file_Symbol_max_trade = new File("p_symbolsMaxTrade.properties");
+	private File file_Symbol_indicator_panic = new File("p_symbolsIndicatorPanic.properties");
 	private List<SymbolConfig> lSymbols = new ArrayList<SymbolConfig>();
 
 	public static SymbolsConfig getInstance() {
@@ -50,6 +51,11 @@ public class SymbolsConfig {
 	public void storeMaxTrade() {
 		Properties p = toPropertiesMaxTrade();
 		store(p, file_Symbol_max_trade, "Mis a jour max trade");
+	}
+
+	public void storeIndicatorPanic() {
+		Properties p = toPropertiesIndicatorPanic();
+		store(p, file_Symbol_indicator_panic, "Mis a jour indicator Panic");
 	}
 
 	private void store(Properties p, File f, String comment) {
@@ -79,6 +85,7 @@ public class SymbolsConfig {
 		Properties prpSymbol_Currency_ = loadPropertiesSymbolCurrencies();
 		Properties prpSymbol_Sort = loadPropertiesSymbolSort();
 		Properties prpSymbol_MaxTrade = loadPropertiesSymbolMaxTrade();
+		Properties prpIndicatorPanic = loadPropertiesIndicatorPanic();
 
 		if (file_Symbol_selected.exists()) {
 			FileReader reader = null;
@@ -91,6 +98,7 @@ public class SymbolsConfig {
 					sym.setComment(prpSymbol_Currency_.getProperty("" + key, ""));
 					sym.setOrder(prpSymbol_Sort.getProperty("" + key, "10000"));
 					sym.setMaxTrade(prpSymbol_MaxTrade.getProperty("" + key, "0"));
+					sym.setIndicatorPanic(prpIndicatorPanic.getProperty("" + key, "true"));
 					this.lSymbols.add(sym);
 				}
 			} catch (Exception e) {
@@ -141,6 +149,13 @@ public class SymbolsConfig {
 		load(p, file_Symbol_max_trade);
 		return p;
 	}
+	
+	private Properties loadPropertiesIndicatorPanic() {
+		Properties p = new Properties();
+		load(p, file_Symbol_indicator_panic);
+		return p;
+	}
+
 
 	public static void load(Properties p, File file) {
 		try {
@@ -167,6 +182,13 @@ public class SymbolsConfig {
 		Properties p = new Properties();
 		for (SymbolConfig symbol : this.lSymbols) {
 			p.setProperty(symbol.getName(), "" + symbol.getMaxTrade());
+		}
+		return p;
+	}
+	Properties toPropertiesIndicatorPanic() {
+		Properties p = new Properties();
+		for (SymbolConfig symbol : this.lSymbols) {
+			p.setProperty(symbol.getName(), "" + symbol.isIndicatorPanic());
 		}
 		return p;
 	}
@@ -215,5 +237,7 @@ public class SymbolsConfig {
 		}
 		return s;
 	}
+	
+	
 
 }

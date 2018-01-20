@@ -202,18 +202,28 @@ public class History implements Serializable {
 	}
 
 	static final NumberFormat df_0 = new DecimalFormat("000"); 
+	static final NumberFormat df_1 = new DecimalFormat("##0.0"); 
 	static final NumberFormat df_3 = new DecimalFormat("000.000"); 
 	
-	public String getSimuResult(int retard) {
+	public SimuResult getSimuResult(int retard) {
+		double sommeInitiale = 100;
 		if (getListSessionCurrency().isEmpty()) {
-			return "";
+			return null;
 		}
-		double vDollar = 100;
+		double vDollar = sommeInitiale;
 		double vCurrency=0;
 		double price=0.0;
 		int nAcheter = 0;
 		int nVendre = 0;
+		long timeStart = -1;
+		SessionCurrency sc0=null;
+		int nVente =0;
+		int nAchat = 0;
 		for(SessionCurrency sc : getListSessionCurrency()){
+			if (timeStart <= 0){
+				timeStart = sc.getDate().getTime();
+			}
+			sc0 = sc;
 			Value v  = sc.getStochastique_10mn();
 			price  = sc.getTicker_Z_1().getLastPrice();
 			SessionCurrency.EtatSTOCHASTIQUE etat = SessionCurrency.getStochastique(v);
@@ -228,25 +238,58 @@ public class History implements Serializable {
 			double totalD = vDollar+(vCurrency*price);
 			//System.out.println("Dollar   "+df_3.format(vDollar)+"\tcurrency  "+df_3.format(vCurrency)+  "\ttotal en dollar  "+df_3.format(totalD)+"   price "+price+" \tacheter: "+etat.acheter+"  vendre "+etat.vendre+"  "+etat);
 			if (nAcheter > retard){
+				if (vDollar > 0.00000001){
+					nAchat++;
+				}
 				vCurrency += vDollar/price;
 				vDollar =0;
+				
 			}
 			if (nVendre > retard){
+				if (vCurrency > 0.0000000001){
+					nVente++;
+				}
 				if (vCurrency > 0.0000001){
 					vDollar += vCurrency*price;
 					vCurrency=0;
 					}
 			}
-		
-		
-		
 		}
 		
-		double totalfinal = vDollar+vCurrency*price;
-		
-		return "Simu :"+ df_0.format(totalfinal)+" /100";
+		double sommefinale_usd = vDollar+vCurrency*price;
+		Long timeEnd = sc0.getDate().getTime();
+		long duree = timeEnd - timeStart;
+		SimuResult result = new SimuResult(sommeInitiale, sommefinale_usd, duree, nVente, nAchat);
+		System.err.println("result "+result);
+		return result;
 	}
 
-	
+	public static class SimuResult {
+		public double sommeInnitiale;
+		public double sommeFinale;
+		public  long duree;
+		public int nbVente;
+		public int nbAchat;
+		public SimuResult(double sommeInnitiale, double sommeFinale, long duree, int nbVente, int nbAchat) {
+			super();
+			this.sommeInnitiale = sommeInnitiale;
+			this.sommeFinale = sommeFinale;
+			this.duree = duree;
+			this.nbVente = nbVente;
+			this.nbAchat = nbAchat;
+		}
+		@Override
+		public String toString() {
+			return "SimuResult [sommeInnitiale=" + sommeInnitiale + ", sommeFinale=" + sommeFinale + ", duree_mn=" + duree/60000
+					+ ", nbVente=" + nbVente + ", nbAchat=" + nbAchat + "]";
+		}
+		public String toStringShort() {
+			// TODO Auto-generated method stub
+			return (df_1.format( 100.* (sommeFinale - sommeInnitiale)/sommeInnitiale)) +"%";
+		}
+		
+		
+		
+	}
 	
 }

@@ -14,6 +14,9 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import bg.panama.btc.model.Balance;
 import bg.panama.btc.model.Balances;
 import bg.panama.btc.model.v2.ITicker;
@@ -26,6 +29,7 @@ public class SessionCurrencies implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
+	private static final Logger loggerPanic= LogManager.getLogger("panic");
 	
 	@Id
 	@GeneratedValue
@@ -233,6 +237,47 @@ public class SessionCurrencies implements Serializable {
 
 	public void setDate(Date date) {
 		this.date = date;
+	}
+
+	public boolean isModePanic() {
+		int nNegative=0;
+		int nPositive=0;
+		int nNegativeMoyenne=0;
+		int nPositiveMoyenne=0;
+		int nStochasAcheter_10mn =0;
+		int nStochasVendre_10mn =0;
+		for(SessionCurrency sc : this.lSessionCurrency){
+			if (sc.getTicker_Z_1().getHourlyChangePerCent() > 0) {
+				nPositive ++;
+			}else {
+				nNegative++;
+			}
+			if (sc.getHourlyChangePerCentByDayInstant() > 0){
+				nPositiveMoyenne ++;
+			}else {
+				nNegativeMoyenne++;
+			}
+			SessionCurrency.EtatSTOCHASTIQUE etat_10mn = SessionCurrency.getStochastique(sc.getStochastique_10mn());
+			if (etat_10mn.vendre){
+				nStochasVendre_10mn++;
+			}else {
+				nStochasAcheter_10mn++;
+			}
+		}
+		boolean isPanic = false;
+		if (nPositive == 0){
+			isPanic = true;
+		}
+		if (nPositiveMoyenne == 0){
+			isPanic = true;
+		}
+		if (nStochasAcheter_10mn ==0){
+			isPanic =true;
+		}
+		String trace = "isModePanic :"+isPanic+"| nPositive :"+nPositive+" |  nNegative : "+nNegative+"| nPositiveMoyenne :"+ nPositiveMoyenne+"| nNegativeMoyenne :"+nNegativeMoyenne+"| nStochasAcheter_10mn :"+nStochasAcheter_10mn+"| nStochasVendre_10mn :"+nStochasVendre_10mn;
+		//System.err.println(trace);
+		loggerPanic.info(trace);
+		return isPanic;
 	}
 
 	
