@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.GridLayout;
+import java.awt.Point;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.MouseAdapter;
@@ -26,7 +27,7 @@ public class DialogShowCurrencyDetail extends JPanel{
 	PanelCanvasStochastique panelCanvasStochastique_1h;
 	PanelCanvasStochastique panelCanvasStochastique_10mn;
 	PanelCanvasAchatVente panelCanvasAchatVente;
-	public DialogShowCurrencyDetail(SessionCurrency session) {
+	public DialogShowCurrencyDetail(SessionCurrency session, Point location) {
 		
 		name = session.getName();
 		shortName = session.getShortName();
@@ -37,7 +38,10 @@ public class DialogShowCurrencyDetail extends JPanel{
 		panelCanvasStochastique_10mn = new PanelCanvasStochastique(shortName, PanelCanvasStochastique.TypeStochastique.stoc_10mn);
 		panelCanvasAchatVente = new PanelCanvasAchatVente(shortName);
 		this.session = session;
-		JLabel labelTitle = new JLabel("Detail : "+shortName);
+		String s0 = session.getHistory().getSimuResult(0);
+		String s1 = session.getHistory().getSimuResult(1);
+		String title = "Detail : "+shortName+"  "+s0+" "+s1;
+		JLabel labelTitle = new JLabel(title);
 		labelTitle.setFont(labelTitle.getFont().deriveFont(30));
 		this.addMouseListener(new MouseAdapter() {
 
@@ -62,7 +66,7 @@ public class DialogShowCurrencyDetail extends JPanel{
 
 		frame.pack();
 		frame.setVisible(true);
-
+		frame.setLocation(location);
 		frame.addComponentListener(new ComponentAdapter() {
 			public void componentHidden(ComponentEvent e) {
 				System.err.println("Hide detail "+name);

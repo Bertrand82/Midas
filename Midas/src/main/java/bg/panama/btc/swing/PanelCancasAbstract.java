@@ -6,6 +6,7 @@ import java.awt.Component;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
@@ -17,13 +18,13 @@ abstract public class PanelCancasAbstract {
 		JLabel label = new JLabel(getImageIcon());
 		panel.setBorder(BorderFactory.createLineBorder(Color.RED, 2));
 		panel.add(label, BorderLayout.WEST);
-		panel.add(new JLabel(getTitre()), BorderLayout.CENTER);
+		panel.add(getTitre(), BorderLayout.CENTER);
 		return panel;
 		
 	}
 
 	public abstract  ImageIcon getImageIcon() ;
 
-	public abstract String getTitre();
+	public abstract JComponent getTitre();
 
 }

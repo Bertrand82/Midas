@@ -2,6 +2,7 @@ package bg.panama.btc.swing;
 
 import java.awt.BorderLayout;
 import java.awt.Font;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
@@ -343,7 +344,8 @@ public class MidasGUI {
 		System.err.println("Show Detail " + name + "   " + b);
 		DialogShowCurrencyDetail dialogShowCurrency = hDetails.get(name);
 		if ((dialogShowCurrency == null) && b) {
-			dialogShowCurrency = new DialogShowCurrencyDetail(session);
+			Point location =new Point(this.frame.getLocation().x+10, this.frame.getLocation().y +10);
+			dialogShowCurrency = new DialogShowCurrencyDetail(session, location);
 			hDetails.put(name, dialogShowCurrency);
 		} else {
 			dialogShowCurrency.setVisible(b);

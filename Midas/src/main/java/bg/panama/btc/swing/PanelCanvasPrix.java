@@ -5,6 +5,8 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 
 import javax.swing.ImageIcon;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
 
 import bg.panama.btc.trading.first.SessionCurrency;
 import bg.util.PointDouble;
@@ -116,8 +118,8 @@ public class PanelCanvasPrix extends PanelCancasAbstract{
 	}
 
 	
-	public String getTitre() {
-		return "Prix vs $";
+	public  JComponent getTitre() {
+		return new JLabel("Prix vs $");
 	}
 
 	

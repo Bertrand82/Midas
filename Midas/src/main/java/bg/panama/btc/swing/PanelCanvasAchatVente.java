@@ -7,6 +7,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.ImageIcon;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 
 import org.hibernate.internal.SessionOwnerBehavior;
 
@@ -57,6 +60,9 @@ public class PanelCanvasAchatVente extends PanelCancasAbstract {
 		for (Value p : h.getStochastiques_10mn()) {
 			initMinMax(p);
 		}
+		String s0 =  h.getSimuResult(0);
+		String s1 =  h.getSimuResult(0);
+	    System.err.println("Result simu "+s0 +":"+s1);
 	}
 
 	void initMinMax(Value p) {
@@ -106,23 +112,18 @@ public class PanelCanvasAchatVente extends PanelCancasAbstract {
 				SessionCurrency.EtatSTOCHASTIQUE etat= SessionCurrency.getStochastique(vStochas);
 				boolean draw = false;
 				Color color = Color.MAGENTA;
-				if (etat == SessionCurrency.EtatSTOCHASTIQUE.down_up) {
+				if (etat.acheter) {
 					color = Color.GREEN;
 					draw = true;
-				}else if (etat == SessionCurrency.EtatSTOCHASTIQUE.up_down) {
+				}else if (etat.vendre) {
 					color = Color.RED;
-					draw = true;
-				}else if (etat == SessionCurrency.EtatSTOCHASTIQUE.down_down) {
-					draw = true;
-				}else if (etat == SessionCurrency.EtatSTOCHASTIQUE.up_up) {
-					color = Color.YELLOW;
 					draw = true;
 				}
 				if (draw){
 					g2.setColor(color);
 					int x = (int) ((vStochas.time - xMin)*w/dx);
 					g2.drawLine(x, 0, x, 20);
-					System.err.println("drawLine   x:"+x+"  etat: "+etat+"   color :"+color);
+					
 				}
 				// System.out.println("Prix Filtre:\t"+str+"\t x: " + x + " y :"
 				// + y);
@@ -130,10 +131,12 @@ public class PanelCanvasAchatVente extends PanelCancasAbstract {
 		}
 	}
 
+	
 	@Override
-	public String getTitre() {
+	public JComponent getTitre() {
 		String s = "Achat Vente";
-		return s;
+		return new JLabel(s);
+		
 	}
 
 	class PointAchatVente {

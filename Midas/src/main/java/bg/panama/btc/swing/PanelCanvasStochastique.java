@@ -6,6 +6,8 @@ import java.awt.image.BufferedImage;
 import java.util.List;
 
 import javax.swing.ImageIcon;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
 
 import bg.panama.btc.trading.first.SessionCurrency;
 import bg.util.PointDouble;
@@ -122,14 +124,14 @@ public class PanelCanvasStochastique  extends PanelCancasAbstract {
 	}
 
 	@Override
-	public String getTitre() {
+	public JComponent getTitre() {
 		String s = "Stochastique";
 		if (type == TypeStochastique.stoc_10mn){
 			s +=" 10 mn";
 		}else if (type == TypeStochastique.stoc_1heur){
 			s +=" 1 h";
 		}
-		return s;
+		return new JLabel(s);
 	}
 
 	

@@ -1,6 +1,8 @@
 package bg.panama.btc.swing;
 
 import java.io.Serializable;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -9,6 +11,7 @@ import bg.panama.btc.model.v2.Ticker;
 import bg.panama.btc.trading.commun.Value;
 import bg.panama.btc.trading.first.SessionCurrenciesFactory;
 import bg.panama.btc.trading.first.SessionCurrency;
+import bg.panama.btc.trading.first.SessionCurrency.EtatSTOCHASTIQUE;
 import bg.util.PointDouble;
 
 public class History implements Serializable {
@@ -198,4 +201,52 @@ public class History implements Serializable {
 		return list;
 	}
 
+	static final NumberFormat df_0 = new DecimalFormat("000"); 
+	static final NumberFormat df_3 = new DecimalFormat("000.000"); 
+	
+	public String getSimuResult(int retard) {
+		if (getListSessionCurrency().isEmpty()) {
+			return "";
+		}
+		double vDollar = 100;
+		double vCurrency=0;
+		double price=0.0;
+		int nAcheter = 0;
+		int nVendre = 0;
+		for(SessionCurrency sc : getListSessionCurrency()){
+			Value v  = sc.getStochastique_10mn();
+			price  = sc.getTicker_Z_1().getLastPrice();
+			SessionCurrency.EtatSTOCHASTIQUE etat = SessionCurrency.getStochastique(v);
+			if (etat.acheter){
+				nAcheter++;
+				nVendre=0;
+			}else if (etat.vendre){
+				nVendre++;
+				nAcheter=0;
+			}
+			
+			double totalD = vDollar+(vCurrency*price);
+			//System.out.println("Dollar   "+df_3.format(vDollar)+"\tcurrency  "+df_3.format(vCurrency)+  "\ttotal en dollar  "+df_3.format(totalD)+"   price "+price+" \tacheter: "+etat.acheter+"  vendre "+etat.vendre+"  "+etat);
+			if (nAcheter > retard){
+				vCurrency += vDollar/price;
+				vDollar =0;
+			}
+			if (nVendre > retard){
+				if (vCurrency > 0.0000001){
+					vDollar += vCurrency*price;
+					vCurrency=0;
+					}
+			}
+		
+		
+		
+		}
+		
+		double totalfinal = vDollar+vCurrency*price;
+		
+		return "Simu :"+ df_0.format(totalfinal)+" /100";
+	}
+
+	
+	
 }

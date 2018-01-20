@@ -352,11 +352,17 @@ public class SessionCurrency implements Serializable,Cloneable{
 				+ hourlyPrice + ", lastPrice=" + lastPrice + "]";
 	}
 	public enum EtatSTOCHASTIQUE {
-		up_up,
-		down_up,
-		down_down,
-		up_down,
-		unknow
+		up_up (true,false),
+		down_up(true,false),
+		down_down(false,true),
+		up_down(false,true),
+		unknow(false,false);
+		public boolean acheter;
+		public boolean vendre;
+		EtatSTOCHASTIQUE(boolean b1, boolean b2){
+			this.acheter = b2;
+			this.vendre = b1;
+		}
 	};
 	
 	
@@ -371,7 +377,7 @@ public class SessionCurrency implements Serializable,Cloneable{
 			if (st.getDerivee()<= 0.01) etat = EtatSTOCHASTIQUE.down_down;
 		}
 		//System.err.println("getStochastique "+etat+"  st :"+st);
-		return etat;
+		return etat; 
 	}
 
 	public boolean getStochastique_ok() {

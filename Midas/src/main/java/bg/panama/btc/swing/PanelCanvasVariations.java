@@ -5,6 +5,8 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 
 import javax.swing.ImageIcon;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
 
 import bg.panama.btc.trading.first.SessionCurrency;
 import bg.util.PointDouble;
@@ -105,9 +107,9 @@ public class PanelCanvasVariations  extends PanelCancasAbstract{
 	}
 
 @Override
-public String getTitre() {
+public JComponent getTitre() {
 	
-	return "Variations";
+	return new JLabel("Variations");
 }
 
 
