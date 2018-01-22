@@ -11,13 +11,18 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
 
+import bg.panama.btc.model.OrderBook;
 import bg.panama.btc.model.OrderBookFactory;
+import bg.panama.btc.model.OrderBookItem;
 import bg.panama.btc.swing.History.SimuResult;
 import bg.panama.btc.trading.first.SessionCurrency;
 
@@ -34,7 +39,7 @@ public class DialogShowCurrencyDetail extends JPanel {
 	PanelCanvasStochastique panelCanvasStochastique_1h;
 	PanelCanvasStochastique panelCanvasStochastique_10mn;
 	PanelCanvasAchatVente panelCanvasAchatVente;
-
+	PanelOrderBookHistory panelOrderBookHistory = new PanelOrderBookHistory();
 	public DialogShowCurrencyDetail(SessionCurrency session, Point location) {
 
 		name = session.getName();
@@ -69,6 +74,7 @@ public class DialogShowCurrencyDetail extends JPanel {
 				showBookOrder();
 			}
 		});
+		
 		JPanel panelNorth = new JPanel(new BorderLayout());
 		panelNorth.add(labelTitle, BorderLayout.CENTER);
 		panelNorth.add(buttonShowBook, BorderLayout.EAST);
@@ -83,6 +89,7 @@ public class DialogShowCurrencyDetail extends JPanel {
 		panelGlobal.setLayout(new BorderLayout());
 		panelGlobal.add(panelNorth, BorderLayout.NORTH);
 		panelGlobal.add(panelCenter, BorderLayout.CENTER);
+		panelGlobal.add(panelOrderBookHistory.getTabbedPane(), BorderLayout.SOUTH);
 		frame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 		frame.getContentPane().add(panelGlobal, BorderLayout.CENTER);
 
@@ -132,14 +139,16 @@ public class DialogShowCurrencyDetail extends JPanel {
 		return this.name.substring(1).toLowerCase();
 	}
 	
+	
 	protected void showBookOrder() {
 
 		try {
 			String symbol = this.getSymbolFromName();
-			System.out.println("Show Book Order symbol >" + symbol+"<");
-			OrderBookFactory.getInstance().getOrderBook(symbol);
-			PanelOrderBook panelOrderBook = new PanelOrderBook();
-			this.add(panelOrderBook, BorderLayout.SOUTH);
+			OrderBook book = OrderBookFactory.getInstance().getOrderBook(symbol);
+			this.panelOrderBookHistory.addOrderBook(book);
+			
+			this.frame.pack();
+			
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

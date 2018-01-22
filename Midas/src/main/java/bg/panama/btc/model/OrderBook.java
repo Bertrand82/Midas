@@ -44,6 +44,22 @@ public class OrderBook {
 		
 		return "OrderBook [ \n listAsks=" + listAsks + ",\n listBids=" + listBids + "\n]";
 	}
+
+	public List<OrderBookItem> getListAsks() {
+		return listAsks;
+	}
+
+	public void setListAsks(List<OrderBookItem> listAsks) {
+		this.listAsks = listAsks;
+	}
+
+	public List<OrderBookItem> getListBids() {
+		return listBids;
+	}
+
+	public void setListBids(List<OrderBookItem> listBids) {
+		this.listBids = listBids;
+	}
 	
 	
 
