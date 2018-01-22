@@ -11,7 +11,6 @@ import bg.panama.btc.model.v2.Ticker;
 import bg.panama.btc.trading.commun.Value;
 import bg.panama.btc.trading.first.SessionCurrenciesFactory;
 import bg.panama.btc.trading.first.SessionCurrency;
-import bg.panama.btc.trading.first.SessionCurrency.EtatSTOCHASTIQUE;
 import bg.util.PointDouble;
 
 public class History implements Serializable {

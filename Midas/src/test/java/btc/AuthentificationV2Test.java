@@ -6,23 +6,16 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.ProtocolException;
 import java.net.URL;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Test;
 
-import bg.panama.btc.BitfinexClient.EnumService;
 import bg.panama.btc.swing.ConfigFileProtected;
 
 public class AuthentificationV2Test {

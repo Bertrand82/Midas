@@ -17,7 +17,7 @@ public class BitfinexClientFactory {
 		 try {
 			 ConfigFileProtected pcf  = new ConfigFileProtected(password);
 			 System.out.println("getBitfinexClient "+pcf);
-			 getBitfinexClient(pcf);			
+			 bfnx = getBitfinexClient(pcf);			
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new RuntimeException(e);
@@ -26,13 +26,16 @@ public class BitfinexClientFactory {
 		
 	}
 	
-
-	public static BitfinexClient getBitfinexClient() {
+	public static BitfinexClient getBitfinexClientFree() {
+		return new BitfinexClient();
+	}
+	
+	public static BitfinexClient getBitfinexClientAuthenticated() {
 		try {
 			ConfigFileProtected pcf  = ConfigFileProtected.getInstance();
 			if (pcf == null){
 				System.err.println("No Config file !!!!!");
-				throw new Exception("NO Config File with api and secret key");
+				return new BitfinexClient();
 			}
 			return getBitfinexClient(pcf);
 		} catch (Exception e) {			

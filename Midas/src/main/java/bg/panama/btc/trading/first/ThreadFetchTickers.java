@@ -108,24 +108,6 @@ public class ThreadFetchTickers implements Runnable{
 	private static DecimalFormat decimalFormat = new DecimalFormat("0.000");
 	
 
-	private String getTrace2(List<SessionCurrency> list) {
-		String s ="";
-		for(SessionCurrency it : list){
-			s+=getTrace(it);
-		}
-		return s;
-	}
-
-	private String getTrace(List<SessionCurrency> list){
-		String s ="";
-		for(SessionCurrency it : list){
-			s+=getTrace(it);
-		}
-		return s;
-	}
-	private String getTrace(SessionCurrency x){
-		return x.getShortName()+" ["+decimalFormat.format(x.getHourlyChangePerCentByDay())+"]";
-	}
 	private Tickers fetchTickers(){
 		try {
 			return   (Tickers) bitfinexClient.serviceProcess(EnumService.tickersV2,"",symbolsCurrenciesSelected);

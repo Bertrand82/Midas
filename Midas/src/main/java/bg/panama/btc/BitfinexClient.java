@@ -28,6 +28,7 @@ import org.json.JSONObject;
 
 import bg.panama.btc.model.ActiveOrders;
 import bg.panama.btc.model.Balances;
+import bg.panama.btc.model.OrderBook;
 import bg.panama.btc.model.Symbols;
 import bg.panama.btc.model.TickerV1;
 import bg.panama.btc.model.v2.Tickers;
@@ -108,7 +109,7 @@ public class BitfinexClient {
 		symbols_details("symbols_details", Type.Public,true), 
 		stats("stats", Type.Public, rArrayTrue, null, Params.Symbol), 
 		ticker("pubticker", Type.Public,rArrayTrue, TickerV1.class, Params.Symbol), 
-		orderbook("book", Type.Public, rArrayTrue, null,Params.Symbol),
+		orderbook("book", Type.Public, rArrayTrue, OrderBook.class,Params.Symbol),
 		trades("trades", Type.Public, rArrayTrue, null,
 										Params.Symbol), lends("lends", Type.Public, rArrayTrue, null, Params.Currency),
 

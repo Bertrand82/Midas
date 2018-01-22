@@ -32,13 +32,13 @@ public class OrderManager {
 			try {
 				sendOrderPrivate(bfnx, order);
 			} catch (ExceptionNoSymbolForOrder e) {
-				// Je converti en btc qui est convertible en tout apparament
-				order.setCurrencyTo("btc");
+				// Je converti en usd qui est convertible en tout apparament
+				order.setCurrencyTo("usd");
 				try {
 					sendOrderPrivate(bfnx, order);
 				} catch (ExceptionNoSymbolForOrder e1) {	
 					System.err.println("Deuxiemme echec for order !!!");
-					loggerOrder.warn("Desesperant! Essayer le usd ?");
+					loggerOrder.warn("Desesperant!");
 				}
 			}
 		} catch (Throwable e) {
@@ -67,9 +67,7 @@ public class OrderManager {
 				throw new ExceptionNoSymbolForOrder("No symbol for order " + order);
 			}
 			order.setSymbolWithDirection(symbol);
-			TickerV1 ticker =(TickerV1) bfnx.serviceProcess(EnumService.ticker, "", symbol);
-			System.err.println("LastPrice : "+ticker.getLast_price()+"   MidPrice :  "+ticker.getMid());
-			double price = Math.max(ticker.getLast_price(), ticker.getMid());
+			double price = getPrice(symbol);
 			order.setPrice(price);
 			if(order.isBuying()){
 				double amountToConvert = order.getAmountDesired();
@@ -87,6 +85,18 @@ public class OrderManager {
 			e.printStackTrace();			
 		}
 
+	}
+
+	private double getPrice(String symbol) throws Exception {
+		double price = getPriceFromTickers(symbol);
+		return price;
+	}
+	private double getPriceFromTickers(String symbol) throws Exception {
+		BitfinexClient bfnx = BitfinexClientFactory.getBitfinexClientAuthenticated();
+		TickerV1 ticker =(TickerV1) bfnx.serviceProcess(EnumService.ticker, "", symbol);
+		System.err.println("LastPrice : "+ticker.getLast_price()+"   MidPrice :  "+ticker.getMid());
+		double price = Math.max(ticker.getLast_price(), ticker.getMid());
+		return price;
 	}
 
 

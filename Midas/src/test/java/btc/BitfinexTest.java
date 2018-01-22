@@ -1,14 +1,11 @@
 package btc;
 
-import java.io.File;
-
 import org.junit.Test;
 
 import bg.panama.btc.BitfinexClient;
-import bg.panama.btc.BitfinexClientFactory;
 import bg.panama.btc.BitfinexClient.EnumService;
+import bg.panama.btc.BitfinexClientFactory;
 import bg.panama.btc.model.Balances;
-import bg.panama.btc.swing.ConfigFileProtected;
 
 public class BitfinexTest {
 	
@@ -18,6 +15,7 @@ public class BitfinexTest {
 	BitfinexClient bfnx;
 	public BitfinexTest() {
 		bfnx = BitfinexClientFactory.getBitfinexClient(passwordDefault);
+		System.out.println("BitfinexTest.bfnx "+bfnx);
 	}
 	
 	

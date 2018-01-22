@@ -9,7 +9,6 @@ import bg.panama.btc.model.Balances;
 import bg.panama.btc.trading.first.Order;
 import bg.panama.btc.trading.first.ServiceCurrencies;
 import bg.panama.btc.trading.first.SessionCurrencies;
-import bg.panama.btc.trading.first.SessionCurrenciesFactory;
 
 public class OrderThreadSaveAllInUsd implements Runnable{
 

@@ -1,24 +1,13 @@
 package btc;
 
-import static bg.panama.btc.UtilBtc.*;
-
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
 import org.junit.Test;
 
 import bg.panama.btc.BitfinexClient;
 import bg.panama.btc.BitfinexClientFactory;
-import bg.panama.btc.BitfinexClient.EnumService;
-import bg.panama.btc.model.Balances;
-import bg.panama.btc.model.Symbols;
-import bg.panama.btc.model.TickerV1;
-import bg.panama.btc.swing.SymbolsConfig;
-import bg.panama.btc.trading.first.Order;public class OrderTestV1 {
+import bg.panama.btc.trading.first.Order;
+
+
+public class OrderTestV1 {
 
 	BitfinexClient bfnx;
 

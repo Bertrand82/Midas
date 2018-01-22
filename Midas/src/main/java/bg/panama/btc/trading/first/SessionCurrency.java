@@ -11,12 +11,9 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Transient;
 
-import org.hibernate.annotations.CascadeType;
-
 import bg.panama.btc.model.v2.Ticker;
 import bg.panama.btc.swing.History;
 import bg.panama.btc.trading.commun.Value;
-import bg.panama.btc.trading.first.SessionCurrency.EtatSTOCHASTIQUE;
 
 
 @Entity

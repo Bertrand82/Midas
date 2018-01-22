@@ -6,8 +6,6 @@ import javax.crypto.spec.SecretKeySpec;
 
 import org.junit.Test;
 
-import bg.panama.btc.swing.ConfigFileProtected;
-
 public class CryptoTest {
 
 	

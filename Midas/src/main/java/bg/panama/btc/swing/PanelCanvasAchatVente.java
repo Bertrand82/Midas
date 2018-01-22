@@ -9,14 +9,10 @@ import java.util.List;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
-
-import org.hibernate.internal.SessionOwnerBehavior;
 
 import bg.panama.btc.swing.History.SimuResult;
 import bg.panama.btc.trading.commun.Value;
 import bg.panama.btc.trading.first.SessionCurrency;
-import bg.util.PointDouble;
 
 public class PanelCanvasAchatVente extends PanelCancasAbstract {
 

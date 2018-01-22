@@ -37,7 +37,7 @@ public class Balances implements Serializable{
 				if (balance.isTypeEchange()) {
 					this.lBalancesExchange.add(balance);
 				}
-				System.out.println("balance  "+balance);
+				
 			}
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block

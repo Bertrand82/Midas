@@ -1,12 +1,7 @@
 package btc;
 
-import static org.junit.Assert.assertEquals;
-
-import java.util.Date;
-
 import org.junit.Test;
 
-import bg.panama.btc.model.v2.ITicker;
 import bg.panama.btc.model.v2.Ticker;
 import bg.panama.btc.trading.first.SessionCurrencies;
 import bg.panama.btc.trading.first.SessionCurrency;

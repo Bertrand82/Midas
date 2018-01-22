@@ -23,15 +23,12 @@ public class OrderFactory {
 
 	public void emergencySaveInDollar(String from) {
 			this.isPanic = true;
-			BitfinexClient bitfinexClient = BitfinexClientFactory.getBitfinexClient();
+			BitfinexClient bitfinexClient = BitfinexClientFactory.getBitfinexClientAuthenticated();
 			loggerOrder.info("emergencySaveInDollar from :"+from);
 			if (this.orderThreadSaveAllInUsd == null){
 				this.orderThreadSaveAllInUsd = new OrderThreadSaveAllInUsd(bitfinexClient);
 			}
 			this.orderThreadSaveAllInUsd.saveAllInUSD("from OrderFactory from "+from);
-		
-	
-		
 	}
 	
 	

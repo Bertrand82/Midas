@@ -32,6 +32,9 @@ public class AmbianceMarket {
 		this.isModePanic = isModePanic;
 		if (isModePanic){
 			nbPanic++;
+			nbPanicNo =0;
+		}else {
+			nbPanicNo++;
 		}
 	}
 
