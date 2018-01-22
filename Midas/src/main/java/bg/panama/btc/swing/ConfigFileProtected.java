@@ -28,6 +28,7 @@ public class ConfigFileProtected {
 	static final File dirPrivate = new File("private");
 	static final File defaultFile = new File(dirPrivate,"p_config_private.properties");
 	File file ;
+	private static ConfigFileProtected instance;
 	
 	private  char[] password;
 
@@ -53,6 +54,7 @@ public class ConfigFileProtected {
 		if (file.exists()){
 			properties.load(new FileReader(file));
 		}
+		instance = this;
 	}
 
    
@@ -116,4 +118,12 @@ public class ConfigFileProtected {
 		String clear = this.decrypt(crypted);
 		return clear;
 	}
+	public static ConfigFileProtected getInstance() {
+		return instance;
+	}
+	public static void removeInstance() {
+		instance = null;
+	}
+	
+	
 }

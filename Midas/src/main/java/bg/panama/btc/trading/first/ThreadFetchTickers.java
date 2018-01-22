@@ -13,6 +13,7 @@ import org.apache.logging.log4j.Logger;
 
 import bg.panama.btc.BitfinexClient;
 import bg.panama.btc.BitfinexClient.EnumService;
+import bg.panama.btc.OrderFactory;
 import bg.panama.btc.model.ActiveOrder;
 import bg.panama.btc.model.ActiveOrders;
 import bg.panama.btc.model.v2.Tickers;
@@ -37,7 +38,6 @@ public class ThreadFetchTickers implements Runnable{
 	BitfinexClient bitfinexClient;
 	SessionCurrencies sessionCurrencies;
 	Config config;
-	private boolean emergencySaveAllRequest = false;
 	public ThreadFetchTickers(Config config)  {	
 		this.config = config;
 		try {			
@@ -79,6 +79,9 @@ public class ThreadFetchTickers implements Runnable{
 					if(this.config.isOrderAble()){
 						//OrderManager.getInstance().sendOrders(this.bitfinexClient,orders);
 					}
+					if (sessionCurrencies.isModePanic()){
+						emergencySaveInDollar("ThreadFetchTickers");
+					}
 					MidasGUI.getInstance().updateThread();
 					EntityManagerFactory emf = HibernateUtil.getEntityManagerFactory();
 					EntityManager em = emf.createEntityManager();
@@ -93,9 +96,7 @@ public class ThreadFetchTickers implements Runnable{
 					log("Exception23: "+e.getClass()+" "+e.getMessage());
 					e.printStackTrace();
 				}
-			//	checkEmergencySaveRequest();
 				sleep(timeSleeping);
-			//	checkEmergencySaveRequest();
 			}
 			log( "stop thread");
 	}
@@ -163,11 +164,9 @@ public class ThreadFetchTickers implements Runnable{
 		return sessionCurrencies;
 	}
 
-	public void emergencySave(String from) {
+	public void emergencySaveInDollar(String from) {
 		log("emergy save request from "+from);
-		this.emergencySaveAllRequest=true;
-		
-		awake();
+		OrderFactory.getInstance().emergencySaveInDollar( from);
 	}
 
 	public Config getConfig() {

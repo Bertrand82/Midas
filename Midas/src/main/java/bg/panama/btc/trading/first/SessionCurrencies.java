@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.List;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -37,7 +38,10 @@ public class SessionCurrencies implements Serializable {
 
 	private final Date timeStart = new Date();
 	
-	private boolean isModePanic = false;
+	
+	
+	@Embedded
+	private AmbianceMarket ambianceMarket;
 	/**
 	 * Utile pour faire des tris
 	 */
@@ -218,6 +222,7 @@ public class SessionCurrencies implements Serializable {
 		SessionCurrencies s = new SessionCurrencies();
 		s.numero = numero;
 		s.sessionCurrencyBestEligible = sessionCurrencyBestEligible;
+		s.ambianceMarket = (AmbianceMarket) ambianceMarket.clone();
 		for(SessionCurrency sc : lSessionCurrency){
 			SessionCurrency sc2 =(SessionCurrency) sc.clone();
 			s.lSessionCurrency.add(sc2);
@@ -249,7 +254,9 @@ public class SessionCurrencies implements Serializable {
 		int nPositiveMoyenne=0;
 		int nStochasAcheter_10mn =0;
 		int nStochasVendre_10mn =0;
+		int nCurrencies =0;
 		for(SessionCurrency sc : this.lSessionCurrency){
+			nCurrencies =0;
 			if (sc.getTicker_Z_1().getHourlyChangePerCent() > 0) {
 				nPositive ++;
 			}else {
@@ -268,27 +275,48 @@ public class SessionCurrencies implements Serializable {
 			}
 		}
 		boolean isPanic = false;
+		String causePanicStr ="";
 		if (nPositive == 0){
-			isPanic = true;
+			isPanic = true;;
+			causePanicStr+="nbPositive == 0;";
 		}
 		if (nPositiveMoyenne == 0){
 			isPanic = true;
+			causePanicStr+="nPositiveMoyenne == 0;";
 		}
 		if (nStochasAcheter_10mn ==0){
 			isPanic =true;
+			causePanicStr+="nStochasAcheter_10mn == 0;";
 		}
-		String trace = "isModePanic :"+isPanic+"| nPositive :"+nPositive+" |  nNegative : "+nNegative+"| nPositiveMoyenne :"+ nPositiveMoyenne+"| nNegativeMoyenne :"+nNegativeMoyenne+"| nStochasAcheter_10mn :"+nStochasAcheter_10mn+"| nStochasVendre_10mn :"+nStochasVendre_10mn;
-		//System.err.println(trace);
+		if (this.ambianceMarket == null){
+			this.ambianceMarket = new AmbianceMarket();
+		}
+		this.ambianceMarket.setModePanic(isPanic); 
+		this.ambianceMarket.setCausePanic(causePanicStr);
+		String trace = ambianceMarket+"| nCurrencies :"+nCurrencies+"| nPositive :"+nPositive+" |  nNegative : "+nNegative+"| nPositiveMoyenne :"+ nPositiveMoyenne+"| nNegativeMoyenne :"+nNegativeMoyenne+"| nStochasAcheter_10mn :"+nStochasAcheter_10mn+"| nStochasVendre_10mn :"+nStochasVendre_10mn;
+		if (isModePanic()){
+			System.err.println(trace);
+		}
 		loggerPanic.info(trace);
-		this.isModePanic = isPanic;
+		
 	}
 
 	public boolean isModePanic() {
-		return isModePanic;
+		if (this.ambianceMarket == null){
+			System.err.println("ambianceMarket is nulll !!! Should never happen");
+			return true;
+		}
+		return this.ambianceMarket.isModePanic();
 	}
 
-	public void setModePanic(boolean isModePanic) {
-		this.isModePanic = isModePanic;
+	
+
+	public AmbianceMarket getAmbianceMarket() {
+		return ambianceMarket;
+	}
+
+	public void setAmbianceMarket(AmbianceMarket ambianceMarket) {
+		this.ambianceMarket = ambianceMarket;
 	}
 
 	

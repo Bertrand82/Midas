@@ -346,7 +346,6 @@ public class PanelCurrencies extends JPanel implements ICheckAlive {
 	}
 
 	public void updateBalances(Balances balances) {
-		System.out.println("updateBalances "+balances);
 		this.balances = balances;
 				Runnable runable = new Runnable() {
 			public void run() {

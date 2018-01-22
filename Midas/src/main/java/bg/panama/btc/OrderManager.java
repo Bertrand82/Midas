@@ -10,6 +10,8 @@ import bg.panama.btc.model.Symbols;
 import bg.panama.btc.model.TickerV1;
 import bg.panama.btc.trading.first.Order;
 
+
+
 public class OrderManager {
 
 	private static final Logger loggerOrder= LogManager.getLogger("orders");
@@ -40,7 +42,6 @@ public class OrderManager {
 				}
 			}
 		} catch (Throwable e) {
-			System.err.println("cccccccccccccccccccc");
 			e.printStackTrace();
 		}
 	}

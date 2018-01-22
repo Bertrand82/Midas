@@ -37,6 +37,7 @@ public class Balances implements Serializable{
 				if (balance.isTypeEchange()) {
 					this.lBalancesExchange.add(balance);
 				}
+				System.out.println("balance  "+balance);
 			}
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
@@ -72,7 +73,7 @@ public class Balances implements Serializable{
 		for (Balance balance : this.lBalancesExchange) {
 			String currency = balance.getCurrency();
 			SessionCurrency tickerCurrent = session.getTickerByCurrency(currency);
-			
+			System.out.println("balance cureency "+currency);
 			if(tickerCurrent == null){
 				if (currency.trim().equalsIgnoreCase("usd")){
 					tickerCurrent = SessionCurrency.SessionCurrencyUSD;

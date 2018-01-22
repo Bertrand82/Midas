@@ -55,7 +55,7 @@ public class Balance implements Serializable{
 	}
 	@Override
 	public String toString() {
-		return "Balance " + type + " " + currency + " " + amount + " avalaible " + available+"  $:"+availableInDollar
+		return "Balance " + type + " " + currency + "|amount :" + amount + "|avalaible :" + available+" | availableInDollar:"+availableInDollar
 				+ "]";
 	}
 	public double getLastPrice() {

@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Point;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
@@ -20,6 +21,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
+import javax.swing.event.MenuEvent;
+import javax.swing.event.MenuListener;
 
 import bg.panama.btc.BitfinexClient;
 import bg.panama.btc.BitfinexClient.EnumService;
@@ -28,6 +31,7 @@ import bg.panama.btc.model.Symbols;
 import bg.panama.btc.simu.DialogSimuGUI;
 import bg.panama.btc.trading.first.AlgoProcessCurrencies;
 import bg.panama.btc.trading.first.Config;
+import bg.panama.btc.trading.first.ServiceCurrencies;
 import bg.panama.btc.trading.first.SessionCurrencies;
 import bg.panama.btc.trading.first.SessionCurrency;
 import bg.panama.btc.trading.first.ThreadBalance;
@@ -51,7 +55,7 @@ public class MidasGUI {
 	ThreadProcessTickers threadProcessTickers;
 	ThreadBalance threadBalance;
 	private static MidasGUI instance;
-	JMenuItem menuPanic = new JMenuItem("PANIC");
+	JMenu menuPanic = new JMenu("PANIC");
 	public MidasGUI() {
 		super();
 		instance = this;
@@ -81,6 +85,15 @@ public class MidasGUI {
 			}
 		});
 
+		JMenuItem menuRemovePanic = new JMenuItem("Remove Panic  ");
+		menuRemovePanic.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				removePanic();
+			}
+		});
+		
 		JMenuItem menuItemCancelAllOrders = new JMenuItem("Cancel All Orders  ");
 		menuItemCancelAllOrders.addActionListener(new ActionListener() {
 
@@ -89,6 +102,7 @@ public class MidasGUI {
 				cancelAllOrders();
 			}
 		});
+
 
 		JMenuItem menuItemStartSimu = new JMenuItem("Start Simu ");
 		menuItemStartSimu.addActionListener(new ActionListener() {
@@ -136,9 +150,21 @@ public class MidasGUI {
 			}
 		});
 		
-		setPanic (false);
+		setPanic (false,0,0);
+        JMenu menuAuthentification  = new JMenu("Authentification");
+		JMenuItem menuSetPassword = new JMenuItem("Set Password");
+		JMenuItem menuRemovePassword = new JMenuItem("Remove Password");
 
-		JMenuItem menuSetPassword = new JMenuItem("Password");
+		menuAuthentification.add(menuSetPassword);
+		menuAuthentification.add(menuRemovePassword);
+		menuRemovePassword.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				System.err.println("Remove password");
+				ConfigFileProtected.removeInstance();
+			}
+		});
 		menuSetPassword.addActionListener(new ActionListener() {
 
 			@Override
@@ -157,13 +183,14 @@ public class MidasGUI {
 				startAuthenticatedThread();
 			}
 		});
-
+       
 		JMenu menuFile = new JMenu("File");
 		menuFile.add(menuItemSaveConfig);
 		menuFile.add(menuItemOrderAble);
 		menuFile.add(menuSelectCurrency);
 		menuFile.add(menuSetSecretKeys);
-		menuFile.add(this.menuPanic);
+		
+		 this.menuPanic.add(menuRemovePanic);
 
 		JMenu menuActions = new JMenu("Actions");
 		menuActions.add(menuItemCancelAllOrders);
@@ -173,8 +200,10 @@ public class MidasGUI {
 		JMenuBar menuBar = new JMenuBar();
 		menuBar.add(menuFile);
 		menuBar.add(menuActions);
-		menuBar.add(menuSetPassword);
+		
 		menuBar.add(this.menuPanic);
+		menuBar.add(menuAuthentification);
+		
 		JPanel panelButtons = new JPanel();
 
 		// panelButtons.add(buttonFetchSymbols);
@@ -203,20 +232,32 @@ public class MidasGUI {
 
 		startThreads();
 	}
-
-	private void setPanic(boolean isPanic) {
+   
+	private void setPanic(boolean isPanic,int nbPanic, int nbPanicNo) {
 		Color colorBackGround = Color.GREEN;
 		String text ;
 		if (isPanic){
 			text = "PANIC!";
 			colorBackGround = Color.RED;
-		}else {
-			text = "NO PANIC!";
+			beep();
+		}else if (nbPanic == 0){
+			text = "NO PANIC! "+nbPanicNo;
 			colorBackGround = Color.GREEN;
+		}else {
+			text = "NO PANIC now !"+nbPanic+" panics "+nbPanicNo+" ";
+			colorBackGround = Color.ORANGE;
 		}
 		this.menuPanic.setBackground(colorBackGround);
 		this.menuPanic.setText(text);
 		
+	}
+
+	private void beep() {
+		try {
+			Toolkit.getDefaultToolkit().beep();
+		} catch (Throwable e) {
+			
+		} 
 	}
 
 	private void fetchTickers() {
@@ -302,8 +343,9 @@ public class MidasGUI {
 				@Override
 				public void run() {
 					boolean  isModePanic = session.isModePanic();
-					setPanic(isModePanic);
-					
+					int nbPanic = session.getAmbianceMarket().getNbPanic();
+					int nbPanicNo = session.getAmbianceMarket().getNbPanicNo();
+					setPanic(isModePanic,nbPanic, nbPanicNo);					
 				}
 			};
 			SwingUtilities.invokeLater(runnable);
@@ -328,7 +370,7 @@ public class MidasGUI {
 
 	private void emergencySave() {
 		System.out.println("Emergency Save");
-		this.threadFetchTickers.emergencySave("Operator");
+		this.threadFetchTickers.emergencySaveInDollar("Operator");
 	}
 
 	private void cancelAllOrders() {
@@ -367,6 +409,7 @@ public class MidasGUI {
 		}
 		this.threadBalance = new ThreadBalance(getConfig());
 	}
+	
 
 	HashMap<String, DialogShowCurrencyDetail> hDetails = new HashMap<>();
 
@@ -385,6 +428,14 @@ public class MidasGUI {
 
 	public void removeDetail(String name) {
 		hDetails.remove(name);
+	}
+	
+	private void removePanic(){
+		System.err.println("remove PAnic");
+		this.setPanic(false, 0,0);
+		SessionCurrencies sessionCurrencies = ServiceCurrencies.getInstance().getSessionCurrencies();
+		sessionCurrencies.getAmbianceMarket().setNbPanic(0);
+		sessionCurrencies.getAmbianceMarket().setNbPanicNo(0);
 	}
 
 	private void startSimu() {

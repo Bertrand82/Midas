@@ -71,9 +71,7 @@ public class ThreadProcessTickers implements Runnable{
 				} finally{
 					em.close();
 				}
-			//	checkEmergencySaveRequest();
 				sleep(timeSleeping);
-			//	checkEmergencySaveRequest();
 			}
 			log( "stop thread");
 	}

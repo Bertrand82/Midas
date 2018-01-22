@@ -62,7 +62,7 @@ public class ThreadBalance implements Runnable{
 					if(this.config.isOrderAble()){
 						//OrderManager.getInstance().sendOrders(this.bitfinexClient,orders);
 					}
-					//this.sessionCurrencies.setBalancesCurrent(balances);
+					ServiceCurrencies.getInstance().setBalances(balances_);
 					MidasGUI.getInstance().updateThreadBalance(balances_);
 					
 				} catch (Exception e) {
@@ -96,7 +96,9 @@ public class ThreadBalance implements Runnable{
 	}
 	
 	public void stop(String from){
-		log( "stop request from "+from);
+		String trace = "stop request from "+from;
+		log( trace);
+		System.err.println(trace);
 		this.isOn =false;
 		this.awake();
 	}
