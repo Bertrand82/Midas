@@ -27,57 +27,43 @@ public class PanelOrderBook extends JPanel{
 	Date date = new Date();
 	String dateStr ="";
 	Font myFont = new Font ("Courier New", Font.BOLD, 25);
-	double ammountTotalAsk=0;
-	double ammountTotalBids =0;
-	int ammountTotalAskPercent = 0;
-	int ammountToyalBidPercent =0;
 	String label="";
-	public PanelOrderBook(Date date, OrderBook book, List<OrderBookItem> l) {
+	public PanelOrderBook(Date date, OrderBook book) {
 		this.book=book;
 		this.date = date;
 		dateStr=df.format(date);
 		this.setPreferredSize(dim);
 		this.setSize(dim);
-		l.addAll(book.getListAsks());
-		l.addAll(book.getListBids());
-		update(l);
+	
 	}
 	
-	public void update(List<OrderBookItem> l){
+	public void update(double maxPrice, double minPrice, double amountMax){
+		System.out.println("update orderBook panel maxPrice :"+maxPrice+"  minPrice :"+minPrice+"   amountMax :"+amountMax);
 		
-		double maxPrice = l.get(0).getPrice();
-		double minPrice = l.get(0).getPrice();
-		double amountMAx = l.get(0).getAmount();
-		for(OrderBookItem obi : l){
-			if (obi.getPrice() > maxPrice) maxPrice= obi.getPrice();
-			if (obi.getPrice() < minPrice) minPrice= obi.getPrice();
-			if (obi.getAmount()> amountMAx) amountMAx=obi.getAmount();
-		}
 		double deltaPrice  = maxPrice - minPrice;
 		list = new ArrayList<>();
-		ammountTotalAsk=0;
-		ammountTotalBids=0;
+		
 		for(OrderBookItem obi2 : book.getListAsks()){
 			int www =(int) ((obi2.getPrice()-minPrice)*w/deltaPrice);
-			int hhh =  (int)(((obi2.getAmount())/amountMAx) * h);
+			int hhh =  (int)(((obi2.getAmount())/amountMax) * h);
 			int hh = h - hhh;
 			int ww = w - www;
 			Item item = new Item(Color.green,ww,hh);
 			list.add(item);
-			ammountTotalAsk+= obi2.getAmount();
+			
 		}
 		for(OrderBookItem obi2 : book.getListBids()){
 			int www =(int) ((obi2.getPrice()-minPrice)*w/deltaPrice);
-			int hhh =  (int)(((obi2.getAmount())/amountMAx) * h);
+			int hhh =  (int)(((obi2.getAmount())/amountMax) * h);
 			int hh = h - hhh;
 			int ww = w - www;
 			Item item = new Item(Color.red,ww,hh);
 			list.add(item);
-			ammountTotalBids+= obi2.getAmount();
+			
 		}
-		ammountTotalAskPercent= (int) (ammountTotalAsk*100/(ammountTotalAsk+ammountTotalBids));
-		ammountToyalBidPercent= (int) (ammountTotalBids*100/(ammountTotalAsk+ammountTotalBids));
-		label  ="Ask : "+ammountTotalAskPercent+" % Bids "+ammountToyalBidPercent+" %";
+		label  ="Ask : "+book.getAmmountTotalAskPercent()+" % Bids "+book.getAmmountToyalBidPercent()+" %";
+		System.out.println("update orderBook panel label :"+label);
+		
 	}
 	@Override
 	public void paint(Graphics g) {
