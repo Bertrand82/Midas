@@ -1,13 +1,18 @@
 package bg.panama.btc.trading.commun;
 
+import java.io.Serializable;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
 @Entity
-public class Value {
+public class Value implements Serializable {
 
 	
+	
+	private static final long serialVersionUID = 1L;
+			
 	public Value() {
 	}
 

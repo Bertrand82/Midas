@@ -17,7 +17,7 @@ public class Order implements Serializable {
 	private String side;
 	private double price;
 	private String symbolWithDirection;
-		
+	private String comment ="";
 	private double amount;
 	private double amountToConvert;
 
@@ -137,6 +137,14 @@ public class Order implements Serializable {
 
 	public void setOrderType(OrderType orderType) {
 		this.orderType = orderType;
+	}
+
+	public String getComment() {
+		return comment;
+	}
+
+	public void setComment(String comment) {
+		this.comment = comment;
 	}
 
 	

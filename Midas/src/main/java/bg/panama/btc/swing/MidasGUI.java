@@ -7,10 +7,19 @@ import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.security.GeneralSecurityException;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Properties;
 
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -29,6 +38,7 @@ import bg.panama.btc.model.Symbols;
 import bg.panama.btc.simu.DialogSimuGUI;
 import bg.panama.btc.trading.first.AlgoProcessCurrencies;
 import bg.panama.btc.trading.first.Config;
+import bg.panama.btc.trading.first.Order;
 import bg.panama.btc.trading.first.ServiceCurrencies;
 import bg.panama.btc.trading.first.SessionCurrencies;
 import bg.panama.btc.trading.first.SessionCurrency;
@@ -38,14 +48,13 @@ import bg.panama.btc.trading.first.ThreadProcessTickers;
 
 public class MidasGUI {
 
-	JLabel labelLog = new JLabel(" ");
+	JLabel labelLog = new JLabel("Kabel log !!!!!  ");
 	DialogInputKey dialogInputKey;
-
 	DialogSelectSymbols dialogSelectSymbols;
 	ConfigFileProtected configFileProtected;
 	JButton buttonStartThreadThreading_OLD = new JButton("Start Thread Trading");
 	String password;
-	JCheckBoxMenuItem menuItemSaveConfig = new JCheckBoxMenuItem("Save Password");
+	JCheckBoxMenuItem menuItemSaveConfig_____DEPRECATED = new JCheckBoxMenuItem("Save Password");
 	JCheckBoxMenuItem menuItemOrderAble = new JCheckBoxMenuItem("Send Orders");
 	JFrame frame = new JFrame("Midas");
 	JPanel panelGlobal = new JPanel(new BorderLayout());
@@ -54,12 +63,21 @@ public class MidasGUI {
 	ThreadBalance threadBalance;
 	private static MidasGUI instance;
 	JMenu menuPanic = new JMenu("PANIC");
+	JCheckBox checkBoxSavePassword;
+
 	public MidasGUI() {
 		super();
 		instance = this;
 		Font font = new Font("Dialog", Font.BOLD, 18);
 		UIManager.put("Label.font", font);
+		this.checkBoxSavePassword = new JCheckBox("Save Password ", Config.getInstance().getSavePassword());
+		JMenuItem menuTestBestCurrency = new JMenuItem("Test Best Currency");
+		menuTestBestCurrency.addActionListener(new ActionListener() {
 
+			public void actionPerformed(ActionEvent e) {
+				testBestCurrency();
+			}
+		});
 		JMenuItem menuSetSecretKeys = new JMenuItem("Set Secret Keys");
 		menuSetSecretKeys.addActionListener(new ActionListener() {
 
@@ -91,7 +109,7 @@ public class MidasGUI {
 				removePanic();
 			}
 		});
-		
+
 		JMenuItem menuItemCancelAllOrders = new JMenuItem("Cancel All Orders  ");
 		menuItemCancelAllOrders.addActionListener(new ActionListener() {
 
@@ -101,7 +119,6 @@ public class MidasGUI {
 			}
 		});
 
-
 		JMenuItem menuItemStartSimu = new JMenuItem("Start Simu ");
 		menuItemStartSimu.addActionListener(new ActionListener() {
 
@@ -110,7 +127,7 @@ public class MidasGUI {
 				startSimu();
 			}
 		});
-		
+
 		JMenuItem menuItemEmergencySave = new JMenuItem("Emergency change In $ ");
 		menuItemEmergencySave.addActionListener(new ActionListener() {
 
@@ -119,7 +136,6 @@ public class MidasGUI {
 				emergencySave();
 			}
 		});
-
 
 		JButton buttonFetchSymbols = new JButton("Fetch symbols");
 		buttonFetchSymbols.addActionListener(new ActionListener() {
@@ -140,23 +156,38 @@ public class MidasGUI {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				if (threadFetchTickers != null) {
-					boolean b = menuItemOrderAble.isSelected();
-					System.err.println("orderAble::  " + b);
-					threadFetchTickers.getConfig().setOrderAble(b);
+					boolean orderAble = menuItemOrderAble.isSelected();
+					System.err.println("orderAble::  " + orderAble);
+					Config.getInstance().setOrderAble(orderAble);
 				}
 
 			}
 		});
-		
-		setPanic (false,0,0);
-        JMenu menuAuthentification  = new JMenu("Authentification");
+
+		setPanic(false, 0, 0);
+		JMenu menuAuthentification = new JMenu("Authentification");
 		JMenuItem menuSetPassword = new JMenuItem("Set Password");
 		JMenuItem menuRemovePassword = new JMenuItem("Remove Password");
+		JMenuItem menuSavePassword = new JMenuItem("Save Password");
 
 		menuAuthentification.add(menuSetPassword);
 		menuAuthentification.add(menuRemovePassword);
+		menuAuthentification.add(menuSavePassword);
+
+		menuSavePassword.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				System.out.println("SavePAssword");
+
+				JOptionPane.showMessageDialog(frame, checkBoxSavePassword);
+				boolean savePassword = checkBoxSavePassword.isSelected();
+				System.out.println("SavePassword done " + savePassword);
+				Config.getInstance().setSavePassword(savePassword);
+			}
+		});
 		menuRemovePassword.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				System.err.println("Remove password");
@@ -169,9 +200,7 @@ public class MidasGUI {
 			public void actionPerformed(ActionEvent e) {
 				System.err.println("setpassword start");
 				password = (String) JOptionPane.showInputDialog(frame, "Password:\n", "Properties Password",
-						JOptionPane.PLAIN_MESSAGE,
-
-						null, null, "mypassword");
+						JOptionPane.PLAIN_MESSAGE, null, null, "mypassword");
 				try {
 					MidasGUI.this.configFileProtected = new ConfigFileProtected(password);
 				} catch (Exception e1) {
@@ -181,14 +210,14 @@ public class MidasGUI {
 				startAuthenticatedThread();
 			}
 		});
-       
+
 		JMenu menuFile = new JMenu("File");
-		menuFile.add(menuItemSaveConfig);
 		menuFile.add(menuItemOrderAble);
 		menuFile.add(menuSelectCurrency);
 		menuFile.add(menuSetSecretKeys);
-		
-		 this.menuPanic.add(menuRemovePanic);
+		menuFile.add(menuTestBestCurrency);
+
+		this.menuPanic.add(menuRemovePanic);
 
 		JMenu menuActions = new JMenu("Actions");
 		menuActions.add(menuItemCancelAllOrders);
@@ -198,10 +227,10 @@ public class MidasGUI {
 		JMenuBar menuBar = new JMenuBar();
 		menuBar.add(menuFile);
 		menuBar.add(menuActions);
-		
+
 		menuBar.add(this.menuPanic);
 		menuBar.add(menuAuthentification);
-		
+
 		JPanel panelButtons = new JPanel();
 
 		// panelButtons.add(buttonFetchSymbols);
@@ -210,10 +239,11 @@ public class MidasGUI {
 		// panelButtons.add(buttonStartThreadThreading);
 
 		panelGlobal.add(panelButtons, BorderLayout.NORTH);
-		panelGlobal.add(labelLog, BorderLayout.SOUTH);
 
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.getContentPane().setLayout(new BorderLayout());
 		frame.getContentPane().add(panelGlobal, BorderLayout.CENTER);
+		frame.getContentPane().add(labelLog, BorderLayout.SOUTH);
 		frame.setJMenuBar(menuBar);
 		frame.pack();
 		frame.setVisible(true);
@@ -230,32 +260,32 @@ public class MidasGUI {
 
 		startThreads();
 	}
-   
-	private void setPanic(boolean isPanic,int nbPanic, int nbPanicNo) {
+
+	private void setPanic(boolean isPanic, int nbPanic, int nbPanicNo) {
 		Color colorBackGround = Color.GREEN;
-		String text ;
-		if (isPanic){
+		String text;
+		if (isPanic) {
 			text = "PANIC!";
 			colorBackGround = Color.RED;
 			beep();
-		}else if (nbPanic == 0){
-			text = "NO PANIC! "+nbPanicNo;
+		} else if (nbPanic == 0) {
+			text = "NO PANIC! " + nbPanicNo;
 			colorBackGround = Color.GREEN;
-		}else {
-			text = "NO PANIC now !"+nbPanic+" panics "+nbPanicNo+" ";
+		} else {
+			text = "NO PANIC now !" + nbPanic + " panics " + nbPanicNo + " ";
 			colorBackGround = Color.ORANGE;
 		}
 		this.menuPanic.setBackground(colorBackGround);
 		this.menuPanic.setText(text);
-		
+
 	}
 
 	private void beep() {
 		try {
 			Toolkit.getDefaultToolkit().beep();
 		} catch (Throwable e) {
-			
-		} 
+
+		}
 	}
 
 	private void fetchTickers() {
@@ -317,14 +347,15 @@ public class MidasGUI {
 	}
 
 	private void startThreads() {
-		threadFetchTickers = new ThreadFetchTickers(getConfig());
+		threadFetchTickers = new ThreadFetchTickers();
 		threadProcessTickers = new ThreadProcessTickers();
-	}
-
-	private Config getConfig() {
-		boolean orderAble = this.menuItemOrderAble.isSelected();
-		Config config = new Config(orderAble, password);
-		return config;
+		try {
+			MidasGUI.this.configFileProtected = new ConfigFileProtected(Config.getInstance().getPassword());
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		startAuthenticatedThread();
 	}
 
 	public static MidasGUI getInstance() {
@@ -337,13 +368,13 @@ public class MidasGUI {
 		try {
 			SessionCurrencies session = this.threadFetchTickers.getSesionCurrencies();
 			Runnable runnable = new Runnable() {
-				
+
 				@Override
 				public void run() {
-					boolean  isModePanic = session.isModePanic();
+					boolean isModePanic = session.isModePanic();
 					int nbPanic = session.getAmbianceMarket().getNbPanic();
 					int nbPanicNo = session.getAmbianceMarket().getNbPanicNo();
-					setPanic(isModePanic,nbPanic, nbPanicNo);					
+					setPanic(isModePanic, nbPanic, nbPanicNo);
 				}
 			};
 			SwingUtilities.invokeLater(runnable);
@@ -398,16 +429,19 @@ public class MidasGUI {
 	}
 
 	public void updateThreadBalance(Balances balances) {
-		this.panelCurrencies.updateBalances(balances);
+		if (this.panelCurrencies == null) {
+			System.err.println("PanelCurrencies is not yet initialized");
+		} else {
+			this.panelCurrencies.updateBalances(balances);
+		}
 	}
 
 	private void startAuthenticatedThread() {
 		if (this.threadBalance != null) {
 			threadBalance.stop("GUI");
 		}
-		this.threadBalance = new ThreadBalance(getConfig());
+		this.threadBalance = new ThreadBalance();
 	}
-	
 
 	HashMap<String, DialogShowCurrencyDetail> hDetails = new HashMap<>();
 
@@ -416,7 +450,7 @@ public class MidasGUI {
 		System.err.println("Show Detail " + name + "   " + b);
 		DialogShowCurrencyDetail dialogShowCurrency = hDetails.get(name);
 		if ((dialogShowCurrency == null) && b) {
-			Point location =new Point(this.frame.getLocation().x+10, this.frame.getLocation().y +10);
+			Point location = new Point(this.frame.getLocation().x + 10, this.frame.getLocation().y + 10);
 			dialogShowCurrency = new DialogShowCurrencyDetail(session, location);
 			hDetails.put(name, dialogShowCurrency);
 		} else {
@@ -427,17 +461,55 @@ public class MidasGUI {
 	public void removeDetail(String name) {
 		hDetails.remove(name);
 	}
-	
-	private void removePanic(){
+
+	private void removePanic() {
 		System.err.println("remove PAnic");
-		this.setPanic(false, 0,0);
+		this.setPanic(false, 0, 0);
 		SessionCurrencies sessionCurrencies = ServiceCurrencies.getInstance().getSessionCurrencies();
 		sessionCurrencies.getAmbianceMarket().setNbPanic(0);
 		sessionCurrencies.getAmbianceMarket().setNbPanicNo(0);
+		log("Remove Panic");
 	}
 
 	private void startSimu() {
 		new DialogSimuGUI();
-		
+	}
+
+	public void log(String s) {
+		SwingUtilities.invokeLater(() -> {
+			labelLog.setText(s);
+		});
+	}
+
+	public void log(List<Order> listOrdersAchat, List<Order> listOrdersVente) {
+		String s = "Orders ";
+		if (listOrdersAchat == null) {
+
+		} else {
+			s += "Orders Achat n :" + listOrdersAchat.size();
+			for (Order o : listOrdersAchat) {
+				s += " " + o.getCurrencyTo() + " " + o.getAmmount() + "  " + o.getCurrencyFrom() + " ;";
+			}
+		}
+		if (listOrdersVente == null){
+			
+		}else {
+			s += "Orders Vente n :" + listOrdersVente.size();
+			for (Order o : listOrdersVente) {
+				s += " " + o.getCurrencyTo() + " " + o.getAmmount() + "  " + o.getCurrencyFrom() + " ;";
+			}
+		}
+		log(s);
+	}
+
+	private void testBestCurrency() {
+		SessionCurrencies sessionCurrencies = ServiceCurrencies.getInstance().getSessionCurrencies();
+		if (sessionCurrencies == null) {
+			System.err.println("No sessionCurrencies for processing orders");
+			log("No session yet . Just try again later");
+			return;
+		}
+		SessionCurrency sessionBest = sessionCurrencies.getBestEligible();
+		log("Best Currency : " + sessionBest);
 	}
 }

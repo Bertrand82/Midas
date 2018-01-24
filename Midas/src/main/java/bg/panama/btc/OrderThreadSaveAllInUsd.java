@@ -10,7 +10,7 @@ import bg.panama.btc.trading.first.Order;
 import bg.panama.btc.trading.first.ServiceCurrencies;
 import bg.panama.btc.trading.first.SessionCurrencies;
 
-public class OrderThreadSaveAllInUsd implements Runnable{
+public class OrderThreadSaveAllInUsd implements Runnable {
 
 	BitfinexClient bitfinexClient;
 
@@ -19,7 +19,7 @@ public class OrderThreadSaveAllInUsd implements Runnable{
 	}
 
 	public void saveAllInUSD(String from) {
-		System.err.println("SaveAllInUSD from : "+from);
+		System.err.println("SaveAllInUSD from : " + from);
 		Thread t = new Thread(this);
 		t.setDaemon(false);
 		t.start();
@@ -32,22 +32,23 @@ public class OrderThreadSaveAllInUsd implements Runnable{
 			SessionCurrencies sessionCurrencies = ServiceCurrencies.getInstance().getSessionCurrencies();
 			Balances balances = ServiceCurrencies.getInstance().getBalances();
 			List<Order> lOrders = new ArrayList<>();
-			for(Balance balance : balances.getlBalancesExchange()){
-				double ammountDollar =  balance.getAmountInDollar();
-				String currencyFrom = balance.getCurrency();
-				Order order = new Order(currencyFrom, "usd", balance.getAmount());
-				lOrders.add(order);
+			for (Balance balance : balances.getlBalancesExchange()) {
+				double ammountDollar = balance.getAmountInDollar();
+				if (ammountDollar > 50) {
+					String currencyFrom = balance.getCurrency();
+					Order order = new Order(currencyFrom, "usd", balance.getAmount());
+					lOrders.add(order);
+				}
 			}
-			OrderManager.getInstance().sendOrders(bitfinexClient, lOrders);
+			OrderManager.getInstance().sendOrdersAchat(bitfinexClient, lOrders);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
-
-	public void cancelAllOrders() throws Exception{
-		Object o = this.bitfinexClient.serviceProcess(EnumService.cancelAllOrders,"","");
-		System.out.println("orders :"+o);
+	public void cancelAllOrders() throws Exception {
+		Object o = this.bitfinexClient.serviceProcess(EnumService.cancelAllOrders, "", "");
+		System.out.println("orders :" + o);
 	}
-	
+
 }

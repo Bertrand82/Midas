@@ -37,9 +37,9 @@ public class ThreadFetchTickers implements Runnable{
 	boolean isOn = true;
 	BitfinexClient bitfinexClient;
 	SessionCurrencies sessionCurrencies;
-	Config config;
-	public ThreadFetchTickers(Config config)  {	
-		this.config = config;
+	Config config = Config.getInstance();
+	public ThreadFetchTickers()  {	
+		
 		try {			
 			this.symbolsCurrenciesSelected = SymbolsConfig.getInstance().getSymbolsSelectedRequest();
 			String pwd = config.getPassword();

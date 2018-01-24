@@ -21,11 +21,20 @@ public class OrderManager {
 		return instance;
 	}
 	
-	public void sendOrders (BitfinexClient bfnx ,List<Order> orders){
+	public void sendOrdersAchat (BitfinexClient bfnx ,List<Order> orders){
 		for(Order order: orders){
-			sendOrder(bfnx, order);
+			System.out.println("sendOrdersAchat No Implemented yet Order"+order);
+		
 		}
 	}
+	
+	public void sendOrdersVente(BitfinexClient bitfinexClient, List<Order> orders) {
+		for(Order order: orders){
+			System.out.println("sendOrdersVente No Implemented yet Order"+order);		
+		}
+	}
+
+
 
 	public  void sendOrder(BitfinexClient bfnx ,Order order){
 		try {
@@ -75,8 +84,9 @@ public class OrderManager {
 			}
 			loggerOrder.info("sendOrder : "+order);
 			
-			String r = bfnx.sendOrder(order);
-			loggerOrder.info(r);
+			//String r = bfnx.sendOrder(order);
+			String r ="No SEND ORDER  IMPLEMENTED YET";
+			loggerOrder.info("reponse Order "+r);
 		} catch (ExceptionNoSymbolForOrder e) {
 			throw e;
 		} catch (Exception e) {
@@ -99,5 +109,5 @@ public class OrderManager {
 		return price;
 	}
 
-
+	
 }

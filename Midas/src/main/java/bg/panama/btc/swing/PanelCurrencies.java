@@ -4,6 +4,8 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
@@ -13,6 +15,7 @@ import java.util.concurrent.TimeUnit;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -44,7 +47,7 @@ public class PanelCurrencies extends JPanel implements ICheckAlive {
 	private HashMap<String,Boolean > hDetail = new HashMap<>();
 	SessionCurrencies session;
 	private JLabel labelTitre_ = new JLabel("Total ");
-	private JLabel labelBest_ = new JLabel("Best ");
+	private JButton buttonZBest = new JButton("Best ");
 	private JLabel labelMontantTotal = new JLabel("montant Total");
 	private JCheckBox checkBoxDisplayVariationPrice = new JCheckBox("Variation ", true);
 	String[] columnNames = { "Symbol","montant" ,"= dollar", "% Day", "% Hour f", "% Hour instant","Eligible","detail" ,"Variations","Prices"};
@@ -221,8 +224,8 @@ public class PanelCurrencies extends JPanel implements ICheckAlive {
 		table.getColumnModel().getColumn(5).setCellRenderer(new DoubleTableCellRenderer());
 		table.setRowHeight(60);
 		//table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-		table.getColumnModel().getColumn(0).setPreferredWidth(50);
-		table.getColumnModel().getColumn(0).setMaxWidth(50);
+		table.getColumnModel().getColumn(0).setPreferredWidth(55);
+		table.getColumnModel().getColumn(0).setMaxWidth(55);
 		table.getColumnModel().getColumn(1).setPreferredWidth(40);
 		table.getColumnModel().getColumn(2).setPreferredWidth(80);//dollar
 		table.getColumnModel().getColumn(3).setPreferredWidth(40);
@@ -242,7 +245,7 @@ public class PanelCurrencies extends JPanel implements ICheckAlive {
 		JPanel panelNorth = new JPanel(new BorderLayout());
 		JPanel panelWest = new JPanel();
 		panelWest.add(labelTitre_);
-		panelWest.add(labelBest_);
+		panelWest.add(buttonZBest);
 		panelNorth.add(panelWest,BorderLayout.WEST);
 		panelNorth.add(labelMontantTotal,BorderLayout.CENTER);
 		panelNorth.add(checkBoxDisplayVariationPrice,BorderLayout.EAST);
@@ -253,8 +256,24 @@ public class PanelCurrencies extends JPanel implements ICheckAlive {
 		this.add(scrollPane, BorderLayout.CENTER);
 		this.add(panelNorth, BorderLayout.NORTH);
 		this.update(session);
+		buttonZBest.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				showTheBest();
+			}
+		});
 	}
 	
+	private void showTheBest(){
+		System.out.println("showTBest");
+		if (balances==null){
+			System.out.println("No Balances");
+		}else {
+		 SessionCurrency sessionCurrency = this.session.getBestEligible();
+		 System.out.println("ZBest2 is "+sessionCurrency);
+		}
+	}
 	void initCanvas(){
 		try {
 			for(SessionCurrency sc : this.session.getListOrder_byHourlyChangePerCentByDay()){	
@@ -286,19 +305,16 @@ public class PanelCurrencies extends JPanel implements ICheckAlive {
 						pcPrix.update( sc.getHistory());
 					}
 					table.updateUI();
-					SessionCurrency best = session.getSessionCurrencyBestEligible();
+					String bestEligible = session.getSessionCurrencyBestEligible();					
 					
-					String bestEligible ;
-					if(best== null){
+					if(bestEligible== null){
 						bestEligible=" - ";
-					}else {
-						bestEligible= best.getShortName();
 					}
 					long duree =System.currentTimeMillis() -  session.getTimeStart().getTime(); 
 					String dureeStr = String.format("%02d h  %02d mn", 
 						    TimeUnit.MILLISECONDS.toHours(duree),
 						    TimeUnit.MILLISECONDS.toMinutes(duree) 	);
-					labelTitre_.setText(" n :"+session.getNumero()+" | duree :"+dureeStr+"  | best :"+bestEligible);
+					labelTitre_.setText(" n :"+session.getNumero()+" | duree :"+dureeStr+" "+bestEligible);
 				} catch (Throwable e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -334,8 +350,8 @@ public class PanelCurrencies extends JPanel implements ICheckAlive {
 			public void run() {
 				try {					
 					table.updateUI();
-					String bestEligible =algoProcess.getTickerBest().getShortName();								
-					labelBest_.setText(" zbest :"+bestEligible);
+					String bestEligible =algoProcess.getTickerBestByMoyenne().getShortName();								
+					buttonZBest.setText(" zbest3 :"+bestEligible);
 				} catch (Throwable e) {
 					e.printStackTrace();
 				}

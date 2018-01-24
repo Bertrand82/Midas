@@ -3,12 +3,14 @@ package bg.panama.btc.trading.first;
 
 
 import java.text.DecimalFormat;
+import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import bg.panama.btc.BitfinexClient;
 import bg.panama.btc.BitfinexClient.EnumService;
+import bg.panama.btc.OrderManager;
 import bg.panama.btc.model.Balances;
 import bg.panama.btc.model.v2.TickersFactory;
 import bg.panama.btc.swing.ConfigFileProtected;
@@ -27,10 +29,10 @@ public class ThreadBalance implements Runnable{
 	private String symbolsCurrenciesSelected;
 	boolean isOn = true;
 	private BitfinexClient bitfinexClient;
-	private Config config;
+	private Config config = Config.getInstance();
 	
-	public ThreadBalance(Config config)  {	
-		this.config = config;
+	public ThreadBalance()  {	
+		
 		try {			
 			this.symbolsCurrenciesSelected = SymbolsConfig.getInstance().getSymbolsSelectedRequest();
 			String pwd = config.getPassword();
@@ -56,15 +58,23 @@ public class ThreadBalance implements Runnable{
 			loggerTrade.info( "Thread Balance");
 			while(isOn ){
 				try {
-					Balances balances_ = fetchBalances();
+					Balances balances = fetchBalances();
 					
 					//List<Order> orders = balances.process(sessionCurrencies);
-					if(this.config.isOrderAble()){
-						//OrderManager.getInstance().sendOrders(this.bitfinexClient,orders);
-					}
-					ServiceCurrencies.getInstance().setBalances(balances_);
-					MidasGUI.getInstance().updateThreadBalance(balances_);
 					
+					ServiceCurrencies.getInstance().setBalances(balances);
+					MidasGUI.getInstance().updateThreadBalance(balances);
+					
+					List<Order> listOrdersAchat = balances.processOrdersAchat();
+					List<Order> listOrdersVente = balances.processOrdersVente();
+					if(this.config.isOrderAble()){
+						OrderManager.getInstance().sendOrdersAchat(this.bitfinexClient,listOrdersAchat);
+						OrderManager.getInstance().sendOrdersVente(this.bitfinexClient,listOrdersAchat);
+						MidasGUI.getInstance().log(listOrdersAchat,listOrdersVente);
+					}else {
+						MidasGUI.getInstance().log("Order No Send : config is not orderable");
+						System.err.println("Order No Send: config is not orderable!! ");
+					}
 				} catch (Exception e) {
 					log("Exception22: "+e.getClass()+" "+e.getMessage());
 					System.err.println("Exception22 "+e.getClass()+" "+e.getMessage());

@@ -1,10 +1,15 @@
 package bg.panama.btc.trading.first;
 
+import java.io.Serializable;
+
 import javax.persistence.Embeddable;
 
 @Embeddable
-public class AmbianceMarket {
+public class AmbianceMarket implements Serializable {
 	
+	
+	private static final long serialVersionUID = 1L;
+
 	private boolean isModePanic = false;
 	
 	private int nbPanic =0;

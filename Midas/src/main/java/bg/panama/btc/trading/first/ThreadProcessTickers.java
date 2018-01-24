@@ -17,7 +17,7 @@ import bg.panama.btc.swing.MidasGUI;
 import bg.util.HibernateUtil;
 
 
-
+@Deprecated
 public class ThreadProcessTickers implements Runnable{
 
 	private static final Logger loggerProcessCurrencies= LogManager.getLogger("processCurrencies");
@@ -33,7 +33,9 @@ public class ThreadProcessTickers implements Runnable{
 		try {			
 			//this.symbolsCurrenciesSelected = SymbolsConfig.getInstance().getSymbolsSelectedRequest();
 			t.setDaemon(true);
-			t.start();			
+			t.setName("ThreadProcessTickers");
+			//t.start();		
+			
 		} catch (Exception e) {
 			isOn = false;
 			this.timeSleeping=1l;
@@ -55,7 +57,7 @@ public class ThreadProcessTickers implements Runnable{
 					if (lTickers.size() > 0){
 					AlgoProcessCurrencies algoProcess = new AlgoProcessCurrencies(lTickers);
 					
-					Ticker zBest = algoProcess.getTickerBest();
+					Ticker zBest = algoProcess.getTickerBestByMoyenne();
 						
 					loggerProcessCurrencies.info(""+algoProcess.toString());
 					

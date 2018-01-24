@@ -130,4 +130,16 @@ public class Balance implements Serializable{
 		}
 	}
 
+	public double getAchatMaxInDollar() {
+		return getAchatMaxInDollar(this.currency);
+	}
+	
+	public static double  getAchatMaxInDollar(String currency){
+		SymbolConfig symbol = SymbolsConfig.getInstance().getSymbolConfig(currency);
+		double maxDollar = symbol.getMaxTrade();
+		if (maxDollar <= 0){
+			return 0;
+		}
+		return maxDollar;
+	}
 }

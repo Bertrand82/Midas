@@ -41,7 +41,7 @@ public class SessionCurrencies implements Serializable {
 	
 	
 	@Embedded
-	private AmbianceMarket ambianceMarket;
+	private AmbianceMarket ambianceMarket = new AmbianceMarket();
 	/**
 	 * Utile pour faire des tris
 	 */
@@ -74,6 +74,14 @@ public class SessionCurrencies implements Serializable {
 	public SessionCurrency getSessionCurrency_byName(String name) {
 		for (SessionCurrency z : lSessionCurrency) {
 			if (name.equalsIgnoreCase(z.getName())) {
+				return z;
+			}
+		}
+		return null;
+	}
+	public SessionCurrency getSessionCurrency_byShortName(String name) {
+		for (SessionCurrency z : lSessionCurrency) {
+			if (name.equalsIgnoreCase(z.getShortName())) {
 				return z;
 			}
 		}
@@ -166,25 +174,30 @@ public class SessionCurrencies implements Serializable {
 		}
 		return null;
 	}
-    SessionCurrency sessionCurrencyBestEligible;
-	public SessionCurrency getSessionCurrencyBestEligible() {
+    String  sessionCurrencyBestEligible;
+    
+	public String getSessionCurrencyBestEligible() {
 		return sessionCurrencyBestEligible;
 	}
 
 	
-	public SessionCurrency getBestEligible(Balances balancesCurrent) {
+	public SessionCurrency getBestEligible() {
 		List<SessionCurrency> list = this.getListOrder_byHourlyChangePerCentByDay();
 		// Liste ordonnée les premieres sont lthe best ... si elles sont eligibles
-		if (balancesCurrent == null){
-			return null;
-		}
+		
 		for (int i = 0; i < list.size(); i++) {
 			
 			SessionCurrency sc = (SessionCurrency) list.get(i);
-			Balance b = balancesCurrent.getBalance(sc.getShortName());
-			if (sc.isEligible() && !b.isOverLimit()) {
-				this.sessionCurrencyBestEligible =sc;
-				return sc;
+			//Balance b = balancesCurrent.getBalance(sc.getShortName());
+			if (sc.isEligible()) {
+				this.sessionCurrencyBestEligible =sc.getShortName();
+				if (sc.getEtatStochastique_10mn().acheter){
+				
+					return sc;
+				}
+				
+			}else {
+				System.err.println("getBestEligible No elligible :"+sc.getShortName());
 			}
 		}
 		System.err.println("getBestEligible Pas de currency eligible");

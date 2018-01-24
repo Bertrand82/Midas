@@ -37,10 +37,11 @@ public class AlgoProcessCurrencies {
 		return l;
 	}
 
-	public Ticker getTickerBest() {
-		
+	public Ticker getTickerBestByMoyenne() {
+		List<AlgoProcessCurrency> l = new ArrayList<>();
+		l.addAll(listAlgoProcessCurrency);
 		Comparator<AlgoProcessCurrency> comparator = AlgoProcessCurrency.COMPARATOR_MOYENNE;
-		Collections.sort(listAlgoProcessCurrency, comparator );
+		Collections.sort(l, comparator );
 		Ticker zBest =  listAlgoProcessCurrency.get(0).getLastTicker();
 		return zBest;
 	}
