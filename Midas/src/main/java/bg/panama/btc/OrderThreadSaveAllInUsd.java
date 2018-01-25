@@ -40,7 +40,7 @@ public class OrderThreadSaveAllInUsd implements Runnable {
 					lOrders.add(order);
 				}
 			}
-			OrderManager.getInstance().sendOrdersAchat(bitfinexClient, lOrders);
+			OrderManager.getInstance().sendOrders(bitfinexClient, lOrders);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

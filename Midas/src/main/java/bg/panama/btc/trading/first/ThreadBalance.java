@@ -3,6 +3,7 @@ package bg.panama.btc.trading.first;
 
 
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
@@ -68,8 +69,20 @@ public class ThreadBalance implements Runnable{
 					List<Order> listOrdersAchat = balances.processOrdersAchat();
 					List<Order> listOrdersVente = balances.processOrdersVente();
 					if(this.config.isOrderAble()){
-						OrderManager.getInstance().sendOrdersAchat(this.bitfinexClient,listOrdersAchat);
-						OrderManager.getInstance().sendOrdersVente(this.bitfinexClient,listOrdersAchat);
+						List<Order> listOrders = new ArrayList<>();
+						if (this.config.isOrderAbleAchat()){
+							listOrders.addAll(listOrdersAchat);
+						} else {
+							System.err.println("Is Not orderable Achat");
+							loggerTrade.info("Is not orderable Achat");
+						}
+						if (this.config.isOrderAbleVente()){
+							listOrders.addAll(listOrdersVente);
+						}else {
+							System.err.println("Is Not orderable Vente");
+							loggerTrade.info("Is not orderable Vente");
+						}
+						OrderManager.getInstance().cancelAndSendOrders(this.bitfinexClient, listOrders);
 						MidasGUI.getInstance().log(listOrdersAchat,listOrdersVente);
 					}else {
 						MidasGUI.getInstance().log("Order No Send : config is not orderable");

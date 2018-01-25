@@ -76,9 +76,7 @@ public class ThreadFetchTickers implements Runnable{
 					}
 					loggerTrade.info(""+tickers.toString());
 					
-					if(this.config.isOrderAble()){
-						//OrderManager.getInstance().sendOrders(this.bitfinexClient,orders);
-					}
+					
 					if (sessionCurrencies.isModePanic()){
 						emergencySaveInDollar("ThreadFetchTickers");
 					}

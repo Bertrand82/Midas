@@ -2,6 +2,8 @@ package bg.panama.btc.model;
 
 import java.awt.Color;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.json.JSONArray;
@@ -157,6 +159,68 @@ public class OrderBook {
 				+ ", ammountTotalAskPercent=" + ammountTotalAskPercent + ", ammountToyalBidPercent="
 				+ ammountToyalBidPercent + ", maxPrice=" + maxPrice + ", minPrice=" + minPrice + ", amountMAx="
 				+ amountMAx + "]";
+	}
+
+	public double getPrice(boolean achat) {
+		double price;
+		if (achat){
+			double perCentOfAmount =0.2;
+			double priceAchat  = this.getHigerFromList(getListBids(),perCentOfAmount);
+			price = priceAchat;
+		}else {
+			double perCentOfAmount =0.05;
+			double priceVente  = this.getLowerFromList(getListAsks(),perCentOfAmount);
+			price = priceVente;
+		}
+		return price;
+	}
+
+	public static Comparator<OrderBookItem> comparatorAscendant = new Comparator<OrderBookItem>() {
+
+		@Override
+		public int compare(OrderBookItem o1, OrderBookItem o2) {
+			return  Double.compare(o1.price, o2.price);
+			
+		}
+	};
+	public static Comparator<OrderBookItem> comparatorDescendant = new Comparator<OrderBookItem>() {
+
+		@Override
+		public int compare(OrderBookItem o1, OrderBookItem o2) {
+			return  -Double.compare(o1.price, o2.price);
+			
+		}
+	};
+	public double getLowerFromList(List<OrderBookItem> listAsks2, double percentageAmount) {
+		List<OrderBookItem> l2  = new ArrayList<>();
+		l2.addAll(listAsks2);
+		Collections.sort(l2,comparatorAscendant );
+		double total = 0;
+		int i=0;
+		for (OrderBookItem obi : l2){
+			if (total >= percentageAmount * this.ammountTotalAsk){
+				return obi.price *0.9999;
+			}
+			total += obi.getAmount();
+			System.out.println(i+++" Ask obi :: "+obi);
+		}
+		return l2.get(0).getPrice()*0.9999;
+	}
+
+	public double getHigerFromList(List<OrderBookItem> listBids2, double percentageAmount) {
+		List<OrderBookItem> l2  = new ArrayList<>();
+		l2.addAll(listBids2);
+		Collections.sort(l2,comparatorDescendant );
+		double total = 0;
+		int i=0;
+		for (OrderBookItem obi : l2){
+			if (total >= percentageAmount * this.ammountTotalAsk){
+				return obi.price *0.9999;
+			}
+			total += obi.getAmount();
+			System.out.println(i+++" Bids obi :: "+obi);
+		}
+		return l2.get(0).getPrice()*0.9999;
 	}
 	
 	

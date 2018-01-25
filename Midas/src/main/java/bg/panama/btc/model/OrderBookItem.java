@@ -1,5 +1,7 @@
 package bg.panama.btc.model;
 
+import java.text.DecimalFormat;
+
 import org.json.JSONObject;
 
 public class OrderBookItem {
@@ -22,9 +24,10 @@ public class OrderBookItem {
 	public void setPrice(double price) {
 		this.price = price;
 	}
+	private static DecimalFormat df = new DecimalFormat("00.0000");
 	@Override
 	public String toString() {
-		return "OrderBookItem [amount=" + amount + ", price=" + price + "]";
+		return "OrderBookItem [amount=" +df.format(amount)  + ", \tprice=" + price + "]";
 	}
 
 	

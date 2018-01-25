@@ -78,7 +78,7 @@ public class Balances implements Serializable {
 		if (orderToBest != null){
 			orders.add(orderToBest);
 		}
-		System.err.println("List Orders " + orders);
+		System.err.println("processOrdersAchat List Orders " + orders);
 		return orders;
 	}
 
@@ -218,6 +218,7 @@ public class Balances implements Serializable {
 					System.err.println("No sessionCurrency for :"+currency);
 				}else {
 					SessionCurrency.EtatSTOCHASTIQUE etat_10mn = SessionCurrency.getStochastique(sc.getStochastique_10mn());
+					System.err.println("processOrdersVente "+currency+"  "+etat_10mn+"    vendre: "+etat_10mn.vendre);
 					if (etat_10mn.vendre){
 						Order order  = new Order(sc.getShortName(),"usd",balance.amount);
 						orders.add(order);
@@ -225,7 +226,7 @@ public class Balances implements Serializable {
 				}
 			}
 		}
-		System.err.println(" processOrdersVente orders " + orders.size());
+		System.err.println("processOrdersVente orders " + orders.size());
 		return orders;
 	}
 

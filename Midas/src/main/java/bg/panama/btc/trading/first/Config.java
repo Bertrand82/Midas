@@ -15,9 +15,15 @@ public class Config implements Serializable {
 	private static final String KEY_SAVE_PASSWORD = "SavePassword";
 	private static final String KEY_PASSWORD = "Password";
 	private static final String KEY_orderAble = "isOrderAble";
+	private static final String KEY_orderAbleAchat = "isOrderAbleAchat";
+	private static final String KEY_orderAbleVente = "isOrderAbleVente";
+	private static final String KEY_plafondCryptoInDollar = "plafondCryptoInDollar";
 
 	private boolean orderAble = false;
+	private boolean orderAbleAchat = false;
+	private boolean orderAbleVente = true;
 	private boolean savePassword;
+	private int plafondCryptoInDollar =1000;
 	private transient String password = null;
 	private Properties pConfig = new Properties();
 	private File fileConfig = new File("p_config_gui.properties");
@@ -65,6 +71,10 @@ public class Config implements Serializable {
 			}
 			savePassword = pConfig.getProperty(KEY_SAVE_PASSWORD, "").equalsIgnoreCase("true");			
 			orderAble = pConfig.getProperty(KEY_orderAble, "").equalsIgnoreCase("true");
+			orderAbleAchat = pConfig.getProperty(KEY_orderAbleAchat, "").equalsIgnoreCase("true");
+			orderAbleVente = pConfig.getProperty(KEY_orderAbleVente, "").equalsIgnoreCase("true");
+			String plafondCryptoInDollarStr=pConfig.getProperty(KEY_plafondCryptoInDollar, "1000");
+			plafondCryptoInDollar=Integer.parseInt(plafondCryptoInDollarStr);
 			proceessPasswordSaved();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -80,7 +90,10 @@ public class Config implements Serializable {
 				pConfig.setProperty(KEY_PASSWORD, "");
 			}
 			pConfig.setProperty(KEY_orderAble, "" + isOrderAble());
+			pConfig.setProperty(KEY_orderAbleAchat, "" + isOrderAbleAchat());
+			pConfig.setProperty(KEY_orderAbleVente, "" + isOrderAbleVente());
 			pConfig.setProperty(KEY_SAVE_PASSWORD, "" + savePassword);
+			pConfig.setProperty(KEY_plafondCryptoInDollar, "" + plafondCryptoInDollar);
 			
 			FileWriter writer = new FileWriter(fileConfig);
 
@@ -127,6 +140,33 @@ public class Config implements Serializable {
 	
 	public  boolean getSavePassword() {
 		return this.savePassword;
+	}
+
+	public boolean isOrderAbleAchat() {
+		return orderAbleAchat;
+	}
+
+	public void setOrderAbleAchat(boolean orderAbleAchat) {
+		this.orderAbleAchat = orderAbleAchat;
+		saveConfigFile();
+	}
+
+	public boolean isOrderAbleVente() {
+		return orderAbleVente;
+	}
+
+	public void setOrderAbleVente(boolean orderAbleVente) {
+		this.orderAbleVente = orderAbleVente;
+		saveConfigFile();
+	}
+
+	public int getPlafondCryptoInDollar() {
+		return plafondCryptoInDollar;
+	}
+
+	public void setPlafondCryptoInDollar(int plafondCryptoInDollar) {
+		this.plafondCryptoInDollar = plafondCryptoInDollar;
+		saveConfigFile();
 	}
 
 }

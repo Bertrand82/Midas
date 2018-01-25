@@ -32,9 +32,16 @@ public class OrderFactory {
 	}
 	
 	
-	public void cancelAllOrders(BitfinexClient bitfinexClient) throws Exception{
-		Object o = bitfinexClient.serviceProcess(EnumService.cancelAllOrders,"","");
-		System.out.println("cancelAllOrders :"+o);
+	public Object cancelAllOrders(BitfinexClient bitfinexClient){
+		try {
+			Object o = bitfinexClient.serviceProcess(EnumService.cancelAllOrders,"","");
+			System.out.println("cancelAllOrders :"+o);
+			return o;
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			throw new  RuntimeException(e);
+		}
 		
 	}
 	

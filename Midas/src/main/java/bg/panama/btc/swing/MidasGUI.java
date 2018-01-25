@@ -28,6 +28,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
@@ -56,6 +57,8 @@ public class MidasGUI {
 	String password;
 	JCheckBoxMenuItem menuItemSaveConfig_____DEPRECATED = new JCheckBoxMenuItem("Save Password");
 	JCheckBoxMenuItem menuItemOrderAble = new JCheckBoxMenuItem("Send Orders");
+	JCheckBoxMenuItem menuItemOrderAbleAchat = new JCheckBoxMenuItem("Send Orders achat");
+	JCheckBoxMenuItem menuItemOrderAbleVente = new JCheckBoxMenuItem("Send Orders vente");
 	JFrame frame = new JFrame("Midas");
 	JPanel panelGlobal = new JPanel(new BorderLayout());
 	ThreadFetchTickers threadFetchTickers;
@@ -64,13 +67,17 @@ public class MidasGUI {
 	private static MidasGUI instance;
 	JMenu menuPanic = new JMenu("PANIC");
 	JCheckBox checkBoxSavePassword;
-
+	JTextField textFieldPlafondMaxDollar = new JTextField("00000");
 	public MidasGUI() {
 		super();
 		instance = this;
 		Font font = new Font("Dialog", Font.BOLD, 18);
 		UIManager.put("Label.font", font);
 		this.checkBoxSavePassword = new JCheckBox("Save Password ", Config.getInstance().getSavePassword());
+		menuItemOrderAble.setSelected(Config.getInstance().isOrderAble());
+		menuItemOrderAbleAchat.setSelected(Config.getInstance().isOrderAbleAchat());
+		menuItemOrderAbleVente.setSelected(Config.getInstance().isOrderAbleVente());
+		textFieldPlafondMaxDollar.setText(""+Config.getInstance().getPlafondCryptoInDollar());
 		JMenuItem menuTestBestCurrency = new JMenuItem("Test Best Currency");
 		menuTestBestCurrency.addActionListener(new ActionListener() {
 
@@ -151,19 +158,43 @@ public class MidasGUI {
 				fetchTickers();
 			}
 		});
+		JMenuItem menuPlafondMaximalCrypto = new JMenuItem("Plafond Maximal Crypto");
+		menuPlafondMaximalCrypto.addActionListener( e->{
+			JOptionPane.showMessageDialog(frame, textFieldPlafondMaxDollar);
+			int plafondCryptoInDollar = Integer.parseInt(textFieldPlafondMaxDollar.getText());
+			System.out.println("plafond "+plafondCryptoInDollar);
+			Config.getInstance().setPlafondCryptoInDollar(plafondCryptoInDollar);
+			log("Plafond Crypto "+plafondCryptoInDollar+" $");
+			});
+		
 		menuItemOrderAble.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if (threadFetchTickers != null) {
 					boolean orderAble = menuItemOrderAble.isSelected();
 					System.err.println("orderAble::  " + orderAble);
 					Config.getInstance().setOrderAble(orderAble);
-				}
-
 			}
 		});
 
+		menuItemOrderAbleAchat.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+					boolean orderAbleAchat = menuItemOrderAbleAchat.isSelected();
+					System.err.println("orderAbleAchat::  " + orderAbleAchat);
+					Config.getInstance().setOrderAbleAchat(orderAbleAchat);
+			}
+		});
+		menuItemOrderAbleVente.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+					boolean orderAbleVente = menuItemOrderAbleVente.isSelected();
+					System.err.println("orderAble::  " + orderAbleVente);
+					Config.getInstance().setOrderAbleVente(orderAbleVente);
+			}
+		});
 		setPanic(false, 0, 0);
 		JMenu menuAuthentification = new JMenu("Authentification");
 		JMenuItem menuSetPassword = new JMenuItem("Set Password");
@@ -213,6 +244,9 @@ public class MidasGUI {
 
 		JMenu menuFile = new JMenu("File");
 		menuFile.add(menuItemOrderAble);
+		menuFile.add(menuItemOrderAbleAchat);
+		menuFile.add(menuItemOrderAbleVente);
+		menuFile.add(menuPlafondMaximalCrypto);
 		menuFile.add(menuSelectCurrency);
 		menuFile.add(menuSetSecretKeys);
 		menuFile.add(menuTestBestCurrency);
