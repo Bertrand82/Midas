@@ -84,6 +84,7 @@ public class ThreadBalance implements Runnable{
 						}
 						OrderManager.getInstance().cancelAndSendOrders(this.bitfinexClient, listOrders);
 						MidasGUI.getInstance().log(listOrdersAchat,listOrdersVente);
+						BalancesFactory.instance.persists(balances);
 					}else {
 						MidasGUI.getInstance().log("Order No Send : config is not orderable");
 						System.err.println("Order No Send: config is not orderable!! ");

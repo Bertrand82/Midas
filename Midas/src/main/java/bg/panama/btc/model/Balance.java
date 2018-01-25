@@ -1,31 +1,50 @@
 package bg.panama.btc.model;
 
 import java.io.Serializable;
+import java.util.Date;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 
 import org.json.JSONObject;
 
 import bg.panama.btc.swing.SymbolConfig;
 import bg.panama.btc.swing.SymbolsConfig;
 import bg.panama.btc.trading.first.ServiceCurrencies;
-
+@Entity
 public class Balance implements Serializable{
 
 	private static final long serialVersionUID = 1L;
 	public static String TYPE_exchange ="exchange";
 	public static String TYPE_deposit ="deposit";
-	String type;
-	String currency;
-	double amount;
-	double available ;
 	
-	double lastPrice ;
-	double percentHourlyByDay ;
-	double availableInDollar;
-	double amountInDollar;
+	@Id
+	@GeneratedValue
+	private long id;
+
+
+	private String type;
+	private String currency;
+	private double amount;
+	private double available ;
 	
+	private double lastPrice ;
+	private double percentHourlyByDay ;
+	private double availableInDollar;
+	private double amountInDollar;
+	private Date date = new Date();
+	@ManyToOne
+	@JoinColumn(name="balances_id", nullable=false)
+	private  Balances balances;
 	// {"amount":"0.0","available":"0.0","currency":"btc","type":"deposit"}
-	public Balance(JSONObject jsonO) throws Exception{
+	public Balance() {
 		
+	}
+	public Balance(JSONObject jsonO, Balances balances) throws Exception{
+		this.balances= balances;
 		this.amount= jsonO.getDouble("amount");
 		this.available = jsonO.getDouble("available");
 		
@@ -142,4 +161,36 @@ public class Balance implements Serializable{
 		}
 		return maxDollar;
 	}
+
+
+	public long getId() {
+		return id;
+	}
+
+
+	public void setId(long id) {
+		this.id = id;
+	}
+
+
+	public Balances getBalances() {
+		return balances;
+	}
+
+
+	public void setBalances(Balances balances) {
+		this.balances = balances;
+	}
+
+
+	public Date getDate() {
+		return date;
+	}
+
+
+	public void setDate(Date date) {
+		this.date = date;
+	}
+	
+	
 }

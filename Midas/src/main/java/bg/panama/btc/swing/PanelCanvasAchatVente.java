@@ -136,8 +136,6 @@ public class PanelCanvasAchatVente extends PanelCancasAbstract {
 		
 	}
 
-	class PointAchatVente {
-
-	}
+	
 
 }

@@ -36,6 +36,11 @@ public class OrderFactory {
 		try {
 			Object o = bitfinexClient.serviceProcess(EnumService.cancelAllOrders,"","");
 			System.out.println("cancelAllOrders :"+o);
+			try {
+				Thread.sleep(5000);// Cet ordre se passe en 2 temps. Il est necessiare d'attendre ou les ordres envoyéd dans la foulée sont annullés
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 			return o;
 		} catch (Exception e) {
 			// TODO Auto-generated catch block

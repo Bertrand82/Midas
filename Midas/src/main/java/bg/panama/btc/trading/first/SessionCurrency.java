@@ -357,9 +357,14 @@ public class SessionCurrency implements Serializable,Cloneable{
 		unknow(false,false);
 		public boolean acheter;
 		public boolean vendre;
-		EtatSTOCHASTIQUE(boolean b1, boolean b2){
-			this.acheter = b2;
-			this.vendre = b1;
+		/**
+		 * Bizare 
+		 * @param vendre_
+		 * @param acheter_
+		 */
+		EtatSTOCHASTIQUE(boolean vendre_, boolean acheter_){
+			this.acheter = acheter_;
+			this.vendre = vendre_;
 		}
 	};
 	

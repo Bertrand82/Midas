@@ -7,8 +7,10 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import bg.panama.btc.model.Balance;
 import bg.panama.btc.model.v2.Ticker;
 import bg.panama.btc.trading.commun.Value;
+import bg.panama.btc.trading.first.BalancesFactory;
 import bg.panama.btc.trading.first.SessionCurrenciesFactory;
 import bg.panama.btc.trading.first.SessionCurrency;
 import bg.util.PointDouble;
@@ -23,6 +25,7 @@ public class History implements Serializable {
 	private static final int SIZE_MAX = 120;
 
 	private List<SessionCurrency> listSessionCurrency_ = null;
+	private List<Balance> listBalances = null;
 	private SessionCurrency sessionCurrency;
 	private String name;
 
@@ -148,8 +151,9 @@ public class History implements Serializable {
 
 	public Value calculStochastique(long dt, Date date, Ticker ticker, Value Z_1) {
 		long timeMin = date.getTime() - dt;
-		double hh = -1;
-		double bb = -1;
+		double hh = -1;// MAx
+		double bb = -1;// Minimum
+		// Recherche 
 		for (SessionCurrency s : getListSessionCurrency()) {
 			Ticker t = s.getTicker_Z_1();
 			if (t == null) {
@@ -157,7 +161,7 @@ public class History implements Serializable {
 				if (t.getDate().getTime() > timeMin) {
 					double price = t.getLastPrice();
 					if (bb < 0) {
-						bb = price;
+						bb = price;// Initialisation
 					} else if (price < bb) {
 						bb = price;
 					}
@@ -190,6 +194,17 @@ public class History implements Serializable {
 			// "+listSessionCurrency_);
 		}
 		return listSessionCurrency_;
+	}
+	private static DecimalFormat df = new DecimalFormat("00.0000");
+	public List<Balance> getListBalance() {
+		if (this.listBalances == null) {
+			this.listBalances = BalancesFactory.instance.getBalance(SIZE_MAX, this.sessionCurrency.getShortName(),Balance.TYPE_exchange);	
+			for(Balance b : listBalances){
+			//	System.out.println(" amount in dollar "+b.getCurrency()+"  |"+df.format(b.getAmountInDollar())+"   "+b.getDate());
+				
+			}
+		}
+		return listBalances;
 	}
 
 	public List<Value> getStochastiques_10mn() {
@@ -286,9 +301,23 @@ public class History implements Serializable {
 			// TODO Auto-generated method stub
 			return (df_1.format( 100.* (sommeFinale - sommeInnitiale)/sommeInnitiale)) +"%";
 		}
-		
-		
-		
+	}
+
+	public List<PointDouble>  getListPointsBalanceHistory() {
+		List<PointDouble> list = new ArrayList<>();
+		if (getListBalance().isEmpty()) {
+			System.out.println("getListPointsBalanceHistory list is embty");
+			return list;
+		}
+
+		for (Balance s : getListBalance()) {
+			double vDollar = s.getAmountInDollar();
+			if (s.getDate() != null){
+			PointDouble p = new PointDouble(s.getDate().getTime(), vDollar);
+			list.add(p);
+			}
+		}
+		return list;
 	}
 	
 }

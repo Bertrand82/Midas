@@ -18,12 +18,14 @@ public class Config implements Serializable {
 	private static final String KEY_orderAbleAchat = "isOrderAbleAchat";
 	private static final String KEY_orderAbleVente = "isOrderAbleVente";
 	private static final String KEY_plafondCryptoInDollar = "plafondCryptoInDollar";
+	private static final String KEY_plafondCurrencyInDollar = "plafondCurrencyInDollar";
 
 	private boolean orderAble = false;
 	private boolean orderAbleAchat = false;
 	private boolean orderAbleVente = true;
 	private boolean savePassword;
 	private int plafondCryptoInDollar =1000;
+	private int plafondCurrencyInDollard =500;
 	private transient String password = null;
 	private Properties pConfig = new Properties();
 	private File fileConfig = new File("p_config_gui.properties");
@@ -75,6 +77,8 @@ public class Config implements Serializable {
 			orderAbleVente = pConfig.getProperty(KEY_orderAbleVente, "").equalsIgnoreCase("true");
 			String plafondCryptoInDollarStr=pConfig.getProperty(KEY_plafondCryptoInDollar, "1000");
 			plafondCryptoInDollar=Integer.parseInt(plafondCryptoInDollarStr);
+			String plafondCurrencyInDollarStr = pConfig.getProperty(KEY_plafondCryptoInDollar, "500");
+			this.plafondCurrencyInDollard = Integer.parseInt(plafondCurrencyInDollarStr);
 			proceessPasswordSaved();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -94,6 +98,7 @@ public class Config implements Serializable {
 			pConfig.setProperty(KEY_orderAbleVente, "" + isOrderAbleVente());
 			pConfig.setProperty(KEY_SAVE_PASSWORD, "" + savePassword);
 			pConfig.setProperty(KEY_plafondCryptoInDollar, "" + plafondCryptoInDollar);
+			pConfig.setProperty(KEY_plafondCurrencyInDollar, "" + plafondCurrencyInDollard);
 			
 			FileWriter writer = new FileWriter(fileConfig);
 
@@ -167,6 +172,14 @@ public class Config implements Serializable {
 	public void setPlafondCryptoInDollar(int plafondCryptoInDollar) {
 		this.plafondCryptoInDollar = plafondCryptoInDollar;
 		saveConfigFile();
+	}
+
+	public int getPlafondCurrencyInDollard() {
+		return plafondCurrencyInDollard;
+	}
+
+	public void setPlafondCurrencyInDollard(int plafondCurrencyInDollard) {
+		this.plafondCurrencyInDollard = plafondCurrencyInDollard;
 	}
 
 }

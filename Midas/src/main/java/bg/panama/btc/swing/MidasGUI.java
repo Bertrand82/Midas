@@ -68,6 +68,7 @@ public class MidasGUI {
 	JMenu menuPanic = new JMenu("PANIC");
 	JCheckBox checkBoxSavePassword;
 	JTextField textFieldPlafondMaxDollar = new JTextField("00000");
+	JTextField textFieldPlafondMaxDollarByCurrency = new JTextField("00000");
 	public MidasGUI() {
 		super();
 		instance = this;
@@ -78,6 +79,7 @@ public class MidasGUI {
 		menuItemOrderAbleAchat.setSelected(Config.getInstance().isOrderAbleAchat());
 		menuItemOrderAbleVente.setSelected(Config.getInstance().isOrderAbleVente());
 		textFieldPlafondMaxDollar.setText(""+Config.getInstance().getPlafondCryptoInDollar());
+		textFieldPlafondMaxDollarByCurrency.setText(""+Config.getInstance().getPlafondCurrencyInDollard());
 		JMenuItem menuTestBestCurrency = new JMenuItem("Test Best Currency");
 		menuTestBestCurrency.addActionListener(new ActionListener() {
 
@@ -158,11 +160,21 @@ public class MidasGUI {
 				fetchTickers();
 			}
 		});
+		JMenuItem menuPlafondMaximalCryptoByCurrency = new JMenuItem("Plafond Maximal Crypto By Currency");
+		menuPlafondMaximalCryptoByCurrency.addActionListener( e->{
+			JOptionPane.showMessageDialog(frame, textFieldPlafondMaxDollarByCurrency);
+			int plafondCryptoInDollarB = Integer.parseInt(textFieldPlafondMaxDollarByCurrency.getText());
+			System.out.println("plafond by Currency :"+plafondCryptoInDollarB);
+			Config.getInstance().setPlafondCurrencyInDollard(plafondCryptoInDollarB);
+			log("Plafond Crypto "+plafondCryptoInDollarB+" $");
+			});
+		
+
 		JMenuItem menuPlafondMaximalCrypto = new JMenuItem("Plafond Maximal Crypto");
 		menuPlafondMaximalCrypto.addActionListener( e->{
 			JOptionPane.showMessageDialog(frame, textFieldPlafondMaxDollar);
 			int plafondCryptoInDollar = Integer.parseInt(textFieldPlafondMaxDollar.getText());
-			System.out.println("plafond "+plafondCryptoInDollar);
+			System.out.println("plafond Global :"+plafondCryptoInDollar);
 			Config.getInstance().setPlafondCryptoInDollar(plafondCryptoInDollar);
 			log("Plafond Crypto "+plafondCryptoInDollar+" $");
 			});
@@ -247,6 +259,7 @@ public class MidasGUI {
 		menuFile.add(menuItemOrderAbleAchat);
 		menuFile.add(menuItemOrderAbleVente);
 		menuFile.add(menuPlafondMaximalCrypto);
+		menuFile.add(menuPlafondMaximalCryptoByCurrency);
 		menuFile.add(menuSelectCurrency);
 		menuFile.add(menuSetSecretKeys);
 		menuFile.add(menuTestBestCurrency);
@@ -306,7 +319,7 @@ public class MidasGUI {
 			text = "NO PANIC! " + nbPanicNo;
 			colorBackGround = Color.GREEN;
 		} else {
-			text = "NO PANIC now !" + nbPanic + " panics " + nbPanicNo + " ";
+			text = "NO PANIC NOW !" + nbPanic + " panics " + nbPanicNo + " ";
 			colorBackGround = Color.ORANGE;
 		}
 		this.menuPanic.setBackground(colorBackGround);
@@ -483,12 +496,17 @@ public class MidasGUI {
 		String name = session.getName();
 		System.err.println("Show Detail " + name + "   " + b);
 		DialogShowCurrencyDetail dialogShowCurrency = hDetails.get(name);
-		if ((dialogShowCurrency == null) && b) {
+		if (dialogShowCurrency == null)  {
+			if (b){
 			Point location = new Point(this.frame.getLocation().x + 10, this.frame.getLocation().y + 10);
 			dialogShowCurrency = new DialogShowCurrencyDetail(session, location);
 			hDetails.put(name, dialogShowCurrency);
+			}
 		} else {
 			dialogShowCurrency.setVisible(b);
+			if(b){
+				dialogShowCurrency.update(session);
+			}
 		}
 	}
 

@@ -5,6 +5,14 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.Transient;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.JSONArray;
@@ -14,24 +22,40 @@ import org.json.JSONObject;
 import bg.panama.btc.BitfinexClient.EnumService;
 import bg.panama.btc.swing.SymbolConfig;
 import bg.panama.btc.swing.SymbolsConfig;
+import bg.panama.btc.trading.first.Config;
 import bg.panama.btc.trading.first.Order;
 import bg.panama.btc.trading.first.ServiceCurrencies;
 import bg.panama.btc.trading.first.SessionCurrencies;
 import bg.panama.btc.trading.first.SessionCurrency;
 
+@Entity
 public class Balances implements Serializable {
 
+	@Id
+	@GeneratedValue
+	private long id;
+
+	
 	private static final long serialVersionUID = 1L;
 	private static final Logger loggerTradeBalance = LogManager.getLogger("tradeBalance");
+	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL,mappedBy="balances")
 	private List<Balance> lBalances = new ArrayList<>();
+	@Transient
 	private List<Balance> lBalancesExchange = new ArrayList<>();
-
+	private double totalAvailableDollar = 0;
+	private double totalAmountDollar = 0;
+	private double totalCryptoAmountInDollar=0;
+	
+	
+	public Balances() {
+		
+	}
 	public Balances(JSONObject jo) throws Exception {
 		try {
 			JSONArray array = jo.getJSONArray(EnumService.balances.key);
 			for (int i = 0; i < array.length(); i++) {
 				Object o = array.get(i);
-				Balance balance = new Balance((JSONObject) array.get(i));
+				Balance balance = new Balance((JSONObject) array.get(i),this);
 				this.lBalances.add(balance);
 				if (balance.isTypeEchange()) {
 					this.lBalancesExchange.add(balance);
@@ -54,17 +78,20 @@ public class Balances implements Serializable {
 	private void calculTotaux() {
 		this.totalAmountDollar = 0;
 		this.totalAvailableDollar = 0;
+		this.totalCryptoAmountInDollar=0;
 		for (Balance balance : this.lBalancesExchange) {
 			this.totalAmountDollar += balance.getAmountInDollar();
 			this.totalAvailableDollar += balance.getAvailableInDollar();
+			if (!balance.getCurrency().equals("usd")){
+				totalCryptoAmountInDollar += balance.getAmountInDollar();
+			}
 		}
+		System.out.println("totalAmountDollar :"+totalAmountDollar+" | totalCryptoAmountInDollar :"+totalCryptoAmountInDollar);
 	}
 
-	DecimalFormat df = new DecimalFormat("0000000.00");
-	DecimalFormat df2 = new DecimalFormat("00.00");
-	private double totalAvailableDollar = 0;
-	private double totalAmountDollar = 0;
-
+	private final static DecimalFormat df = new DecimalFormat("0000000.00");
+	private final static DecimalFormat df2 = new DecimalFormat("00.00");
+	
 	public List<Order> processOrdersAchat() {
 		List<Order> orders = new ArrayList<>();
 		SessionCurrencies sessionCurrencies = ServiceCurrencies.getInstance().getSessionCurrencies();
@@ -114,6 +141,9 @@ public class Balances implements Serializable {
 		} else if (sessionCurrencies.getAmbianceMarket().getNbPanic() > 0) {
 			// Pas d'ordre. Le mode panic a fait disjoncter le system.
 			logDebug("Mode Panic No removed");
+		}  else if (this.totalCryptoAmountInDollar > Config.getInstance().getPlafondCryptoInDollar()*0.9) {
+			// Pas d'ordre. Le mode panic a fait disjoncter le system.
+			logDebug("Plafond crypto atteint");
 		} else if (balanceUsd.getAvailableInDollar() < 50) {
 			// minimum order size between 10-25 USD . Il n'y a plus de dollar
 		} else if (sessionCurrencies.getNumero() < 10) {
@@ -122,14 +152,15 @@ public class Balances implements Serializable {
 		} else if ( (balanceBest!=null) && (balanceBest.getAmountInDollar() > 100)) {
 			// Le compte a déja été alimenté. A Modifier
 		} else {
-			double amountOrder = (balanceUsd.available) * 0.9;
+			double amountOrder = (balanceUsd.getAvailable()) * 0.9;
 			if (symbolTickerBest.getMaxTrade() == 0) {
 
 			} else {
 
 				amountOrder = Math.min(amountMAxDollar, amountOrder);
+				amountOrder = Math.min(Config.getInstance().getPlafondCryptoInDollar(), amountOrder);
 			}
-			amountOrder = Math.min(1000d, amountOrder); // ECRETAGE POUR QUALIF
+			amountOrder = Math.min(Config.getInstance().getPlafondCurrencyInDollard(), amountOrder); // ECRETAGE POUR QUALIF
 			order = new Order(currencyUSD, sessionBest.getShortName(), amountOrder);
 			order.setComment("orderToBest limit : "+maxAmountInDolllar+"");
 		}
@@ -220,7 +251,7 @@ public class Balances implements Serializable {
 					SessionCurrency.EtatSTOCHASTIQUE etat_10mn = SessionCurrency.getStochastique(sc.getStochastique_10mn());
 					System.err.println("processOrdersVente "+currency+"  "+etat_10mn+"    vendre: "+etat_10mn.vendre);
 					if (etat_10mn.vendre){
-						Order order  = new Order(sc.getShortName(),"usd",balance.amount);
+						Order order  = new Order(sc.getShortName(),"usd",balance.getAvailable());
 						orders.add(order);
 					}
 				}

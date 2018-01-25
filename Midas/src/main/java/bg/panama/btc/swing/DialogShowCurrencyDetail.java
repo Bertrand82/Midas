@@ -39,6 +39,7 @@ public class DialogShowCurrencyDetail extends JPanel {
 	PanelCanvasStochastique panelCanvasStochastique_1h;
 	PanelCanvasStochastique panelCanvasStochastique_10mn;
 	PanelCanvasAchatVente panelCanvasAchatVente;
+	PanelCanvasBalanceHistory panelCanvasBalanceHistory;
 	PanelOrderBookHistory panelOrderBookHistory = new PanelOrderBookHistory();
 	public DialogShowCurrencyDetail(SessionCurrency session, Point location) {
 
@@ -52,6 +53,7 @@ public class DialogShowCurrencyDetail extends JPanel {
 		panelCanvasStochastique_10mn = new PanelCanvasStochastique(shortName,
 				PanelCanvasStochastique.TypeStochastique.stoc_10mn);
 		panelCanvasAchatVente = new PanelCanvasAchatVente(shortName);
+		panelCanvasBalanceHistory = new PanelCanvasBalanceHistory(shortName);
 		this.session = session;
 		SimuResult s0 = session.getHistory().getSimuResult(0);
 		SimuResult s1 = session.getHistory().getSimuResult(1);
@@ -85,6 +87,7 @@ public class DialogShowCurrencyDetail extends JPanel {
 		panelCenter.add(panelCanvasStochastique_1h.getJPanel());
 		panelCenter.add(panelCanvasStochastique_10mn.getJPanel());
 		panelCenter.add(panelCanvasAchatVente.getJPanel());
+		panelCenter.add(panelCanvasBalanceHistory.getJPanel());
 		JPanel panelGlobal = this;
 		panelGlobal.setLayout(new BorderLayout());
 		panelGlobal.add(panelNorth, BorderLayout.NORTH);
@@ -112,6 +115,7 @@ public class DialogShowCurrencyDetail extends JPanel {
 		this.panelCanvasStochastique_1h.update(sc);
 		this.panelCanvasStochastique_10mn.update(sc);
 		this.panelCanvasAchatVente.update(sc);
+		this.panelCanvasBalanceHistory.update(sc);
 	}
 
 	public void setVisible(boolean b) {

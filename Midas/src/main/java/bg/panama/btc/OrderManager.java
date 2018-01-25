@@ -40,6 +40,7 @@ public class OrderManager {
 		}
 		if (orders.size() >0){
 			OrderFactory.getInstance().cancelAllOrders(bfnx);
+			
 		}
 		sendOrders(bfnx, orders);
 	}

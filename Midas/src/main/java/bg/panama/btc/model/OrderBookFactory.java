@@ -20,7 +20,6 @@ public class OrderBookFactory {
 	public OrderBook getOrderBook(String symbol) throws Exception{
 		BitfinexClient bfnx = BitfinexClientFactory.getBitfinexClientFree();
 		Object o = bfnx.serviceProcess(EnumService.orderbook,"",symbol);
-		System.out.println("getOrderBook ");
 		OrderBook orderBook = (OrderBook) o;
 		return orderBook;
 		

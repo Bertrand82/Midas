@@ -36,7 +36,7 @@ import bg.util.heartBeat.HeartBeat;
 import bg.util.heartBeat.ICheckAlive;
 
 public class PanelCurrencies extends JPanel implements ICheckAlive {
-	private static final DecimalFormat df = new DecimalFormat("0,000,000.00");
+	private static final DecimalFormat df = new DecimalFormat("#,###,000.00");
 	private static final DecimalFormat df2 = new DecimalFormat("0.000;-.000");
 	private static final DecimalFormat df3 = new DecimalFormat("#######0.000;");
 	//private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd  HH:mm:ss");
@@ -111,11 +111,11 @@ public class PanelCurrencies extends JPanel implements ICheckAlive {
 				}
 			} else if (columnIndex == 2) {
 					if (balance == null) {
-					return "-";
+					return 0d;
 				}else if (balance.getAmountInDollar() <=0.01){
-					return "0";
+					return 0d;
 				} else {
-					return df.format(balance.getAmountInDollar()) + " $";
+					return balance.getAmountInDollar();
 				}
 
 			} else if (columnIndex == 3) {
@@ -172,6 +172,8 @@ public class PanelCurrencies extends JPanel implements ICheckAlive {
 
 		public Class<?> getColumnClass(int columnIndex) {
 			switch (columnIndex){
+				case 2:
+					return Double.class;
 				case 3:
 				case 4:
 				case 5 :
@@ -191,6 +193,7 @@ public class PanelCurrencies extends JPanel implements ICheckAlive {
 
 	};
 	
+	
 	 public class DoubleTableCellRenderer extends DefaultTableCellRenderer {
 
 
@@ -202,10 +205,26 @@ public class PanelCurrencies extends JPanel implements ICheckAlive {
 
          @Override
          public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-             if (value instanceof Number) {
+        	 Double dd  =0d;
+        	 if (value instanceof Number) {
+            	 dd =(Double) value;
                  value = df2.format(value);
              }
-             return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+             Component c  = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+           
+             if (column == 2){
+            	  //System.out.println("row :"+row+ "column = 2 (+value).length() "+(""+value).length()+"  value: "+value);
+            	  
+            	  if (dd > 30) {
+            		 value = value+" $";
+            		 c.setBackground(Color.RED);
+            		 c.setForeground(Color.GREEN);            		
+            	 }else {
+            		 c.setBackground(Color.WHITE);
+            		 c.setForeground(Color.BLACK);   
+            	 }
+             }
+             return c;
          }
 
      }
@@ -219,6 +238,7 @@ public class PanelCurrencies extends JPanel implements ICheckAlive {
 		initCanvas();
 		
 		table = new JTable(tableModel);
+		table.getColumnModel().getColumn(2).setCellRenderer(new DoubleTableCellRenderer());
 		table.getColumnModel().getColumn(3).setCellRenderer(new DoubleTableCellRenderer());
 		table.getColumnModel().getColumn(4).setCellRenderer(new DoubleTableCellRenderer());
 		table.getColumnModel().getColumn(5).setCellRenderer(new DoubleTableCellRenderer());

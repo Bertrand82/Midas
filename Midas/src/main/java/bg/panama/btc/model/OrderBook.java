@@ -33,7 +33,6 @@ public class OrderBook {
 	}
 
 	public OrderBook(JSONObject jo) {
-		System.out.println("Constructeur OrderBook");
 		try {
 			JSONArray arrayAsk = jo.getJSONArray("asks");
 			for (int i = 0; i < arrayAsk.length(); i++) {

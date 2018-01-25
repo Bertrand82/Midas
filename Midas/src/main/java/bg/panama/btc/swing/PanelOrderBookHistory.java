@@ -22,7 +22,6 @@ public class PanelOrderBookHistory {
     
 	public void addOrderBook(OrderBook book) {
 		PanelOrderBook panelOrderBook = new PanelOrderBook(new Date(),book);
-		System.out.println("addOrderBook book :"+book);
 		this.listTotaleBookOrderItemMinMax.add(book.getOrderBookItemMax());
 		this.listTotaleBookOrderItemMinMax.add(book.getOrderBookItemMin());
 		this.listTotaleBookOrderItemMinMax.add(book.getOrderBookItemAmmountMax());
