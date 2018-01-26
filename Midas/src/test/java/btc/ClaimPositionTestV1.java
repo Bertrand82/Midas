@@ -40,7 +40,7 @@ public class ClaimPositionTestV1 {
 	 */
 	@Test
 	public void testNewOrder() throws Exception {
-		Order order = new Order("btc", "XRP", 0.003);
+		Order order = new Order("btc", 0.003, Order.Side.buy);
 		//Order order = new Order("xrp", "btc", 15);
 		// ATTENTION avant de tester: Cela passe un ordre
 		

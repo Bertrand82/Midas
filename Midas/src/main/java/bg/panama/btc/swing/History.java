@@ -201,8 +201,7 @@ public class History implements Serializable {
 		if (this.listBalances == null) {
 			this.listBalances = BalancesFactory.instance.getBalance(SIZE_MAX, this.sessionCurrency.getShortName(),Balance.TYPE_exchange);	
 			for(Balance b : listBalances){
-			//	System.out.println(" amount in dollar "+b.getCurrency()+"  |"+df.format(b.getAmountInDollar())+"   "+b.getDate());
-				
+			//System.out.println(" amount in dollar "+b.getCurrency()+"  |"+df.format(b.getAmountInDollar())+"  Achat :"+b.getOrderAchat()+" Vente "+b.getOrderVente()+"   "+b.getDate());
 			}
 		}
 		return listBalances;

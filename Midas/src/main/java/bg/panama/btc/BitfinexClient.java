@@ -526,8 +526,8 @@ public class BitfinexClient {
 			JSONObject jo = new JSONObject();
 			jo.put("request", urlPath);
 			jo.put("nonce", nonce);
-			jo.put("symbol", order.getSymbolWithDirection());
-			jo.put("amount", df.format(order.getAmmountToConvert()));
+			jo.put("symbol", order.getSymbol());
+			jo.put("amount", df.format(order.getAmmount()));
 			jo.put("price", df.format(order.getPrice()));
 			jo.put("exchange", "bitfinex");
 			jo.put("side", order.getSide());

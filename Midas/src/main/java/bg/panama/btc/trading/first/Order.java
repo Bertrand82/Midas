@@ -6,58 +6,41 @@ import java.util.Date;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 
 import bg.panama.btc.BitfinexClient.OrderType;
-import bg.panama.btc.model.Balance;
 @Entity
 public class Order implements Serializable {
 
 	/**
 	 * 
 	 */
-	public static final String side_buy ="buy";
-	public static final String side_sell ="sell";
+	public enum Side {
+		buy,
+		sell
+	}
 	private static final long serialVersionUID = 1L;
 	@Id
 	@GeneratedValue
 	private long id;
 
-	private String currencyFrom;
-	private String currencyTo;
-	private String side;
+	private String currency;
+	private Side side;
 	private double price;
-	private String symbolWithDirection;
 	private String comment ="";
 	private double amount;
-	private double amountToConvert;
 	private Date date = new Date();
-	@ManyToOne
-	@JoinColumn(name="balance_id", nullable=true)
-	private Balance balance;
-	public void setBalance(Balance balance) {
-		this.balance = balance;
-	}
-
 	public Order() {
 		
 	}
 
-	public Order(String currencyFrom, String currencyTo, double ammont) {
+	public Order(String currency,  double ammont, Side side) {
 		super();
-		this.currencyFrom = currencyFrom;
-		this.currencyTo = currencyTo;
+		this.currency= currency;
 		this.amount = ammont;
+		this.side = side;
 	}
 
-	public String getCurrencyFrom() {
-		return currencyFrom;
-	}
-
-	public String getCurrencyTo() {
-		return currencyTo;
-	}
+	
 
 	public double getAmmount() {
 		return amount;
@@ -70,9 +53,7 @@ public class Order implements Serializable {
 		if(side != null){
 			s += " "+side;
 		}
-		if(symbolWithDirection != null){
-			s+=" "+symbolWithDirection;
-		}
+		
 		if(price != 0){
 			s+=" price "+price;
 			s += " AmountDesired "+getAmountDesired();
@@ -80,26 +61,14 @@ public class Order implements Serializable {
 		if (orderType != null){
 			s += " orderType "+orderType;
 		}
-		return "Order From=" + currencyFrom + ", To=" + currencyTo + ", ammont=" + amount + ""+s;
+		return "Order From=" + currency+ ", Side=" + side + ", ammont=" + amount + ""+s;
 	}
 
 	public String getSymbol() {
-		return (currencyFrom + currencyTo).toLowerCase();
-	}
-
-	public String getSymbolInvers() {
-		return (currencyTo + currencyFrom).toLowerCase();
+		return (currency +"usd").toLowerCase();
 	}
 
 	
-	public String getSymbolWithDirection() {
-		return symbolWithDirection;
-	}
-
-	public void setSymbolWithDirection(String symbolWithDirection) {
-		this.symbolWithDirection = symbolWithDirection;
-	}
-
 
 	
 	public double getPrice() {
@@ -110,29 +79,22 @@ public class Order implements Serializable {
 	 * 
 	 * Either “buy” or “sell”.
 	 */
-	public String getSide() {
+	public Side getSide() {
 		return this.side;
 	}
 
-	public void setSide(String side) {
+	public void setSide(Side side) {
 		this.side = side;
 	}
 
-	public double getAmmountToConvert() {
-		return amountToConvert;
-	}
-	
-	public void setAmmountToConvert(double ammountToConvert) {
-		this.amountToConvert = ammountToConvert;
-	}
 
 	public boolean isSelling() {
 		
-		return side_sell.equals(this.side);
+		return side==Side.sell;
 	}
 	public boolean isBuying() {
 		
-		return side_buy.equals(this.side);
+		return side==Side.buy;
 	}
 
 	public void setPrice(double price) {
@@ -148,10 +110,8 @@ public class Order implements Serializable {
 		return 0;
 	}
 
-	public void setCurrencyTo(String currencyTo) {
-		this.currencyTo = currencyTo;
-	}
-	//OrderType orderType = OrderType.limit;  // I get message":"Invalid order: not enough tradable balance for....
+	
+	//OrderType orderType = OrderType.limit;  
 	OrderType orderType = OrderType.exchange_limit;// Working
 	public OrderType getOrderType() {
 		
@@ -186,14 +146,7 @@ public class Order implements Serializable {
 		this.amount = amount;
 	}
 
-	public double getAmountToConvert() {
-		return amountToConvert;
-	}
-
-	public void setAmountToConvert(double amountToConvert) {
-		this.amountToConvert = amountToConvert;
-	}
-
+	
 	public Date getDate() {
 		return date;
 	}
@@ -202,8 +155,8 @@ public class Order implements Serializable {
 		this.date = date;
 	}
 
-	public void setCurrencyFrom(String currencyFrom) {
-		this.currencyFrom = currencyFrom;
+	public String getCurrency() {
+		return currency;
 	}
 
 	

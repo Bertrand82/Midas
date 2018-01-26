@@ -88,11 +88,13 @@ public class PanelCanvasBalanceHistory extends PanelCancasAbstract{
 				}else if(((Double) p.o1) > 0){
 					g2.setColor(Color.GREEN);
 					g2.drawLine(x, 0, x, h);
+					System.out.println("Acheter !!!!!!!!!!!!!!!!!!!!!!! ");
 				}
 				if(p.o2 == null){
 				} else if(((Double) p.o2) > 0){
 					g2.setColor(Color.RED);
 					g2.drawLine(x, 0, x, h);
+					System.out.println("Vendre !!!!!!!!!!!!!!!!!!!!!!! ");
 				}
 			}
 		}

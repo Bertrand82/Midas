@@ -206,14 +206,14 @@ public class Balance implements Serializable{
 	public double getOrderAchat() {
 		return orderAchat;
 	}
-	public void addOrderAchat(double orderAchat) {
-		this.orderAchat += orderAchat;
+	public void addOrderAchat(double orderAchat_) {
+		this.orderAchat += orderAchat_;
 	}
 	public double getOrderVente() {
 		return orderVente;
 	}
-	public void addOrderVente(double oderVente) {
-		this.orderVente += oderVente;
+	public void addOrderVente(double oderVente_) {
+		this.orderVente += oderVente_;
 	}
 	
 	

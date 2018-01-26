@@ -27,6 +27,7 @@ import bg.panama.btc.trading.first.Order;
 import bg.panama.btc.trading.first.ServiceCurrencies;
 import bg.panama.btc.trading.first.SessionCurrencies;
 import bg.panama.btc.trading.first.SessionCurrency;
+import bg.panama.btc.trading.first.Order.Side;
 
 @Entity
 public class Balances implements Serializable {
@@ -160,16 +161,18 @@ public class Balances implements Serializable {
 		} else if ( (balanceBest!=null) && (balanceBest.getAmountInDollar() > 100)) {
 			// Le compte a déja été alimenté. A Modifier
 		} else {
-			double amountOrder = (balanceUsd.getAvailable()) * 0.9;
+			double amountOrderInDollar = (balanceUsd.getAvailable()) * 0.9;
 			if (symbolTickerBest.getMaxTrade() == 0) {
 
 			} else {
 
-				amountOrder = Math.min(amountMAxDollar, amountOrder);
-				amountOrder = Math.min(Config.getInstance().getPlafondCryptoInDollar(), amountOrder);
+				amountOrderInDollar = Math.min(amountMAxDollar, amountOrderInDollar);
+				amountOrderInDollar = Math.min(Config.getInstance().getPlafondCryptoInDollar(), amountOrderInDollar);
 			}
-			amountOrder = Math.min(Config.getInstance().getPlafondCurrencyInDollard(), amountOrder); // ECRETAGE POUR QUALIF
-			order = new Order(currencyUSD, sessionBest.getShortName(), amountOrder);
+			amountOrderInDollar = Math.min(Config.getInstance().getPlafondCurrencyInDollard(), amountOrderInDollar); // ECRETAGE POUR QUALIF
+			double price = sessionBest.getTicker_Z_1().getLastPrice();
+			double amount = amountOrderInDollar/price;
+			order = new Order( sessionBest.getShortName(), amount, Order.Side.buy);
 			order.setComment("orderToBest limit : "+maxAmountInDolllar+"");
 		}
 		return order;
@@ -218,7 +221,7 @@ public class Balances implements Serializable {
 			} else if (balance.getAvailableInDollar() < 30) {
 				// minimum order size between 10-25 USD
 			} else {
-				Order order = new Order(currency, "usd", balance.getAvailable());
+				Order order = new Order(currency,  balance.getAvailable(),Order.Side.sell);
 				orders.add(order);
 			}
 		}
@@ -259,7 +262,7 @@ public class Balances implements Serializable {
 					SessionCurrency.EtatSTOCHASTIQUE etat_10mn = SessionCurrency.getStochastique(sc.getStochastique_10mn());
 					System.err.println("processOrdersVente "+currency+"  "+etat_10mn+"    vendre: "+etat_10mn.vendre);
 					if (etat_10mn.vendre){
-						Order orderVente  = new Order(sc.getShortName(),"usd",balance.getAvailable());
+						Order orderVente  = new Order(sc.getShortName(),balance.getAvailable(),Order.Side.sell);
 						balance.addOrderVente(orderVente.getAmmount());
 						orders.add(orderVente);
 					}

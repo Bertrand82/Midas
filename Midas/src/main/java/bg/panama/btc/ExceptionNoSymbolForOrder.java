@@ -1,5 +1,7 @@
 package bg.panama.btc;
 
+
+@Deprecated
 public class ExceptionNoSymbolForOrder extends Exception {
 
 	public ExceptionNoSymbolForOrder(String message) {

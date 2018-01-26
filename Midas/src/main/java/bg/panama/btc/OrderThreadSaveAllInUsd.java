@@ -37,10 +37,14 @@ public class OrderThreadSaveAllInUsd implements Runnable {
 			for (Balance balance : balances.getlBalancesExchange()) {
 				double ammountDollar = balance.getAmountInDollar();
 				if (ammountDollar > 50) {
-					String currencyFrom = balance.getCurrency();
-					Order order = new Order(currencyFrom, "usd", balance.getAmount());
+					if (balance.getCurrency().equalsIgnoreCase("usd")){
+						
+					}else {
+					String currency= balance.getCurrency();
+					Order order = new Order(currency, balance.getAmount(),Order.Side.sell);
 					balance.addOrderVente(order.getAmmount());
 					lOrders.add(order);
+					}
 				}
 			}
 			OrderManager.getInstance().sendOrders(bitfinexClient, lOrders);

@@ -11,6 +11,8 @@ public class PointTriple {
 		super();
 		this.x = x;
 		this.y = y;
+		this.o1 =o1;
+		this.o2 = o2;
 	}
 	@Override
 	public String toString() {

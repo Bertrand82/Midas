@@ -4,6 +4,8 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -35,13 +37,20 @@ public class PanelOrderBook extends JPanel{
 		dateStr=df.format(date);
 		this.setPreferredSize(dim);
 		this.setSize(dim);
+		this.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				drawVerticalLine(e.getX(), e.getY());
+			}
+		});
 	
 	}
-	
+	double deltaPrice  ;
+	double minPrice;
 	public void update(double maxPrice, double minPrice, double amountMax){
 		System.out.println("update orderBook panel maxPrice :"+maxPrice+"  minPrice :"+minPrice+"   amountMax :"+amountMax);
-		
-		double deltaPrice  = maxPrice - minPrice;
+		this.minPrice = minPrice;
+		deltaPrice  = maxPrice - minPrice;
 		list = new ArrayList<>();
 		
 		for(OrderBookItem obi2 : book.getListAsks()){
@@ -67,6 +76,15 @@ public class PanelOrderBook extends JPanel{
 		System.out.println("update orderBook panel label :"+labelAsk+labelBid);
 		
 	}
+	private boolean drawVerticalLine = false;
+	int x =0;
+	double priceClicked ;
+	private void drawVerticalLine(int x, int y) {
+		this.x = x;
+		priceClicked = ((x*deltaPrice)/w)  +minPrice ;		
+		drawVerticalLine=true;
+		repaint();
+	}
 	@Override
 	public void paint(Graphics g) {
 		g.setColor(Color.white);
@@ -82,6 +100,11 @@ public class PanelOrderBook extends JPanel{
 		g.drawString(labelAsk, 20, 50);
 		g.setColor(Color.RED);
 		g.drawString(labelBid, 20, 70);
+		if (drawVerticalLine){
+			g.setColor(Color.BLACK);
+			g.drawLine(x, 0, x, h);
+			g.drawString("priceClicked : "+priceClicked, 20, 90);
+		}
 	}
 
 	static class Item {

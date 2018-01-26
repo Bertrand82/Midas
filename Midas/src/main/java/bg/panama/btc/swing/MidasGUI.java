@@ -540,7 +540,7 @@ public class MidasGUI {
 		} else {
 			s += "Orders Achat n :" + listOrdersAchat.size()+" - ";
 			for (Order o : listOrdersAchat) {
-				s += " " + o.getCurrencyTo() + " " + o.getAmmount() + "  " + o.getCurrencyFrom() + " ;";
+				s += " " + o.getCurrency() + " " + o.getAmmount() + "   ;";
 			}
 		}
 		if (listOrdersVente == null){
@@ -548,7 +548,7 @@ public class MidasGUI {
 		}else {
 			s += "Orders Vente n :" + listOrdersVente.size();
 			for (Order o : listOrdersVente) {
-				s += " " + o.getCurrencyTo() + " " + o.getAmmount() + "  " + o.getCurrencyFrom() + " ;";
+				s += " " + o.getCurrency() + " " + o.getAmmount() + " ;";
 			}
 		}
 		log(s);
