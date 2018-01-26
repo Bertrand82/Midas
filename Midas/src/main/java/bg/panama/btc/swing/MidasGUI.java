@@ -538,7 +538,7 @@ public class MidasGUI {
 		if (listOrdersAchat == null) {
 
 		} else {
-			s += "Orders Achat n :" + listOrdersAchat.size();
+			s += "Orders Achat n :" + listOrdersAchat.size()+" - ";
 			for (Order o : listOrdersAchat) {
 				s += " " + o.getCurrencyTo() + " " + o.getAmmount() + "  " + o.getCurrencyFrom() + " ;";
 			}

@@ -45,4 +45,11 @@ public class BalancesFactory {
 
 	}
 
+	public void merge(Balances balances) {
+		EntityManager em = emf.createEntityManager();
+		em.getTransaction().begin();
+		em.merge(balances);
+		em.getTransaction().commit();
+	}
+
 }

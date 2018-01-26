@@ -19,35 +19,19 @@ public class PanelCanvasStochastique  extends PanelCancasAbstract {
 		stoc_1heur,
 		stoc_10mn
 	}
-	int w = 300;
-	int h = 50;
-	String currency;
-	Graphics2D g2;
-
-	BufferedImage bf = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
-	ImageIcon imageIcon = new ImageIcon(bf);
-	TypeStochastique type;
+	
+		TypeStochastique type;
 	public PanelCanvasStochastique(String currency, TypeStochastique type) {
-		super();
-		this.currency = currency;
+		super(currency);
 		this.type = type;
-		g2 = bf.createGraphics();
-		g2.setColor(Color.CYAN);
-		g2.fillRect(0, 0, w, h);
+		
 	}
 
 	public ImageIcon getImageIcon() {
 		return imageIcon;
 	}
 
-	private Double xMax;
-	private Double xMin;
-	private Double yMax;
-	private Double yMin;
-	private double xM;
-	private double yM;
-	private double dx;
-	private double dy;
+	
 
 	private List<PointDouble> getPoints(History h){
 		if (type == TypeStochastique.stoc_1heur){
@@ -84,7 +68,6 @@ public class PanelCanvasStochastique  extends PanelCancasAbstract {
 		
 
 		// dx = xMax - xMin;
-		dx = 2 * 60 * 60 * 1000;
 		xMin = xMax -dx;
 		// dy = yMax - yMin;
 		yMax = 100d;

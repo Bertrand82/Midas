@@ -1,18 +1,28 @@
 package bg.panama.btc.model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.MapsId;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.PrimaryKeyJoinColumn;
 
 import org.json.JSONObject;
 
 import bg.panama.btc.swing.SymbolConfig;
 import bg.panama.btc.swing.SymbolsConfig;
+import bg.panama.btc.trading.first.Order;
 import bg.panama.btc.trading.first.ServiceCurrencies;
 @Entity
 public class Balance implements Serializable{
@@ -36,6 +46,8 @@ public class Balance implements Serializable{
 	private double availableInDollar;
 	private double amountInDollar;
 	private Date date = new Date();
+	double orderAchat=0;
+	double orderVente =0;
 	@ManyToOne
 	@JoinColumn(name="balances_id", nullable=false)
 	private  Balances balances;
@@ -190,6 +202,18 @@ public class Balance implements Serializable{
 
 	public void setDate(Date date) {
 		this.date = date;
+	}
+	public double getOrderAchat() {
+		return orderAchat;
+	}
+	public void addOrderAchat(double orderAchat) {
+		this.orderAchat += orderAchat;
+	}
+	public double getOrderVente() {
+		return orderVente;
+	}
+	public void addOrderVente(double oderVente) {
+		this.orderVente += oderVente;
 	}
 	
 	

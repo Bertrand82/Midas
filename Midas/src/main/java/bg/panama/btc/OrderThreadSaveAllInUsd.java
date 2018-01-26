@@ -6,6 +6,7 @@ import java.util.List;
 import bg.panama.btc.BitfinexClient.EnumService;
 import bg.panama.btc.model.Balance;
 import bg.panama.btc.model.Balances;
+import bg.panama.btc.trading.first.BalancesFactory;
 import bg.panama.btc.trading.first.Order;
 import bg.panama.btc.trading.first.ServiceCurrencies;
 import bg.panama.btc.trading.first.SessionCurrencies;
@@ -27,22 +28,27 @@ public class OrderThreadSaveAllInUsd implements Runnable {
 
 	@Override
 	public void run() {
+		Balances balances = ServiceCurrencies.getInstance().getBalances();
 		try {
 			cancelAllOrders();
 			SessionCurrencies sessionCurrencies = ServiceCurrencies.getInstance().getSessionCurrencies();
-			Balances balances = ServiceCurrencies.getInstance().getBalances();
+			
 			List<Order> lOrders = new ArrayList<>();
 			for (Balance balance : balances.getlBalancesExchange()) {
 				double ammountDollar = balance.getAmountInDollar();
 				if (ammountDollar > 50) {
 					String currencyFrom = balance.getCurrency();
 					Order order = new Order(currencyFrom, "usd", balance.getAmount());
+					balance.addOrderVente(order.getAmmount());
 					lOrders.add(order);
 				}
 			}
 			OrderManager.getInstance().sendOrders(bitfinexClient, lOrders);
+			
 		} catch (Exception e) {
 			e.printStackTrace();
+		}finally {
+			BalancesFactory.instance.merge(balances);
 		}
 	}
 

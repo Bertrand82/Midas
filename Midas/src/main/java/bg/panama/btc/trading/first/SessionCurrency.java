@@ -388,6 +388,7 @@ public class SessionCurrency implements Serializable,Cloneable{
 		return etat;
 	}
 
+	
 
 	
 

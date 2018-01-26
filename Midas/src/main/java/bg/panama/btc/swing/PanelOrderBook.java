@@ -27,7 +27,8 @@ public class PanelOrderBook extends JPanel{
 	Date date = new Date();
 	String dateStr ="";
 	Font myFont = new Font ("Courier New", Font.BOLD, 25);
-	String label="";
+	String labelAsk="";
+	String labelBid="";
 	public PanelOrderBook(Date date, OrderBook book) {
 		this.book=book;
 		this.date = date;
@@ -61,8 +62,9 @@ public class PanelOrderBook extends JPanel{
 			list.add(item);
 			
 		}
-		label  ="Ask : "+book.getAmmountTotalAskPercent()+" % Bids "+book.getAmmountToyalBidPercent()+" %";
-		System.out.println("update orderBook panel label :"+label);
+		labelAsk  ="Ask : "+book.getAmmountTotalAskPercent()+" % ";
+		labelBid  =" Bids "+book.getAmmountToyalBidPercent()+" %";
+		System.out.println("update orderBook panel label :"+labelAsk+labelBid);
 		
 	}
 	@Override
@@ -76,8 +78,10 @@ public class PanelOrderBook extends JPanel{
 		g.setColor(Color.BLACK);
 		g.setFont(myFont);
 		g.drawString(dateStr, 20, 20);
-		
-		g.drawString(label, 20, 60);
+		g.setColor(Color.GREEN);
+		g.drawString(labelAsk, 20, 50);
+		g.setColor(Color.RED);
+		g.drawString(labelBid, 20, 70);
 	}
 
 	static class Item {

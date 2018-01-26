@@ -1,9 +1,17 @@
 package bg.panama.btc.trading.first;
 
 import java.io.Serializable;
+import java.util.Date;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 
 import bg.panama.btc.BitfinexClient.OrderType;
-
+import bg.panama.btc.model.Balance;
+@Entity
 public class Order implements Serializable {
 
 	/**
@@ -12,6 +20,10 @@ public class Order implements Serializable {
 	public static final String side_buy ="buy";
 	public static final String side_sell ="sell";
 	private static final long serialVersionUID = 1L;
+	@Id
+	@GeneratedValue
+	private long id;
+
 	private String currencyFrom;
 	private String currencyTo;
 	private String side;
@@ -20,6 +32,17 @@ public class Order implements Serializable {
 	private String comment ="";
 	private double amount;
 	private double amountToConvert;
+	private Date date = new Date();
+	@ManyToOne
+	@JoinColumn(name="balance_id", nullable=true)
+	private Balance balance;
+	public void setBalance(Balance balance) {
+		this.balance = balance;
+	}
+
+	public Order() {
+		
+	}
 
 	public Order(String currencyFrom, String currencyTo, double ammont) {
 		super();
@@ -145,6 +168,42 @@ public class Order implements Serializable {
 
 	public void setComment(String comment) {
 		this.comment = comment;
+	}
+
+	public long getId() {
+		return id;
+	}
+
+	public void setId(long id) {
+		this.id = id;
+	}
+
+	public double getAmount() {
+		return amount;
+	}
+
+	public void setAmount(double amount) {
+		this.amount = amount;
+	}
+
+	public double getAmountToConvert() {
+		return amountToConvert;
+	}
+
+	public void setAmountToConvert(double amountToConvert) {
+		this.amountToConvert = amountToConvert;
+	}
+
+	public Date getDate() {
+		return date;
+	}
+
+	public void setDate(Date date) {
+		this.date = date;
+	}
+
+	public void setCurrencyFrom(String currencyFrom) {
+		this.currencyFrom = currencyFrom;
 	}
 
 	

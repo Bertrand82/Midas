@@ -20,34 +20,16 @@ public class PanelCanvasAchatVente extends PanelCancasAbstract {
 		stoc_1heur, stoc_10mn
 	}
 
-	int w = 300;
-	int h = 50;
-	String currency;
-	Graphics2D g2;
-
-	BufferedImage bf = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
-	ImageIcon imageIcon = new ImageIcon(bf);
-
 	public PanelCanvasAchatVente(String currency) {
-		super();
-		this.currency = currency;
-		g2 = bf.createGraphics();
-		g2.setColor(Color.CYAN);
-		g2.fillRect(0, 0, w, h);
+		super(currency);
 	}
 
 	public ImageIcon getImageIcon() {
 		return imageIcon;
 	}
 
-	private Double xMax;
-	private Double xMin;
-	private Double yMax;
-	private Double yMin;
-	private double xM;
-	private double yM;
-	private double dx;
-	private double dy;
+	
+	
 
 	List<Value> listVAlues = new ArrayList<>();
 
@@ -76,10 +58,7 @@ public class PanelCanvasAchatVente extends PanelCancasAbstract {
 			xMin = (double) p.time;
 		}
 		}
-		// dx = xMax - xMin;
-		dx = 2 * 60 * 60 * 1000;
-		
-		// dy = yMax - yMin;
+	
 		yMax = 100d;
 		yMin = 0d;
 		dy = 100d;

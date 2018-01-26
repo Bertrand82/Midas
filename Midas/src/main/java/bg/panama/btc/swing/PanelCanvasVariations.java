@@ -12,35 +12,17 @@ import bg.panama.btc.trading.first.SessionCurrency;
 import bg.util.PointDouble;
 
 public class PanelCanvasVariations  extends PanelCancasAbstract{
-	int w = 300;
-	int h = 50;
-	String currency;
-	Graphics2D g2;
-
-	BufferedImage bf = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
-	ImageIcon imageIcon = new ImageIcon(bf);
-
+	
+	
 	public PanelCanvasVariations(String currency) {
-		super();
-		this.currency = currency;
-
-		g2 = bf.createGraphics();
-		g2.setColor(Color.CYAN);
-		g2.fillRect(0, 0, w, h);
+		super(currency);
 	}
 
 	public ImageIcon getImageIcon() {
 		return imageIcon;
 	}
 
-	private Double xMax;
-	private Double xMin;
-	private Double yMax;
-	private Double yMin;
-	private double xM;
-	private double yM;
-	private double dx;
-	private double dy;
+
 
 	private void initFromHistory(History h) {
 		xMax= null;
@@ -61,7 +43,6 @@ public class PanelCanvasVariations  extends PanelCancasAbstract{
 		if (p.x > xMax) {
 			xMax = p.x;
 		}
-		dx = 2*60*60*1000;
 		dy = 20;
 		xMin = xMax -dx;
 		

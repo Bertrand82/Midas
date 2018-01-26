@@ -207,7 +207,7 @@ public class PanelCurrencies extends JPanel implements ICheckAlive {
          public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
         	 Double dd  =0d;
         	 if (value instanceof Number) {
-            	 dd =(Double) value;
+            	 dd =((Number) value).doubleValue();
                  value = df2.format(value);
              }
              Component c  = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);

@@ -130,6 +130,8 @@ public class DialogShowCurrencyDetail extends JPanel {
 
 	private void drawVerticalLine(int x, int y) {
 		this.x = x;
+		double timeFromStart  = this.panelCanvasPrix.getDx()*x/this.panelCanvasPrix.w;
+		System.out.println("timeFromStart : "+timeFromStart+"   "+(timeFromStart/60000)+" mn    x : "+x);
 		repaint();
 	}
 
@@ -137,6 +139,7 @@ public class DialogShowCurrencyDetail extends JPanel {
 		super.paint(g);
 		g.setColor(Color.BLACK);
 		g.drawLine(x, 20, x, this.getHeight());
+		
 	}
 
 	private String getSymbolFromName(){

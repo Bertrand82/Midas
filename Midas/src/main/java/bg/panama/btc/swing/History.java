@@ -14,6 +14,7 @@ import bg.panama.btc.trading.first.BalancesFactory;
 import bg.panama.btc.trading.first.SessionCurrenciesFactory;
 import bg.panama.btc.trading.first.SessionCurrency;
 import bg.util.PointDouble;
+import bg.util.PointTriple;
 
 public class History implements Serializable {
 
@@ -303,8 +304,8 @@ public class History implements Serializable {
 		}
 	}
 
-	public List<PointDouble>  getListPointsBalanceHistory() {
-		List<PointDouble> list = new ArrayList<>();
+	public List<PointTriple>  getListPointsBalanceHistory() {
+		List<PointTriple> list = new ArrayList<>();
 		if (getListBalance().isEmpty()) {
 			System.out.println("getListPointsBalanceHistory list is embty");
 			return list;
@@ -313,7 +314,7 @@ public class History implements Serializable {
 		for (Balance s : getListBalance()) {
 			double vDollar = s.getAmountInDollar();
 			if (s.getDate() != null){
-			PointDouble p = new PointDouble(s.getDate().getTime(), vDollar);
+			PointTriple p = new PointTriple(s.getDate().getTime(), vDollar,s.getOrderAchat(),s.getOrderVente());
 			list.add(p);
 			}
 		}
