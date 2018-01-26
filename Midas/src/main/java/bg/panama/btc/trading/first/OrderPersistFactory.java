@@ -46,6 +46,7 @@ public class OrderPersistFactory {
 		em.getTransaction().begin();
 		em.persist(order);
 		em.getTransaction().commit();
+		em.close();
 	}
 
 	public List<Order> getOrders(int sizeMax, String currency) {

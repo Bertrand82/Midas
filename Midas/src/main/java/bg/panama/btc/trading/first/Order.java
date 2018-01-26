@@ -6,15 +6,18 @@ import java.util.Date;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Table;
 
 import bg.panama.btc.BitfinexClient.OrderType;
+// Il faut donner un nom à la table, parceque Order ca plante!!!!! 
 @Entity
+@Table(name="ORDER_BTFX2")
 public class Order implements Serializable {
 
 	/**
 	 * 
 	 */
-	public enum Side {
+	public static enum Side {
 		buy,
 		sell
 	}
@@ -23,14 +26,14 @@ public class Order implements Serializable {
 	@GeneratedValue
 	private long id;
 
-	private String currency;
-	private Side side;
-	private double price;
-	private String comment ="";
-	private double amount;
+	private String currency="";	
+	private Side  side;
+	private double price =0d;
+	private String comment ="No Comment";
+	private double amount=0d;
 	private Date date = new Date();
+	
 	public Order() {
-		
 	}
 
 	public Order(String currency,  double ammont, Side side) {
@@ -38,6 +41,7 @@ public class Order implements Serializable {
 		this.currency= currency;
 		this.amount = ammont;
 		this.side = side;
+		System.out.println("order "+this);
 	}
 
 	
@@ -50,9 +54,9 @@ public class Order implements Serializable {
 	public String toString() {
 		String s ="";
 		
-		if(side != null){
+		
 			s += " "+side;
-		}
+	
 		
 		if(price != 0){
 			s+=" price "+price;
@@ -80,21 +84,21 @@ public class Order implements Serializable {
 	 * Either “buy” or “sell”.
 	 */
 	public Side getSide() {
-		return this.side;
+		return side;
 	}
 
 	public void setSide(Side side) {
 		this.side = side;
 	}
-
+	
 
 	public boolean isSelling() {
 		
-		return side==Side.sell;
+		return getSide()==Side.sell;
 	}
 	public boolean isBuying() {
 		
-		return side==Side.buy;
+		return getSide()==Side.buy;
 	}
 
 	public void setPrice(double price) {
@@ -157,6 +161,10 @@ public class Order implements Serializable {
 
 	public String getCurrency() {
 		return currency;
+	}
+
+	public void setCurrency(String currency) {
+		this.currency = currency;
 	}
 
 	

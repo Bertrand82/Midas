@@ -45,6 +45,7 @@ public class OrderTestV1 {
 		// ATTENTION avant de tester: Cela passe un ordre
 		System.err.println("TTENTION avant de tester: Cela passe un ordre");
 		//OrderManager.sendOrder(this.bfnx,order);
+		
 	}
 	/*
 	 * 
