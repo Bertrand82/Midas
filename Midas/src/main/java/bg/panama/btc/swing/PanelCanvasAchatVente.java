@@ -52,17 +52,17 @@ public class PanelCanvasAchatVente extends PanelCancasAbstract {
 
 		}
 		if (p.time !=0){
-		if (p.time > xMax) {
-			xMax = (double) p.time;
-		}if (p.time < xMin) {
-			xMin = (double) p.time;
-		}
+			if (p.time > xMax) {
+				xMax = (double) p.time;
+			}if (p.time < xMin) {
+				xMin = (double) p.time;
+			}
 		}
 	
 		yMax = 100d;
 		yMin = 0d;
 		dy = 100d;
-
+		xMin = xMax -dx;
 		xM = (xMax + xMin) / 2;
 		yM = (yMax + yMin) / 2;
 

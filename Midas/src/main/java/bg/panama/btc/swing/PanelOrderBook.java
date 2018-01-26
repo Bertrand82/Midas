@@ -31,9 +31,11 @@ public class PanelOrderBook extends JPanel{
 	Font myFont = new Font ("Courier New", Font.BOLD, 25);
 	String labelAsk="";
 	String labelBid="";
-	public PanelOrderBook(Date date, OrderBook book) {
+	PanelOrderBookHistory parent;
+	public PanelOrderBook(Date date, OrderBook book, PanelOrderBookHistory parent) {
 		this.book=book;
 		this.date = date;
+		this.parent = parent;
 		dateStr=df.format(date);
 		this.setPreferredSize(dim);
 		this.setSize(dim);
@@ -83,6 +85,7 @@ public class PanelOrderBook extends JPanel{
 		this.x = x;
 		priceClicked = ((x*deltaPrice)/w)  +minPrice ;		
 		drawVerticalLine=true;
+		this.parent.setPrice(priceClicked);
 		repaint();
 	}
 	@Override

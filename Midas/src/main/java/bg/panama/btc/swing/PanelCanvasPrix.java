@@ -52,7 +52,7 @@ public class PanelCanvasPrix extends PanelCancasAbstract{
 			yMin = p.y;
 		}
 
-		// dx = xMax - xMin;
+		
 		xMin = xMax -dx;
 		// dy = yMax - yMin;
 		yMax = 0.75d;

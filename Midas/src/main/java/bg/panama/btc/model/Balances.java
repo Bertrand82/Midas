@@ -172,7 +172,7 @@ public class Balances implements Serializable {
 			amountOrderInDollar = Math.min(Config.getInstance().getPlafondCurrencyInDollard(), amountOrderInDollar); // ECRETAGE POUR QUALIF
 			double price = sessionBest.getTicker_Z_1().getLastPrice();
 			double amount = amountOrderInDollar/price;
-			order = new Order( sessionBest.getShortName(), amount, Order.Side.buy);
+			order = new Order( sessionBest.getShortName(), amount, Order.Side.buy, Order.TypeChoicePrice.fromTickers);
 			order.setComment("orderToBest limit : "+maxAmountInDolllar+"");
 		}
 		return order;
@@ -221,7 +221,7 @@ public class Balances implements Serializable {
 			} else if (balance.getAvailableInDollar() < 30) {
 				// minimum order size between 10-25 USD
 			} else {
-				Order order = new Order(currency,  balance.getAvailable(),Order.Side.sell);
+				Order order = new Order(currency,  balance.getAvailable(),Order.Side.sell, Order.TypeChoicePrice.panic);
 				orders.add(order);
 			}
 		}
@@ -262,7 +262,7 @@ public class Balances implements Serializable {
 					SessionCurrency.EtatSTOCHASTIQUE etat_10mn = SessionCurrency.getStochastique(sc.getStochastique_10mn());
 					System.err.println("processOrdersVente "+currency+"  "+etat_10mn+"    vendre: "+etat_10mn.vendre);
 					if (etat_10mn.vendre){
-						Order orderVente  = new Order(sc.getShortName(),balance.getAvailable(),Order.Side.sell);
+						Order orderVente  = new Order(sc.getShortName(),balance.getAvailable(),Order.Side.sell, Order.TypeChoicePrice.fromBookOrder);
 						balance.addOrderVente(orderVente.getAmmount());
 						orders.add(orderVente);
 					}

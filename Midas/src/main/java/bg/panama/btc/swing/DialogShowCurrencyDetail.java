@@ -17,13 +17,18 @@ import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
+import bg.panama.btc.OrderManager;
 import bg.panama.btc.model.OrderBook;
 import bg.panama.btc.model.OrderBookFactory;
 import bg.panama.btc.model.OrderBookItem;
 import bg.panama.btc.swing.History.SimuResult;
+import bg.panama.btc.trading.first.Config;
+import bg.panama.btc.trading.first.Order;
+import bg.panama.btc.trading.first.Order.Side;
 import bg.panama.btc.trading.first.SessionCurrency;
 
 public class DialogShowCurrencyDetail extends JPanel {
@@ -68,18 +73,38 @@ public class DialogShowCurrencyDetail extends JPanel {
 			}
 
 		});
+		JButton buttonAcheter = new JButton("Buy");
+		JButton buttonVendre = new JButton("Sell");
 		JButton buttonShowBook = new JButton("Order Book");
-		buttonShowBook.addActionListener(new ActionListener() {
+		buttonVendre.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				System.out.println(" Vendre "+session.getShortName());
+				acheterVendre(Order.Side.sell);
+			}
 
+			
+		});
+		buttonAcheter.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				System.out.println("Acheter "+session.getShortName());
+				acheterVendre(Order.Side.buy);
+			}
+		});
+		buttonShowBook.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				showBookOrder();
 			}
 		});
-		
+		JPanel panelButton = new JPanel(new GridLayout(1, 0));
+		panelButton.add(buttonAcheter);		
+		panelButton.add(buttonVendre);
+		panelButton.add(buttonShowBook);
 		JPanel panelNorth = new JPanel(new BorderLayout());
 		panelNorth.add(labelTitle, BorderLayout.CENTER);
-		panelNorth.add(buttonShowBook, BorderLayout.EAST);
+		panelNorth.add(panelButton, BorderLayout.EAST);
 
 		JPanel panelCenter = new JPanel(new GridLayout(0, 1));
 		panelCenter.add(panelCanvasPrix.getJPanel());
@@ -162,4 +187,31 @@ public class DialogShowCurrencyDetail extends JPanel {
 		}
 	}
 
+	private void acheterVendre(Side side) {
+		double amountInDollard  = Config.getInstance().getPlafondCryptoInDollar();
+		double price = this.panelOrderBookHistory.getPrice();
+		if (Math.abs(price) < 0.000000001){
+			System.err.println("Price Too small");
+			JOptionPane.showMessageDialog(frame, "No Price!!!");
+			return;
+		}
+		double amount = amountInDollard/price;
+		Order order = new Order(this.session.getShortName(),amount,side,Order.TypeChoicePrice.fromTickers);
+		
+		order.setPrice(price);
+		
+		System.out.println("order "+order);
+		double lastPrice  = this.session.getTicker_Z_1().getLastPrice();
+		int delta =  (int) ((price -lastPrice) *100/price);
+		System.out.println(" Last Price : "+lastPrice+"   delta "+delta +" %");
+		String message = order.getMessageConfirmation()+" | delta last price ticker : "+delta +" %";
+		int result = JOptionPane.showConfirmDialog(frame,message,"Confirm "+order.getSide(), JOptionPane.OK_CANCEL_OPTION);
+		System.out.println("result   "+result);
+		if (result == JOptionPane.OK_OPTION){
+			System.out.println("Okk   envoie l'ordre");
+			OrderManager.getInstance().sendOrderPrivate( order);
+		}else {
+			 return;
+		}
+	}
 }

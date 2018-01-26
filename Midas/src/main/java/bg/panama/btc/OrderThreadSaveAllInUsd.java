@@ -41,7 +41,7 @@ public class OrderThreadSaveAllInUsd implements Runnable {
 						
 					}else {
 					String currency= balance.getCurrency();
-					Order order = new Order(currency, balance.getAmount(),Order.Side.sell);
+					Order order = new Order(currency, balance.getAmount(),Order.Side.sell,Order.TypeChoicePrice.panic);
 					balance.addOrderVente(order.getAmmount());
 					lOrders.add(order);
 					}

@@ -21,9 +21,6 @@ public class OrderManager {
 	private static final Logger loggerOrder = LogManager.getLogger("orders");
 	private static OrderManager instance = new OrderManager();
 
-	enum ChoicePriceOrder {
-		panic, fromTickers, fromBookOrder
-	}
 
 	public static OrderManager getInstance() {
 		return instance;
@@ -50,45 +47,22 @@ public class OrderManager {
 
 	protected void sendOrders(BitfinexClient bfnx, List<Order> orders) {
 		for (Order order : orders) {
-			sendOrder(bfnx, order);
-		}
-	}
-
-	public void sendOrder(BitfinexClient bfnx, Order order) {
-		try {
 			sendOrderPrivate(bfnx, order);
-		} catch (Exception e) {
-			e.printStackTrace();
 		}
 	}
 
-	public void sendOrderPrivate(BitfinexClient bfnx, Order order) throws ExceptionNoSymbolForOrder {
+
+	public void sendOrderPrivate(BitfinexClient bfnx, Order order)  {
 		try {
-
-			Symbols symbols = (Symbols) bfnx.serviceProcess(EnumService.symbols, null, null);
-			String symbol;
-
-			if (symbols.contains(order.getSymbol())) {
-
-				symbol = order.getSymbol();
-
-			} else {
-				loggerOrder.warn("No symbol for order" + order + " try to convert in btc!!");
-				throw new Exception("No symbol for order " + order);
-			}
-
-			ChoicePriceOrder choicePriceOrder = ChoicePriceOrder.fromTickers;
-			double price = getPrice(symbol, choicePriceOrder, order.isBuying());
-			order.setPrice(price);
-			
-			loggerOrder.info("sendOrder : " + order);
+			processPrice(order);			
+			loggerOrder.info("sendOrderWithPrice : " + order);
 			boolean fireOk = true;
 			String r = "";
 			if (fireOk) {
 				System.err.println("sendOrderPrivate sending order :" + order);
 				r = bfnx.sendOrder(order);
 			} else {
-				r = "No SEND ORDER  It is ONLY simu  !!!!!";
+				r = "No SEND ORDER  It is ONLY simu  !!!!! ";
 			}
 			loggerOrder.info("reponse Order " + r);
 			System.err.println("sendOrderPrivate retour :" + r);
@@ -100,10 +74,14 @@ public class OrderManager {
 
 	}
 
-	private double getPrice(String symbol, ChoicePriceOrder choice, boolean achat) throws Exception {
+	private void  processPrice(Order order) throws Exception {
+		String symbol=order.getCurrency();
+		Order.TypeChoicePrice choice = order.getTypeChoicePrice();
+		boolean achat = order.isBuying();
 		double price;
 		switch (choice) {
-
+		case manual:
+			return;			
 		case fromBookOrder:
 			price = getPriceFromBookOrder(symbol, achat);
 			break;
@@ -112,8 +90,8 @@ public class OrderManager {
 		default:
 			price = getPriceFromTickers(symbol, achat);
 		}
-
-		return price;
+		order.setPrice(price);
+		return ;
 	}
 
 	private double getPriceFromBookOrder(String symbol, boolean achat) {
@@ -139,6 +117,11 @@ public class OrderManager {
 			price = Math.max(ticker.getLast_price(), ticker.getMid());
 		}
 		return price;
+	}
+
+	public void sendOrderPrivate(Order order) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

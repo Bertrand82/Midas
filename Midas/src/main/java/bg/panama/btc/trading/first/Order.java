@@ -21,6 +21,13 @@ public class Order implements Serializable {
 		buy,
 		sell
 	}
+	public enum TypeChoicePrice {
+		panic, 
+		fromTickers, 
+		fromBookOrder,
+		manual
+	}
+
 	private static final long serialVersionUID = 1L;
 	@Id
 	@GeneratedValue
@@ -28,6 +35,7 @@ public class Order implements Serializable {
 
 	private String currency="";	
 	private Side  side;
+	private TypeChoicePrice typeChoicePrice;
 	private double price =0d;
 	private String comment ="No Comment";
 	private double amount=0d;
@@ -36,11 +44,12 @@ public class Order implements Serializable {
 	public Order() {
 	}
 
-	public Order(String currency,  double ammont, Side side) {
+	public Order(String currency,  double ammont, Side side, TypeChoicePrice typeChoicePrice) {
 		super();
 		this.currency= currency;
 		this.amount = ammont;
 		this.side = side;
+		this.typeChoicePrice = typeChoicePrice;
 		System.out.println("order "+this);
 	}
 
@@ -165,6 +174,18 @@ public class Order implements Serializable {
 
 	public void setCurrency(String currency) {
 		this.currency = currency;
+	}
+
+	public TypeChoicePrice getTypeChoicePrice() {
+		return typeChoicePrice;
+	}
+
+	public void setTypeChoicePrice(TypeChoicePrice typeChoicePrice) {
+		this.typeChoicePrice = typeChoicePrice;
+	}
+
+	public String getMessageConfirmation() {
+		return this.side+" "+this.amount+"  "+this.currency;
 	}
 
 	

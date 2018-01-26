@@ -12,7 +12,8 @@ import bg.panama.btc.model.OrderBookItem;
 public class PanelOrderBookHistory {
 
 	JTabbedPane tabbedPane = new JTabbedPane();
-
+	private double price =0;
+	
 	public JTabbedPane getTabbedPane() {
 		return tabbedPane;
 	}
@@ -21,7 +22,7 @@ public class PanelOrderBookHistory {
     List<PanelOrderBook> listPAnelOrderBook_ = new ArrayList<>();
     
 	public void addOrderBook(OrderBook book) {
-		PanelOrderBook panelOrderBook = new PanelOrderBook(new Date(),book);
+		PanelOrderBook panelOrderBook = new PanelOrderBook(new Date(),book,this);
 		this.listTotaleBookOrderItemMinMax.add(book.getOrderBookItemMax());
 		this.listTotaleBookOrderItemMinMax.add(book.getOrderBookItemMin());
 		this.listTotaleBookOrderItemMinMax.add(book.getOrderBookItemAmmountMax());
@@ -31,6 +32,7 @@ public class PanelOrderBookHistory {
 		processMinMax();
 		for(PanelOrderBook p : listPAnelOrderBook_){
 			p.update(maxPrice,minPrice,ammountMax);
+			p.repaint();
 		}
 		tabbedPane.setSelectedIndex(i-1);
 	}
@@ -52,6 +54,12 @@ public class PanelOrderBookHistory {
 				ammountMax = obi.getAmount();
 
 		}
+	}
+	public void setPrice(double price) {
+		this.price = price;
+	}
+	public double getPrice() {
+		return price;
 	}
 	
 	
