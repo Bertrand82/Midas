@@ -85,7 +85,7 @@ public class OrderManager {
 	}
 
 	private void  processPrice(Order order) throws Exception {
-		String symbol=order.getCurrency();
+		String currenvy_=order.getCurrency();
 		Order.TypeChoicePrice choice = order.getTypeChoicePrice();
 		boolean achat = order.isBuying();
 		double price;
@@ -93,19 +93,20 @@ public class OrderManager {
 		case manual:
 			return;			
 		case fromBookOrder:
-			price = getPriceFromBookOrder(symbol, achat);
+			price = getPriceFromBookOrder(currenvy_, achat);
 			break;
 		case fromTickers:
 		case panic:
 		default:
-			price = getPriceFromTickers(symbol, achat);
+			price = getPriceFromTickers(currenvy_, achat);
 		}
 		System.err.println("Set Price "+price);
 		order.setPrice(price);
 		return ;
 	}
 
-	private double getPriceFromBookOrder(String symbol, boolean achat) throws Exception{
+	private double getPriceFromBookOrder(String currency, boolean achat) throws Exception{
+		String symbol = currency+"usd";
 			OrderBook orderBook = OrderBookFactory.getInstance().getOrderBook(symbol);
 			double price = orderBook.getPrice(achat);
 			return price;
@@ -113,7 +114,8 @@ public class OrderManager {
 		
 	}
 
-	private double getPriceFromTickers(String symbol, boolean achat) throws Exception {
+	private double getPriceFromTickers(String currency, boolean achat) throws Exception {
+		String symbol = currency+"usd";
 		BitfinexClient bfnx = BitfinexClientFactory.getBitfinexClientAuthenticated();
 		TickerV1 ticker = (TickerV1) bfnx.serviceProcess(EnumService.ticker, "", symbol);
 		System.err.println("getPriceFromTickers LastPrice : " + symbol + "  lastPrice " + ticker.getLast_price()

@@ -322,6 +322,7 @@ public class MidasGUI {
 			text = "NO PANIC NOW !" + nbPanic + " panics " + nbPanicNo + " ";
 			colorBackGround = Color.ORANGE;
 		}
+		this.menuPanic.setOpaque(true);
 		this.menuPanic.setBackground(colorBackGround);
 		this.menuPanic.setText(text);
 
