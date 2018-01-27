@@ -89,18 +89,21 @@ public class OrderManager {
 		Order.TypeChoicePrice choice = order.getTypeChoicePrice();
 		boolean achat = order.isBuying();
 		double price;
+		double priceFromTicker  = getPriceFromTickers(currenvy_, achat);
+		double priceFromBookOrder = getPriceFromBookOrder(currenvy_, achat);
 		switch (choice) {
 		case manual:
 			return;			
 		case fromBookOrder:
-			price = getPriceFromBookOrder(currenvy_, achat);
+			price = priceFromBookOrder;
 			break;
 		case fromTickers:
 		case panic:
 		default:
-			price = getPriceFromTickers(currenvy_, achat);
+			price = priceFromTicker;
 		}
-		System.err.println("Set Price "+price);
+		double delta = (priceFromBookOrder- priceFromTicker)*100d/priceFromTicker;
+		System.err.println("Set Price achat "+achat+"  "+price+"   priceFromBookOrder : "+priceFromBookOrder+"  priceFromTicker :"+priceFromTicker+"  delta "+delta+" %");
 		order.setPrice(price);
 		return ;
 	}

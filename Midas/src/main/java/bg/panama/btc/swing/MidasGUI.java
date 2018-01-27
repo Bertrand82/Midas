@@ -162,7 +162,7 @@ public class MidasGUI {
 		});
 		JMenuItem menuPlafondMaximalCryptoByCurrency = new JMenuItem("Plafond Maximal Crypto By Currency");
 		menuPlafondMaximalCryptoByCurrency.addActionListener( e->{
-			JOptionPane.showMessageDialog(frame, textFieldPlafondMaxDollarByCurrency);
+			JOptionPane.showMessageDialog(frame, textFieldPlafondMaxDollarByCurrency,"Plafond Maximal By Currency (In $)",JOptionPane.INFORMATION_MESSAGE);
 			int plafondCryptoInDollarB = Integer.parseInt(textFieldPlafondMaxDollarByCurrency.getText());
 			System.out.println("plafond by Currency :"+plafondCryptoInDollarB);
 			Config.getInstance().setPlafondCurrencyInDollard(plafondCryptoInDollarB);
@@ -172,7 +172,7 @@ public class MidasGUI {
 
 		JMenuItem menuPlafondMaximalCrypto = new JMenuItem("Plafond Maximal Crypto");
 		menuPlafondMaximalCrypto.addActionListener( e->{
-			JOptionPane.showMessageDialog(frame, textFieldPlafondMaxDollar);
+			JOptionPane.showMessageDialog(frame, textFieldPlafondMaxDollar,"Plafond Maximal Crypto" ,JOptionPane.INFORMATION_MESSAGE);
 			int plafondCryptoInDollar = Integer.parseInt(textFieldPlafondMaxDollar.getText());
 			System.out.println("plafond Global :"+plafondCryptoInDollar);
 			Config.getInstance().setPlafondCryptoInDollar(plafondCryptoInDollar);

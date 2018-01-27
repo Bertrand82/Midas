@@ -98,15 +98,16 @@ public class PanelOrderBook extends JPanel{
 		}
 		g.setColor(Color.BLACK);
 		g.setFont(myFont);
-		g.drawString(dateStr, 20, 20);
+		g.drawString(this.book.getSymbol()+dateStr, 20, 20);
+		g.drawString(this.book.getSymbol()+dateStr, 20, 50);
 		g.setColor(Color.GREEN);
-		g.drawString(labelAsk, 20, 50);
+		g.drawString(labelAsk, 20, 80);
 		g.setColor(Color.RED);
-		g.drawString(labelBid, 20, 70);
+		g.drawString(labelBid, 20, 110);
 		if (drawVerticalLine){
 			g.setColor(Color.BLACK);
 			g.drawLine(x, 0, x, h);
-			g.drawString("priceClicked : "+priceClicked, 20, 90);
+			g.drawString("priceClicked : "+priceClicked, 20,140);
 		}
 	}
 

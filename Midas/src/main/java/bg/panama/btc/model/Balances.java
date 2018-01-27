@@ -155,6 +155,9 @@ public class Balances implements Serializable {
 			logDebug("Plafond crypto atteint");
 		} else if (balanceUsd.getAvailableInDollar() < 50) {
 			// minimum order size between 10-25 USD . Il n'y a plus de dollar
+		} else if(balanceUsd.getAvailable() != balanceUsd.getAmount()){
+			// Il y a des ordres "en cours", eventuellement des ordre d'achat de cette devise ....
+			logDebug("Ordre achat usd en cours (available != amount)");
 		} else if (sessionCurrencies.getNumero() < 10) {
 			// Pas d'ordre: les filtres ne sont pas initialisés
 			// Pas d'ordre: il y a assez d'ordre sur Balance Best
