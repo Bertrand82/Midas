@@ -76,4 +76,114 @@ public class ActiveOrder {
 		return "order id:"+this.id+" side: "+this.side+"  "+original_amount+"  "+symbol+"  type: "+this.type+"  price  "+price;
 	}
 
+
+	public String getId() {
+		return id;
+	}
+
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+
+	public String getSymbol() {
+		return symbol;
+	}
+
+
+	public void setSymbol(String symbol) {
+		this.symbol = symbol;
+	}
+
+
+	public Double getPrice() {
+		return price;
+	}
+
+
+	public void setPrice(Double price) {
+		this.price = price;
+	}
+
+
+	public String getSide() {
+		return side;
+	}
+
+
+	public void setSide(String side) {
+		this.side = side;
+	}
+
+
+	public String getType() {
+		return type;
+	}
+
+
+	public void setType(String type) {
+		this.type = type;
+	}
+
+
+	public Boolean getIs_live() {
+		return is_live;
+	}
+
+
+	public void setIs_live(Boolean is_live) {
+		this.is_live = is_live;
+	}
+
+
+	public Boolean getIs_cancelled() {
+		return is_cancelled;
+	}
+
+
+	public void setIs_cancelled(Boolean is_cancelled) {
+		this.is_cancelled = is_cancelled;
+	}
+
+
+	public Boolean getIs_hidden() {
+		return is_hidden;
+	}
+
+
+	public void setIs_hidden(Boolean is_hidden) {
+		this.is_hidden = is_hidden;
+	}
+
+
+	public Double getOriginal_amount() {
+		return original_amount;
+	}
+
+
+	public void setOriginal_amount(Double original_amount) {
+		this.original_amount = original_amount;
+	}
+
+
+	public Double getRemaining_amount() {
+		return remaining_amount;
+	}
+
+
+	public void setRemaining_amount(Double remaining_amount) {
+		this.remaining_amount = remaining_amount;
+	}
+
+
+	public Double getExecuted_amount() {
+		return executed_amount;
+	}
+
+
+	public void setExecuted_amount(Double executed_amount) {
+		this.executed_amount = executed_amount;
+	}
+
 }

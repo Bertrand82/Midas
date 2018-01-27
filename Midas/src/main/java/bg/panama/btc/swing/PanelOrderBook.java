@@ -99,7 +99,7 @@ public class PanelOrderBook extends JPanel{
 		g.setColor(Color.BLACK);
 		g.setFont(myFont);
 		g.drawString(this.book.getSymbol()+dateStr, 20, 20);
-		g.drawString(this.book.getSymbol()+dateStr, 20, 50);
+		
 		g.setColor(Color.GREEN);
 		g.drawString(labelAsk, 20, 80);
 		g.setColor(Color.RED);

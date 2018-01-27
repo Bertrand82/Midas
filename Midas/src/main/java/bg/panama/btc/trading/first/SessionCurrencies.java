@@ -18,6 +18,9 @@ import javax.persistence.OneToMany;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import bg.panama.btc.OrderFactory;
+import bg.panama.btc.model.ActiveOrder;
+import bg.panama.btc.model.ActiveOrders;
 import bg.panama.btc.model.Balance;
 import bg.panama.btc.model.Balances;
 import bg.panama.btc.model.v2.ITicker;
@@ -335,6 +338,31 @@ public class SessionCurrencies implements Serializable {
 
 	public void setAmbianceMarket(AmbianceMarket ambianceMarket) {
 		this.ambianceMarket = ambianceMarket;
+	}
+
+	public void checkActiveOrders() {
+		System.err.println("checkActiveOrders");
+		ActiveOrders activeOrders= OrderFactory.getInstance().getAllActivesOrders();
+		
+		System.out.println("checkActiveOrders :::::"+activeOrders);
+		for(ActiveOrder ao : activeOrders.getlOrders()){
+			System.out.println("------> ao :::::"+ao);
+			if (ao.getIs_live()){
+				if (ao.getSide().equalsIgnoreCase("buy")){
+					checkActiveOrderAchat(ao);
+				}
+			}
+		}
+	}
+
+	private void checkActiveOrderAchat(ActiveOrder ao) {
+		String shortName = ao.getSymbol().substring(0,3);
+		SessionCurrency currency = getSessionCurrency_byShortName(shortName);
+		if (currency.isEligible()){
+			System.err.println("Currency is Elligible NO IMPLEMENTED YET");
+		}else {
+			System.err.println("Currency is no more Elligible NO IMPLEMENTED YET");
+		}
 	}
 
 	

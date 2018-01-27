@@ -81,12 +81,14 @@ public class ThreadFetchTickers implements Runnable{
 					if (sessionCurrencies.isModePanic()){
 						emergencySaveInDollar("ThreadFetchTickers");
 					}
+					
 					MidasGUI.getInstance().updateThread();
 					EntityManagerFactory emf = HibernateUtil.getEntityManagerFactory();
 					EntityManager em = emf.createEntityManager();
 					SessionCurrenciesFactory.instance.persists(em,sessionCurrencies,tickers);
 					em.close();
 					ServiceCurrencies.getInstance().setSessionCurrencies(sessionCurrencies);
+					sessionCurrencies.checkActiveOrders();
 				} catch (Exception e) {
 					log("Exception22: "+e.getClass()+" "+e.getMessage());
 					System.err.println("Exception22 "+e.getClass()+" "+e.getMessage());

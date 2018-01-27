@@ -603,12 +603,6 @@ public class MidasGUI {
 	
 
 	private void checkActiveOrders() {
-		System.err.println("checkActiveOrders");
-		ActiveOrders activeOrders= OrderFactory.getInstance().getAllActivesOrders();
-		
-		System.out.println("checkActiveOrders :::::"+activeOrders);
-		for(ActiveOrder ao : activeOrders.getlOrders()){
-			System.out.println("------> ao :::::"+ao);
-		}
+		ServiceCurrencies.getInstance().getSessionCurrencies().checkActiveOrders();
 	}
 }

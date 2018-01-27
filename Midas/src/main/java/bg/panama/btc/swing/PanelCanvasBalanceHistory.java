@@ -64,7 +64,7 @@ public class PanelCanvasBalanceHistory extends PanelCancasAbstract{
 	
 	}
 
-	public static final Color GREEN = new Color(0x99FF66);
+	public static final Color GREEN = new Color(0x006400);
 	public static final Color RED = new Color(0xFF0066);
 
 	public void update(SessionCurrency sc) {
@@ -88,13 +88,13 @@ public class PanelCanvasBalanceHistory extends PanelCancasAbstract{
 				}else if(((Double) p.o1) > 0){
 					g2.setColor(Color.GREEN);
 					g2.drawLine(x, 0, x, h);
-					System.out.println("Acheter !!!!!!!!!!!!!!!!!!!!!!! ");
+					g2.fillOval(x-3,5, 6, 6);
 				}
 				if(p.o2 == null){
 				} else if(((Double) p.o2) > 0){
 					g2.setColor(Color.RED);
 					g2.drawLine(x, 0, x, h);
-					System.out.println("Vendre !!!!!!!!!!!!!!!!!!!!!!! ");
+					g2.fillOval(x-3,15, 6,6);
 				}
 			}
 		}
