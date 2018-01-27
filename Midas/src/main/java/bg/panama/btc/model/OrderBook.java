@@ -27,6 +27,7 @@ public class OrderBook {
 	double maxPrice;
 	double minPrice;
 	double amountMAx;
+	private String symbol;
 
 	public OrderBook() throws Exception {
 		this(new JSONObject(jsonStr));
@@ -48,8 +49,12 @@ public class OrderBook {
 
 			}
 			this.process();
+			
 		} catch (Exception e) {
 			System.err.println("Error B552 JSONException " + e.getMessage() + " | JsdonObject :" + jo);
+		}
+		if ((listAsks.size()== 0) && (listBids.size()==0)) {
+			System.err.println("OrderBook probleme :"+jo);
 		}
 	}
 
@@ -193,6 +198,10 @@ public class OrderBook {
 	public double getLowerFromList(List<OrderBookItem> listAsks2, double percentageAmount) {
 		List<OrderBookItem> l2  = new ArrayList<>();
 		l2.addAll(listAsks2);
+		if (l2.size() == 0){
+			System.err.println("OrderBook No Ask List "+symbol);
+			return 0;
+		}
 		Collections.sort(l2,comparatorAscendant );
 		double total = 0;
 		int i=0;
@@ -203,7 +212,9 @@ public class OrderBook {
 			total += obi.getAmount();
 			System.out.println(i+++" Ask obi :: "+obi);
 		}
+		
 		return l2.get(0).getPrice()*0.9999;
+	
 	}
 
 	public double getHigerFromList(List<OrderBookItem> listBids2, double percentageAmount) {
@@ -220,6 +231,15 @@ public class OrderBook {
 			System.out.println(i+++" Bids obi :: "+obi);
 		}
 		return l2.get(0).getPrice()*0.9999;
+	}
+
+	public String getSymbol() {
+		return symbol;
+	}
+
+	public void setSymbol(String symbol) {
+		this.symbol = symbol;
+		System.err.println("OrderBook "+symbol+"  listAsks.size : "+listAsks.size()+" listBids.size :"+listBids.size());
 	}
 	
 	

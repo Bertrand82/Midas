@@ -12,7 +12,7 @@ public class OrderPersistenceTest {
 	public void testNewOrder() throws Exception {
 		try {
 			
-			Order order = new Order("xrp", 123,Order.Side.buy);
+			Order order = new Order("xrp", 123,Order.Side.buy, Order.TypeChoicePrice.fromBookOrder);
 			OrderPersistFactory.instance.persists(order);
 		} catch (Exception e) {
 			e.printStackTrace();

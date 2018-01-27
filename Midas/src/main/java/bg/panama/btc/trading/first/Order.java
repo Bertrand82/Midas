@@ -74,6 +74,7 @@ public class Order implements Serializable {
 		if (orderType != null){
 			s += " orderType "+orderType;
 		}
+		s +="   ChoicePrice :"+ this.typeChoicePrice;
 		return "Order From=" + currency+ ", Side=" + side + ", ammont=" + amount + ""+s;
 	}
 

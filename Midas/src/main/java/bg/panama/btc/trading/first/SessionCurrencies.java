@@ -64,9 +64,14 @@ public class SessionCurrencies implements Serializable {
 
 	public void update(Tickers tickers) {
 		numero++;
-		for (ITicker ticker : tickers.getlTickers()) {
+		for (Ticker ticker : tickers.getlTickers()) {
 			SessionCurrency sessionCurrency = getSessionCurrency_byName(ticker.getName());
-			sessionCurrency.update((Ticker) ticker);
+			if (sessionCurrency== null){
+				sessionCurrency = new SessionCurrency(ticker, this);
+				this.lSessionCurrency.add(sessionCurrency);
+			}else {
+				sessionCurrency.update((Ticker) ticker);
+			}
 		}
 		processModePanic();
 	}

@@ -1,9 +1,11 @@
 package bg.panama.btc;
 
+import java.lang.reflect.Constructor;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.json.JSONObject;
 
 import bg.panama.btc.BitfinexClient.EnumService;
 import bg.panama.btc.model.OrderBook;
@@ -12,6 +14,7 @@ import bg.panama.btc.model.Symbols;
 import bg.panama.btc.model.TickerV1;
 import bg.panama.btc.trading.first.Order;
 import bg.panama.btc.trading.first.OrderPersistFactory;
+import bg.panama.btc.trading.first.OrderRetour;
 import bg.panama.btc.trading.first.ServiceCurrencies;
 import bg.panama.btc.trading.first.SessionCurrencies;
 import btc.BookOrderTest;
@@ -26,7 +29,7 @@ public class OrderManager {
 		return instance;
 	}
 
-	public void cancelAndSendOrders(BitfinexClient bfnx, List<Order> orders) {
+	public void cancelAndSendOrders_(BitfinexClient bfnx, List<Order> orders) {
 		SessionCurrencies sc = ServiceCurrencies.getInstance().getSessionCurrencies();
 		if (sc == null) {
 			return;
@@ -45,7 +48,7 @@ public class OrderManager {
 		OrderPersistFactory.instance.persists(orders);
 	}
 
-	protected void sendOrders(BitfinexClient bfnx, List<Order> orders) {
+	public void sendOrders(BitfinexClient bfnx, List<Order> orders) {
 		for (Order order : orders) {
 			sendOrderPrivate(bfnx, order);
 		}
@@ -54,18 +57,25 @@ public class OrderManager {
 
 	public void sendOrderPrivate(BitfinexClient bfnx, Order order)  {
 		try {
-			processPrice(order);			
-			loggerOrder.info("sendOrderWithPrice : " + order);
+			
+			processPrice(order);	
+			if (order.getPrice() <= 0.0000001) throw new Exception("Price Should notbe 0!!!");
+			System.err.println("sendOrderPrivateA order :"+order);
+			loggerOrder.info("sendOrderWithPrice : order :" + order);
 			boolean fireOk = true;
 			String r = "";
 			if (fireOk) {
-				System.err.println("sendOrderPrivate sending order :" + order);
-				r = bfnx.sendOrder(order);
+				System.err.println("sendOrderPrivateB sending order :" + order);
+				JSONObject jo = bfnx.sendOrder(order);
+				System.err.println("sendOrderPrivateC sending order retour:" + jo);
+				Object orderRetour = instancie(jo, OrderRetour.class);
+				System.err.println("OrderRetour "+orderRetour);
+				
 			} else {
 				r = "No SEND ORDER  It is ONLY simu  !!!!! ";
 			}
 			loggerOrder.info("reponse Order " + r);
-			System.err.println("sendOrderPrivate retour :" + r);
+			System.err.println("sendOrderPrivateD retour :" + r);
 		} catch (Exception e) {
 			loggerOrder.error("Exception44 sendOrderBB Exception : ", e);
 			System.err.println("Exception44 ");
@@ -90,19 +100,17 @@ public class OrderManager {
 		default:
 			price = getPriceFromTickers(symbol, achat);
 		}
+		System.err.println("Set Price "+price);
 		order.setPrice(price);
 		return ;
 	}
 
-	private double getPriceFromBookOrder(String symbol, boolean achat) {
-		try {
+	private double getPriceFromBookOrder(String symbol, boolean achat) throws Exception{
 			OrderBook orderBook = OrderBookFactory.getInstance().getOrderBook(symbol);
 			double price = orderBook.getPrice(achat);
 			return price;
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return 0;
+		
+		
 	}
 
 	private double getPriceFromTickers(String symbol, boolean achat) throws Exception {
@@ -120,8 +128,20 @@ public class OrderManager {
 	}
 
 	public void sendOrderPrivate(Order order) {
-		// TODO Auto-generated method stub
-		
+		BitfinexClient bfx  = BitfinexClientFactory.getBitfinexClientAuthenticated();
+		sendOrderPrivate(bfx,order);
+	}
+	
+	private static  Object instancie(JSONObject jo, Class clazz) throws Exception {
+		if (jo == null) {
+			return null;
+		}
+		if (clazz == null) {
+			return jo;
+		}
+		Constructor<?> c = clazz.getConstructor(JSONObject.class);
+		Object o = c.newInstance(jo);
+		return o;
 	}
 
 }

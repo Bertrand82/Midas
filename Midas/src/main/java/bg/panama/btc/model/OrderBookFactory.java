@@ -21,6 +21,7 @@ public class OrderBookFactory {
 		BitfinexClient bfnx = BitfinexClientFactory.getBitfinexClientFree();
 		Object o = bfnx.serviceProcess(EnumService.orderbook,"",symbol);
 		OrderBook orderBook = (OrderBook) o;
+		orderBook.setSymbol(symbol);
 		return orderBook;
 		
 	}

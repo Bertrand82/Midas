@@ -183,7 +183,7 @@ public class SessionCurrency implements Serializable,Cloneable{
 	}
 	public String getShortName() {
 		// TODO Auto-generated method stub
-		return shortName;
+		return shortName.toLowerCase();
 	}
 
 	public Ticker getTicker_Z_1() {

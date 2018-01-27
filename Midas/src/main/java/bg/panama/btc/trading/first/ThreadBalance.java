@@ -82,7 +82,9 @@ public class ThreadBalance implements Runnable{
 							System.err.println("Is Not orderable Vente");
 							loggerTrade.info("Is not orderable Vente");
 						}
-						OrderManager.getInstance().cancelAndSendOrders(this.bitfinexClient, listOrders);
+						//OrderManager.getInstance().cancelAndSendOrders(this.bitfinexClient, listOrders);
+						OrderManager.getInstance().sendOrders(this.bitfinexClient, listOrders);
+						
 						MidasGUI.getInstance().log(listOrdersAchat,listOrdersVente);
 						BalancesFactory.instance.persists(balances);
 					}else {

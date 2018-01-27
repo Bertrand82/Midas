@@ -499,13 +499,13 @@ public class BitfinexClient {
 	}
 
 	/**
-	 * Creates an authenticated request WITHOUT request parameters. Send a
-	 * request for Balances.
+	 * Creates an authenticated request WITHOUT request parameters. 
+	 * Send a request for Balances.
 	 *
 	 * @return Response string if request successfull
 	 * @throws IOException
 	 */
-	public String sendOrder(Order order) throws Exception {
+	public JSONObject sendOrder(Order order) throws Exception {
 		String sResponse;
 		OrderType type = order.getOrderType();
 		HttpURLConnection conn = null;
@@ -554,8 +554,9 @@ public class BitfinexClient {
 
 			// read the response
 			InputStream in = new BufferedInputStream(conn.getInputStream());
-			return convertStreamToString(in);
-
+			String joStr=  convertStreamToString(in);
+			JSONObject jor = new JSONObject(joStr);
+			return jor;
 		} catch (Exception e) {
 			System.out.println("Exception :::: " + e.getMessage());
 			String errMsg = e.getLocalizedMessage();
@@ -563,11 +564,11 @@ public class BitfinexClient {
 			if (conn != null) {
 				try {
 					sResponse = convertStreamToString(conn.getErrorStream());
-					errMsg += "Error122 -> " + sResponse;
+					errMsg += "Error122 :: " + sResponse;
 					Log(errMsg);
 					throw new Exception(sResponse, e);
 				} catch (IOException e1) {
-					errMsg += " Error on reading error-stream. -->: " + e1.getLocalizedMessage();
+					errMsg += " Error on reading error-stream. :: " + e1.getLocalizedMessage();
 					Log(errMsg, e);
 					throw new Exception("mpossible d'obtenir le message d'erreur", e);
 				}

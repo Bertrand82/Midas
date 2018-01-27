@@ -196,7 +196,7 @@ public class DialogShowCurrencyDetail extends JPanel {
 			return;
 		}
 		double amount = amountInDollard/price;
-		Order order = new Order(this.session.getShortName(),amount,side,Order.TypeChoicePrice.fromTickers);
+		Order order = new Order(this.session.getShortName(),amount,side,Order.TypeChoicePrice.manual);
 		
 		order.setPrice(price);
 		
