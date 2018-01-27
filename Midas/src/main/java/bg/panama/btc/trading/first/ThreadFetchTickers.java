@@ -14,6 +14,7 @@ import org.apache.logging.log4j.Logger;
 import bg.panama.btc.BitfinexClient;
 import bg.panama.btc.BitfinexClient.EnumService;
 import bg.panama.btc.OrderFactory;
+import bg.panama.btc.OrderManager;
 import bg.panama.btc.model.ActiveOrder;
 import bg.panama.btc.model.ActiveOrders;
 import bg.panama.btc.model.v2.Tickers;
@@ -182,10 +183,9 @@ public class ThreadFetchTickers implements Runnable{
 
 
 
-
+	@Deprecated
 	public void cancelAllOrders() throws Exception{
-		Object o = this.bitfinexClient.serviceProcess(EnumService.cancelAllOrders,"","");
-		System.out.println("orders :"+o);
+		OrderFactory.getInstance().cancelAllOrders();
 		
 	}
 	

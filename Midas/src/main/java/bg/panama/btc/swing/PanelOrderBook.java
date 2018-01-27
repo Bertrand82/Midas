@@ -74,7 +74,7 @@ public class PanelOrderBook extends JPanel{
 			
 		}
 		labelAsk  ="Ask : "+book.getAmmountTotalAskPercent()+" % ";
-		labelBid  =" Bids "+book.getAmmountToyalBidPercent()+" %";
+		labelBid  ="Bids : "+book.getAmmountToyalBidPercent()+" %";
 		System.out.println("update orderBook panel label :"+labelAsk+labelBid);
 		
 	}

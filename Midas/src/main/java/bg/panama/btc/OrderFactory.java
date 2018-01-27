@@ -4,6 +4,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import bg.panama.btc.BitfinexClient.EnumService;
+import bg.panama.btc.model.ActiveOrders;
 
 public class OrderFactory {
   
@@ -31,6 +32,11 @@ public class OrderFactory {
 			this.orderThreadSaveAllInUsd.saveAllInUSD("from OrderFactory from "+from);
 	}
 	
+
+	public void cancelAllOrders() {
+		BitfinexClient bitfinexClient = BitfinexClientFactory.getBitfinexClientAuthenticated();
+		cancelAllOrders(bitfinexClient);
+	}
 	
 	public Object cancelAllOrders(BitfinexClient bitfinexClient){
 		try {
@@ -46,8 +52,19 @@ public class OrderFactory {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			throw new  RuntimeException(e);
+		}		
+	}
+	
+	public ActiveOrders getAllActivesOrders(){
+		try {
+			BitfinexClient bitfinexClient = BitfinexClientFactory.getBitfinexClientAuthenticated();
+			ActiveOrders activeOrders= (ActiveOrders) bitfinexClient.serviceProcess(EnumService.orders,"","");
+			return activeOrders;
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
 		}
-		
 	}
 	
 }

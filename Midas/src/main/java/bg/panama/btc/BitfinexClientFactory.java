@@ -33,10 +33,7 @@ public class BitfinexClientFactory {
 	public static BitfinexClient getBitfinexClientAuthenticated() {
 		try {
 			ConfigFileProtected pcf  = ConfigFileProtected.getInstance();
-			if (pcf == null){
-				System.err.println("No Config file !!!!!");
-				return new BitfinexClient();
-			}
+			
 			return getBitfinexClient(pcf);
 		} catch (Exception e) {			
 			e.printStackTrace();

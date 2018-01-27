@@ -73,7 +73,7 @@ public class ActiveOrder {
 
 	@Override
 	public String toString() {
-		return "order id:"+this.id+"  "+this.side+"  "+original_amount+"  "+symbol+"  "+this.type;
+		return "order id:"+this.id+" side: "+this.side+"  "+original_amount+"  "+symbol+"  type: "+this.type+"  price  "+price;
 	}
 
 }

@@ -33,7 +33,10 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
 import bg.panama.btc.BitfinexClient;
+import bg.panama.btc.OrderFactory;
 import bg.panama.btc.BitfinexClient.EnumService;
+import bg.panama.btc.model.ActiveOrder;
+import bg.panama.btc.model.ActiveOrders;
 import bg.panama.btc.model.Balances;
 import bg.panama.btc.model.Symbols;
 import bg.panama.btc.simu.DialogSimuGUI;
@@ -110,12 +113,27 @@ public class MidasGUI {
 			}
 		});
 
+		JMenuItem menuSetPanic = new JMenuItem("Set Panic  ");
+		menuSetPanic.setBackground(Color.RED);
+		menuSetPanic.setOpaque(true);
+		
 		JMenuItem menuRemovePanic = new JMenuItem("Remove Panic  ");
+		menuRemovePanic.setBackground(Color.GREEN);
+		menuRemovePanic.setOpaque(true);
+		
 		menuRemovePanic.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				removePanic();
+				setPanic(false);
+			}
+		});
+		
+		menuSetPanic.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				setPanic(true);
 			}
 		});
 
@@ -137,6 +155,16 @@ public class MidasGUI {
 			}
 		});
 
+		
+		JMenuItem menuItemCheckOrders = new JMenuItem("Check Active Oorders");
+		menuItemCheckOrders.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				checkActiveOrders();
+			}
+
+		});
 		JMenuItem menuItemEmergencySave = new JMenuItem("Emergency change In $ ");
 		menuItemEmergencySave.addActionListener(new ActionListener() {
 
@@ -162,7 +190,7 @@ public class MidasGUI {
 		});
 		JMenuItem menuPlafondMaximalCryptoByCurrency = new JMenuItem("Plafond Maximal Crypto By Currency");
 		menuPlafondMaximalCryptoByCurrency.addActionListener( e->{
-			JOptionPane.showMessageDialog(frame, textFieldPlafondMaxDollarByCurrency,"Plafond Maximal By Currency (In $)",JOptionPane.INFORMATION_MESSAGE);
+			JOptionPane.showMessageDialog(frame, textFieldPlafondMaxDollarByCurrency,"Max by Currency (In $)",JOptionPane.INFORMATION_MESSAGE);
 			int plafondCryptoInDollarB = Integer.parseInt(textFieldPlafondMaxDollarByCurrency.getText());
 			System.out.println("plafond by Currency :"+plafondCryptoInDollarB);
 			Config.getInstance().setPlafondCurrencyInDollard(plafondCryptoInDollarB);
@@ -172,7 +200,7 @@ public class MidasGUI {
 
 		JMenuItem menuPlafondMaximalCrypto = new JMenuItem("Plafond Maximal Crypto");
 		menuPlafondMaximalCrypto.addActionListener( e->{
-			JOptionPane.showMessageDialog(frame, textFieldPlafondMaxDollar,"Plafond Maximal Crypto" ,JOptionPane.INFORMATION_MESSAGE);
+			JOptionPane.showMessageDialog(frame, textFieldPlafondMaxDollar,"Max total Crypto" ,JOptionPane.INFORMATION_MESSAGE);
 			int plafondCryptoInDollar = Integer.parseInt(textFieldPlafondMaxDollar.getText());
 			System.out.println("plafond Global :"+plafondCryptoInDollar);
 			Config.getInstance().setPlafondCryptoInDollar(plafondCryptoInDollar);
@@ -265,12 +293,14 @@ public class MidasGUI {
 		menuFile.add(menuTestBestCurrency);
 
 		this.menuPanic.add(menuRemovePanic);
+		this.menuPanic.add(menuSetPanic);
 
 		JMenu menuActions = new JMenu("Actions");
 		menuActions.add(menuItemCancelAllOrders);
 		menuActions.add(menuItemDisplayAllOrders);
 		menuActions.add(menuItemEmergencySave);
 		menuActions.add(menuItemStartSimu);
+		menuActions.add(menuItemCheckOrders);
 		JMenuBar menuBar = new JMenuBar();
 		menuBar.add(menuFile);
 		menuBar.add(menuActions);
@@ -453,7 +483,7 @@ public class MidasGUI {
 	private void cancelAllOrders() {
 		try {
 			System.out.println("Cancel Order");
-			this.threadFetchTickers.cancelAllOrders();
+			OrderFactory.getInstance().cancelAllOrders();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -515,12 +545,17 @@ public class MidasGUI {
 		hDetails.remove(name);
 	}
 
-	private void removePanic() {
-		System.err.println("remove PAnic");
-		this.setPanic(false, 0, 0);
+	private void setPanic(boolean b) {
+		System.err.println("set PAnic "+b);
 		SessionCurrencies sessionCurrencies = ServiceCurrencies.getInstance().getSessionCurrencies();
+		if(b){
+			sessionCurrencies.getAmbianceMarket().setModePanic(true);;
+		}else {
+		this.setPanic(false, 0, 0);
+		
 		sessionCurrencies.getAmbianceMarket().setNbPanic(0);
 		sessionCurrencies.getAmbianceMarket().setNbPanicNo(0);
+	}
 		log("Remove Panic");
 	}
 
@@ -564,5 +599,16 @@ public class MidasGUI {
 		}
 		SessionCurrency sessionBest = sessionCurrencies.getBestEligible();
 		log("Best Currency : " + sessionBest);
+	}
+	
+
+	private void checkActiveOrders() {
+		System.err.println("checkActiveOrders");
+		ActiveOrders activeOrders= OrderFactory.getInstance().getAllActivesOrders();
+		
+		System.out.println("checkActiveOrders :::::"+activeOrders);
+		for(ActiveOrder ao : activeOrders.getlOrders()){
+			System.out.println("------> ao :::::"+ao);
+		}
 	}
 }
