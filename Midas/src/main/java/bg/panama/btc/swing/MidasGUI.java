@@ -440,7 +440,7 @@ public class MidasGUI {
 		return instance;
 	}
 
-	PanelCurrencies panelCurrencies;
+	PanelTableCurrencies panelCurrencies;
 
 	public void updateThread() {
 		try {
@@ -457,7 +457,7 @@ public class MidasGUI {
 			};
 			SwingUtilities.invokeLater(runnable);
 			if (panelCurrencies == null) {
-				panelCurrencies = new PanelCurrencies(session);
+				panelCurrencies = new PanelTableCurrencies(session);
 				panelGlobal.removeAll();
 				panelGlobal.add(panelCurrencies);
 				frame.pack();

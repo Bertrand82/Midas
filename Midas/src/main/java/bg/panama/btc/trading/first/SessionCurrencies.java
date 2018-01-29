@@ -221,11 +221,11 @@ public class SessionCurrencies implements Serializable {
 		System.err.println("saveConfiguration");
 	}
 
-	public void updateWithArchive(SessionCurrencies sessionArchive) {
+	public void updateWithArchive_____DEPRECATED(SessionCurrencies sessionArchive) {
 		for(SessionCurrency sc : this.lSessionCurrency){
 			String name = sc.getName();
 			SessionCurrency sArchive = sessionArchive.getSessionCurrency_byName(name);
-			sc.updateWithArchive(sArchive);
+			sc.updateWithArchive__DEPRECATED(sArchive);
 		}
 	}
 

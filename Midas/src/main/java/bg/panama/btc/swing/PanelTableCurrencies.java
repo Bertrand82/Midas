@@ -35,7 +35,7 @@ import bg.panama.btc.trading.first.SessionCurrency;
 import bg.util.heartBeat.HeartBeat;
 import bg.util.heartBeat.ICheckAlive;
 
-public class PanelCurrencies extends JPanel implements ICheckAlive {
+public class PanelTableCurrencies extends JPanel implements ICheckAlive {
 	private static final DecimalFormat df = new DecimalFormat("#,###,000.00");
 	private static final DecimalFormat df2 = new DecimalFormat("0.000;-.000");
 	private static final DecimalFormat df3 = new DecimalFormat("#######0.000;");
@@ -194,12 +194,12 @@ public class PanelCurrencies extends JPanel implements ICheckAlive {
 	};
 	
 	
-	 public class DoubleTableCellRenderer extends DefaultTableCellRenderer {
+	 public class TableCellRenderer extends DefaultTableCellRenderer {
 
 
 		private static final long serialVersionUID = 1L;
 
-		public DoubleTableCellRenderer() {
+		public TableCellRenderer() {
              setHorizontalAlignment(JLabel.RIGHT);
          }
 
@@ -209,10 +209,20 @@ public class PanelCurrencies extends JPanel implements ICheckAlive {
         	 if (value instanceof Number) {
             	 dd =((Number) value).doubleValue();
                  value = df2.format(value);
+                 
              }
              Component c  = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-           
-             if (column == 2){
+             if (column ==0){
+            	 
+            	 SessionCurrency sc =session.getSessionCurrency_byShortName(""+value);
+                 if (sc.is_achetetable()){
+                	 c.setBackground(Color.GREEN);
+                 }else if (sc.is_a_vendre()){
+                	 c.setBackground(Color.RED);
+                 }else {
+                	 c.setBackground(Color.YELLOW);
+                 }
+             }else if (column == 2){
             	  //System.out.println("row :"+row+ "column = 2 (+value).length() "+(""+value).length()+"  value: "+value);
             	  
             	  if (dd > 30) {
@@ -230,7 +240,7 @@ public class PanelCurrencies extends JPanel implements ICheckAlive {
      }
 	private JTable table;
 
-	public PanelCurrencies(SessionCurrencies session) {
+	public PanelTableCurrencies(SessionCurrencies session) {
 		
 		super(new BorderLayout());
 		HeartBeat.getInstance().add(this);
@@ -238,10 +248,11 @@ public class PanelCurrencies extends JPanel implements ICheckAlive {
 		initCanvas();
 		
 		table = new JTable(tableModel);
-		table.getColumnModel().getColumn(2).setCellRenderer(new DoubleTableCellRenderer());
-		table.getColumnModel().getColumn(3).setCellRenderer(new DoubleTableCellRenderer());
-		table.getColumnModel().getColumn(4).setCellRenderer(new DoubleTableCellRenderer());
-		table.getColumnModel().getColumn(5).setCellRenderer(new DoubleTableCellRenderer());
+		table.getColumnModel().getColumn(0).setCellRenderer(new TableCellRenderer());
+		table.getColumnModel().getColumn(2).setCellRenderer(new TableCellRenderer());
+		table.getColumnModel().getColumn(3).setCellRenderer(new TableCellRenderer());
+		table.getColumnModel().getColumn(4).setCellRenderer(new TableCellRenderer());
+		table.getColumnModel().getColumn(5).setCellRenderer(new TableCellRenderer());
 		table.setRowHeight(60);
 		//table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		table.getColumnModel().getColumn(0).setPreferredWidth(55);

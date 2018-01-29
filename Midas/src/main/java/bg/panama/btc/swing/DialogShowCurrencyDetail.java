@@ -22,6 +22,8 @@ import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
 import bg.panama.btc.OrderManager;
+import bg.panama.btc.model.Balance;
+import bg.panama.btc.model.Balances;
 import bg.panama.btc.model.OrderBook;
 import bg.panama.btc.model.OrderBookFactory;
 import bg.panama.btc.model.OrderBookItem;
@@ -29,6 +31,7 @@ import bg.panama.btc.swing.History.SimuResult;
 import bg.panama.btc.trading.first.Config;
 import bg.panama.btc.trading.first.Order;
 import bg.panama.btc.trading.first.Order.Side;
+import bg.panama.btc.trading.first.ServiceCurrencies;
 import bg.panama.btc.trading.first.SessionCurrency;
 
 public class DialogShowCurrencyDetail extends JPanel {
@@ -188,14 +191,23 @@ public class DialogShowCurrencyDetail extends JPanel {
 	}
 
 	private void acheterVendre(Side side) {
-		double amountInDollard  = Config.getInstance().getPlafondCryptoInDollar();
+		
 		double price = this.panelOrderBookHistory.getPrice();
 		if (Math.abs(price) < 0.000000001){
 			System.err.println("Price Too small");
 			JOptionPane.showMessageDialog(frame, "No Price!!!");
 			return;
 		}
-		double amount = amountInDollard/price;
+		
+		double amount = 0;
+		if (side==Side.buy){
+			double amountInDollard  = Config.getInstance().getPlafondCurrencyInDollard();
+			amount = amountInDollard/price;
+		}else {
+			Balances balances = ServiceCurrencies.getInstance().getBalances();
+			Balance balance = balances.getBalance(this.session.getShortName());
+			amount = balance.getAmount();
+		}
 		Order order = new Order(this.session.getShortName(),amount,side,Order.TypeChoicePrice.manual);
 		
 		order.setPrice(price);

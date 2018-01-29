@@ -193,12 +193,15 @@ public class SessionCurrency implements Serializable,Cloneable{
 	public boolean isEligible() {
 		return isEligible;
 	}
-
+	/**
+	 * Est coché sur la table GUI
+	 * @param isEligible
+	 */
 	public void setEligible(boolean isEligible) {
 		this.isEligible = isEligible;
 	}
 
-	public void updateWithArchive(SessionCurrency sArchive) {
+	public void updateWithArchive__DEPRECATED(SessionCurrency sArchive) {
 		if(sArchive == null){
 			return;
 		}
@@ -386,6 +389,24 @@ public class SessionCurrency implements Serializable,Cloneable{
 	public EtatSTOCHASTIQUE getEtatStochastique_10mn() {
 		EtatSTOCHASTIQUE etat = getStochastique(getStochastique_10mn());
 		return etat;
+	}
+
+	public boolean is_achetetable() {
+		boolean b0 = this.getHourlyChangePerCentByDay() > 0;
+		SessionCurrency.EtatSTOCHASTIQUE etat_10mn = SessionCurrency.getStochastique(this.getStochastique_10mn());
+		boolean b1 = etat_10mn.acheter;
+		SessionCurrency.EtatSTOCHASTIQUE etat_1h_ = SessionCurrency.getStochastique(this.getStochastique_1heure());
+		boolean b2 = etat_10mn.acheter;
+		boolean  b = b0 && b1 && b2;
+		return b;
+	}
+
+	public boolean is_a_vendre() {
+		boolean b0 = this.getHourlyChangePerCentByDay() < 0;
+		SessionCurrency.EtatSTOCHASTIQUE etat_10mn = SessionCurrency.getStochastique(this.getStochastique_10mn());
+		boolean b1 = etat_10mn.vendre;
+		boolean b  = (b0 && b1);
+		return b;
 	}
 
 	

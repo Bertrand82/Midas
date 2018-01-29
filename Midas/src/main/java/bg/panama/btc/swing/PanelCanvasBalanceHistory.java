@@ -86,7 +86,7 @@ public class PanelCanvasBalanceHistory extends PanelCancasAbstract{
 				g2.fillOval(x, y, 4, 4);
 				if(p.o1 == null){
 				}else if(((Double) p.o1) > 0){
-					g2.setColor(Color.GREEN);
+					g2.setColor(GREEN);
 					g2.drawLine(x, 0, x, h);
 					g2.fillOval(x-3,5, 6, 6);
 				}

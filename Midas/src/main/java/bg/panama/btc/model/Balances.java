@@ -265,7 +265,7 @@ public class Balances implements Serializable {
 					SessionCurrency.EtatSTOCHASTIQUE etat_10mn = SessionCurrency.getStochastique(sc.getStochastique_10mn());
 					System.err.println("processOrdersVente "+currency+"  "+etat_10mn+"    vendre: "+etat_10mn.vendre);
 					if (etat_10mn.vendre){
-						Order orderVente  = new Order(sc.getShortName(),balance.getAvailable(),Order.Side.sell, Order.TypeChoicePrice.fromBookOrder);
+						Order orderVente  = new Order(sc.getShortName(),balance.getAvailable(),Order.Side.sell, Order.TypeChoicePrice.fromTickers);
 						balance.addOrderVente(orderVente.getAmmount());
 						orders.add(orderVente);
 					}
