@@ -4,7 +4,7 @@ import org.junit.Test;
 
 import bg.panama.btc.BitfinexClient;
 import bg.panama.btc.BitfinexClientFactory;
-import bg.panama.btc.trading.first.Order;
+import bg.panama.btc.model.operation.Order;
 
 
 public class OrderTestV1 {

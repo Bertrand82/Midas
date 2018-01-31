@@ -4,8 +4,8 @@ import org.junit.Test;
 
 import bg.panama.btc.BitfinexClient;
 import bg.panama.btc.BitfinexClient.EnumService;
+import bg.panama.btc.model.operation.Order;
 import bg.panama.btc.BitfinexClientFactory;
-import bg.panama.btc.trading.first.Order;
 
 public class ClaimPositionTestV1 {
 

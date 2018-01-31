@@ -2,7 +2,7 @@ package btc;
 
 import org.junit.Test;
 
-import bg.panama.btc.trading.first.Order;
+import bg.panama.btc.model.operation.Order;
 import bg.panama.btc.trading.first.OrderPersistFactory;
 
 public class OrderPersistenceTest {
