@@ -6,16 +6,16 @@ import java.util.List;
 import bg.panama.btc.BitfinexClient.EnumService;
 import bg.panama.btc.model.Balance;
 import bg.panama.btc.model.Balances;
+import bg.panama.btc.model.operation.Order;
 import bg.panama.btc.trading.first.BalancesFactory;
-import bg.panama.btc.trading.first.Order;
 import bg.panama.btc.trading.first.ServiceCurrencies;
 import bg.panama.btc.trading.first.SessionCurrencies;
 
-public class OrderThreadSaveAllInUsd implements Runnable {
+public class PanicThreadOrderSaveAllInUsd implements Runnable {
 
 	BitfinexClient bitfinexClient;
 
-	public OrderThreadSaveAllInUsd(BitfinexClient bitfinexClient) {
+	public PanicThreadOrderSaveAllInUsd(BitfinexClient bitfinexClient) {
 		this.bitfinexClient = bitfinexClient;
 	}
 

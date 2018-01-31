@@ -20,14 +20,16 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import bg.panama.btc.BitfinexClient.EnumService;
+import bg.panama.btc.model.operation.Operation;
+import bg.panama.btc.model.operation.OperationsManager;
+import bg.panama.btc.model.operation.Order;
+import bg.panama.btc.model.operation.Order.Side;
 import bg.panama.btc.swing.SymbolConfig;
 import bg.panama.btc.swing.SymbolsConfig;
 import bg.panama.btc.trading.first.Config;
-import bg.panama.btc.trading.first.Order;
 import bg.panama.btc.trading.first.ServiceCurrencies;
 import bg.panama.btc.trading.first.SessionCurrencies;
 import bg.panama.btc.trading.first.SessionCurrency;
-import bg.panama.btc.trading.first.Order.Side;
 
 @Entity
 public class Balances implements Serializable {
@@ -93,93 +95,42 @@ public class Balances implements Serializable {
 	private final static DecimalFormat df = new DecimalFormat("0000000.00");
 	private final static DecimalFormat df2 = new DecimalFormat("00.00");
 	
-	public List<Order> processOrdersAchat() {
-		List<Order> orders = new ArrayList<>();
+	public double getTotalCryptoAmountInDollar() {
+		return totalCryptoAmountInDollar;
+	}
+	
+	
+	/**
+	 * Les achat dependes du marché ... et des fonds disponibles.
+	 * Il est donc logique que cette methode soit ici;
+	 * @return
+	 */
+	public void processOrdersAchat() {
+		List<Operation> orders = new ArrayList<>();
 		SessionCurrencies sessionCurrencies = ServiceCurrencies.getInstance().getSessionCurrencies();
 		if (sessionCurrencies == null) {
 			System.err.println("No sessionCurrencies for processing orders");
-			return orders;
+			return ;
 		}
 		SessionCurrency sessionBest = sessionCurrencies.getBestEligible();
 		if (sessionBest == null){
-			return orders;
+			return ;
 		}
-		Order orderAchatBest = processSimpleOrderUsdToBest(sessionBest, 1000d);
+		Operation orderAchatBest = OperationsManager.processSimpleOrderUsdToBest(this,sessionBest, 1000d);
 		Balance balance = this.getBalance(sessionBest.getShortName());
 		if (balance == null){
 		}else if (orderAchatBest == null){
 		}else {
-			balance.addOrderAchat(orderAchatBest.getAmmount());
+			balance.addOrderAchat(orderAchatBest.getOrderAchat().getAmmount());
 		}
 		if (orderAchatBest != null){
 			orders.add(orderAchatBest);
 		}
 		System.err.println("processOrdersAchat List Orders " + orders);
-		return orders;
+		OperationsManager.processOperationsAchat(orders);
 	}
 
-	/**
-	 * GEnere un ordre vers le best
-	 * 
-	 * @param sessionBest
-	 * @return
-	 */
-	private Order processSimpleOrderUsdToBest(SessionCurrency sessionBest, double maxAmountInDolllar) {
-		if (sessionBest == null) {
-			return null;
-		}
-
-		SessionCurrencies sessionCurrencies = sessionBest.getSessionCurrencies();
-		String currencyUSD = "usd";
-		Balance balanceUsd = this.getBalance(currencyUSD);
-
-		SymbolConfig symbolTickerBest = SymbolsConfig.getInstance().getSymbolConfig(sessionBest.getShortName());
-
-		String currencyBest = sessionBest.getShortName();
-		Balance balanceBest = getBalance(currencyBest);
-		
-		double amountMAxDollar = Balance.getAchatMaxInDollar(currencyBest);
-
-		Order order = null;
-		if (currencyBest.equalsIgnoreCase(currencyUSD)) {
-			// PAs d'ordres! evidemment. Ne devrait jamais arriver
-		} else if (sessionCurrencies.isModePanic()) {
-			// Pas d'ordre. Le mode panic est géré par ailleurs mais il n'est
-			// pas necessaire d'acheter
-			logDebug("Is Mode Panic");
-		} else if (sessionCurrencies.getAmbianceMarket().getNbPanic() > 0) {
-			// Pas d'ordre. Le mode panic a fait disjoncter le system.
-			logDebug("Mode Panic No removed");
-		}  else if (this.totalCryptoAmountInDollar > Config.getInstance().getPlafondCryptoInDollar()*0.9) {
-			// Pas d'ordre. Le mode panic a fait disjoncter le system.
-			logDebug("Plafond crypto atteint");
-		} else if (balanceUsd.getAvailableInDollar() < 50) {
-			// minimum order size between 10-25 USD . Il n'y a plus de dollar
-		} else if(balanceUsd.getAvailable() != balanceUsd.getAmount()){
-			// Il y a des ordres "en cours", eventuellement des ordre d'achat de cette devise ....
-			logDebug("Ordre achat usd en cours (available != amount)");
-		} else if (sessionCurrencies.getNumero() < 10) {
-			// Pas d'ordre: les filtres ne sont pas initialisés
-			// Pas d'ordre: il y a assez d'ordre sur Balance Best
-		} else if ( (balanceBest!=null) && (balanceBest.getAmountInDollar() > 100)) {
-			// Le compte a déja été alimenté. A Modifier
-		} else {
-			double amountOrderInDollar = (balanceUsd.getAvailable()) * 0.9;
-			if (symbolTickerBest.getMaxTrade() == 0) {
-
-			} else {
-
-				amountOrderInDollar = Math.min(amountMAxDollar, amountOrderInDollar);
-				amountOrderInDollar = Math.min(Config.getInstance().getPlafondCryptoInDollar(), amountOrderInDollar);
-			}
-			amountOrderInDollar = Math.min(Config.getInstance().getPlafondCurrencyInDollard(), amountOrderInDollar); // ECRETAGE POUR QUALIF
-			double price = sessionBest.getTicker_Z_1().getLastPrice();
-			double amount = amountOrderInDollar/price;
-			order = new Order( sessionBest.getShortName(), amount, Order.Side.buy, Order.TypeChoicePrice.fromTickers);
-			order.setComment("orderToBest limit : "+maxAmountInDolllar+"");
-		}
-		return order;
-	}
+	
 
 	@Override
 	public String toString() {
@@ -214,23 +165,6 @@ public class Balances implements Serializable {
 		return null;
 	}
 
-	public List<Order> saveAllInDollar(SessionCurrencies session) {
-
-		List<Order> orders = new ArrayList<>();
-		for (Balance balance : this.lBalancesExchange) {
-			String currency = balance.getCurrency();
-			if ("usd".equalsIgnoreCase(currency)) {
-				// PAs d'ordres
-			} else if (balance.getAvailableInDollar() < 30) {
-				// minimum order size between 10-25 USD
-			} else {
-				Order order = new Order(currency,  balance.getAvailable(),Order.Side.sell, Order.TypeChoicePrice.panic);
-				orders.add(order);
-			}
-		}
-		System.err.println(" saveAllInDollar orders " + orders.size());
-		return orders;
-	}
 
 	public double getAvailableUSD() {
 		return getBalanceUSD().getAvailable();
@@ -239,41 +173,9 @@ public class Balances implements Serializable {
 	public double getAmountUSD() {
 		return getBalanceUSD().getAmount();
 	}
-
-	public List<Order> processOrdersVente() {
-		List<Order> orders = new ArrayList<>();
-		SessionCurrencies sessionCurrencies = ServiceCurrencies.getInstance().getSessionCurrencies();
-		if (sessionCurrencies == null){
-			return orders;
-		}
-		if (sessionCurrencies.isModePanic()){
-			// C'ets traité par ailleurs
-			return orders;
-		}
-		for (Balance balance : this.lBalancesExchange) {
-			String currency = balance.getCurrency();
-			if ("usd".equalsIgnoreCase(currency)) {
-				// PAs d'ordres =))
-			} else if (balance.getAvailableInDollar() < 30) {
-				// minimum order size between 10-25 USD
-			} else {
-				SessionCurrency sc = sessionCurrencies.getSessionCurrency_byShortName(currency);
-				
-				if (sc== null) {
-					System.err.println("No sessionCurrency for :"+currency);
-				}else {
-					SessionCurrency.EtatSTOCHASTIQUE etat_10mn = SessionCurrency.getStochastique(sc.getStochastique_10mn());
-					System.err.println("processOrdersVente "+currency+"  "+etat_10mn+"    vendre: "+etat_10mn.vendre);
-					if (etat_10mn.vendre){
-						Order orderVente  = new Order(sc.getShortName(),balance.getAvailable(),Order.Side.sell, Order.TypeChoicePrice.fromTickers);
-						balance.addOrderVente(orderVente.getAmmount());
-						orders.add(orderVente);
-					}
-				}
-			}
-		}
-		System.err.println("processOrdersVente orders " + orders.size());
-		return orders;
+	public void setTotalAvailableDollar(double totalAvailableDollar) {
+		this.totalAvailableDollar = totalAvailableDollar;
 	}
 
+	
 }

@@ -9,11 +9,11 @@ import javax.persistence.Query;
 import bg.panama.btc.trading.first.SessionCurrency;
 import bg.util.HibernateUtil;
 
-public class OperationFactory {
+public class OperationEntitiesFactory {
 
 	
 	EntityManagerFactory emf = HibernateUtil.getEntityManagerFactory();
-	public static OperationFactory instance = new OperationFactory();
+	public static OperationEntitiesFactory instance = new OperationEntitiesFactory();
 
 	public void persists(Operation operation) {
 		EntityManager em = emf.createEntityManager();

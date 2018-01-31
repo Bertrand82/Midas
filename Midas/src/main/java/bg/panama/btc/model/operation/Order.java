@@ -1,4 +1,4 @@
-package  bg.panama.btc.trading.first;
+package  bg.panama.btc.model.operation;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -10,7 +10,8 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import bg.panama.btc.BitfinexClient.OrderType;
-import bg.panama.btc.model.operation.Operation;
+import bg.panama.btc.model.operation.Order.TypeChoicePrice;
+import bg.panama.btc.trading.first.OrderRetour;
 // Il faut donner un nom à la table, parceque Order ca plante!!!!! 
 @Entity
 @Table(name="ORDER_BTFX2")
@@ -37,13 +38,15 @@ public class Order implements Serializable {
 
 	private String currency="";	
 	private Side  side;
-	private TypeChoicePrice typeChoicePrice;
+	
 	private double price =0d;
 	private String comment ="No Comment";
 	private double amount=0d;
 	private Date date = new Date();
 	//private Operation operation;
+	private TypeChoicePrice typeChoicePrice;
 	
+	private OrderRetour orderRetour;
 	
 
 	public Order() {
@@ -54,7 +57,7 @@ public class Order implements Serializable {
 		this.currency= currency;
 		this.amount = ammont;
 		this.side = side;
-		this.typeChoicePrice = typeChoicePrice;
+		this.typeChoicePrice= typeChoicePrice;
 		System.out.println("order "+this);
 	}
 
@@ -79,7 +82,7 @@ public class Order implements Serializable {
 		if (orderType != null){
 			s += " orderType "+orderType;
 		}
-		s +="   ChoicePrice :"+ this.typeChoicePrice;
+		
 		return "Order From=" + currency+ ", Side=" + side + ", ammont=" + amount + ""+s;
 	}
 
@@ -182,6 +185,11 @@ public class Order implements Serializable {
 		this.currency = currency;
 	}
 
+	
+	public String getMessageConfirmation() {
+		return this.side+" "+this.amount+"  "+this.currency;
+	}
+
 	public TypeChoicePrice getTypeChoicePrice() {
 		return typeChoicePrice;
 	}
@@ -190,8 +198,13 @@ public class Order implements Serializable {
 		this.typeChoicePrice = typeChoicePrice;
 	}
 
-	public String getMessageConfirmation() {
-		return this.side+" "+this.amount+"  "+this.currency;
+	
+	public void setOrderRetour(OrderRetour orderRetour) {
+		this.orderRetour = orderRetour;
+	}
+
+	public OrderRetour getOrderRetour() {
+		return orderRetour;
 	}
 
 	

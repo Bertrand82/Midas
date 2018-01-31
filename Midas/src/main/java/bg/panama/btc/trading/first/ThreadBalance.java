@@ -13,6 +13,7 @@ import bg.panama.btc.BitfinexClient;
 import bg.panama.btc.BitfinexClient.EnumService;
 import bg.panama.btc.OrderManager;
 import bg.panama.btc.model.Balances;
+import bg.panama.btc.model.operation.Order;
 import bg.panama.btc.model.v2.TickersFactory;
 import bg.panama.btc.swing.ConfigFileProtected;
 import bg.panama.btc.swing.MidasGUI;
@@ -66,10 +67,8 @@ public class ThreadBalance implements Runnable{
 					ServiceCurrencies.getInstance().setBalances(balances);
 					MidasGUI.getInstance().updateThreadBalance(balances);
 					
-					List<Order> listOrdersAchat = balances.processOrdersAchat();
-					List<Order> listOrdersVente = balances.processOrdersVente();
 					if(this.config.isOrderAble()){
-						List<Order> listOrders = new ArrayList<>();
+						/*List<Order> listOrders = new ArrayList<>();
 						if (this.config.isOrderAbleAchat()){
 							listOrders.addAll(listOrdersAchat);
 						} else {
@@ -81,11 +80,11 @@ public class ThreadBalance implements Runnable{
 						}else {
 							System.err.println("Is Not orderable Vente");
 							loggerTrade.info("Is not orderable Vente");
-						}
+						}*/
 						//OrderManager.getInstance().cancelAndSendOrders(this.bitfinexClient, listOrders);
-						OrderManager.getInstance().sendOrders(this.bitfinexClient, listOrders);
 						
-						MidasGUI.getInstance().log(listOrdersAchat,listOrdersVente);
+						balances.processOrdersAchat();
+						
 						BalancesFactory.instance.persists(balances);
 					}else {
 						MidasGUI.getInstance().log("Order No Send : config is not orderable");

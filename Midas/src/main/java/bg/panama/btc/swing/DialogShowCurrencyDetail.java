@@ -27,10 +27,11 @@ import bg.panama.btc.model.Balances;
 import bg.panama.btc.model.OrderBook;
 import bg.panama.btc.model.OrderBookFactory;
 import bg.panama.btc.model.OrderBookItem;
+import bg.panama.btc.model.operation.Operation;
+import bg.panama.btc.model.operation.Order;
+import bg.panama.btc.model.operation.Order.Side;
 import bg.panama.btc.swing.History.SimuResult;
 import bg.panama.btc.trading.first.Config;
-import bg.panama.btc.trading.first.Order;
-import bg.panama.btc.trading.first.Order.Side;
 import bg.panama.btc.trading.first.ServiceCurrencies;
 import bg.panama.btc.trading.first.SessionCurrency;
 
@@ -208,20 +209,20 @@ public class DialogShowCurrencyDetail extends JPanel {
 			Balance balance = balances.getBalance(this.session.getShortName());
 			amount = balance.getAmount();
 		}
-		Order order = new Order(this.session.getShortName(),amount,side,Order.TypeChoicePrice.manual);
+		Operation operation = new Operation(this.session.getShortName(),amount,Order.TypeChoicePrice.manual);
 		
-		order.setPrice(price);
+		operation.getOrderAchat().setPrice(price);
 		
-		System.out.println("order "+order);
+		System.out.println("operation "+operation);
 		double lastPrice  = this.session.getTicker_Z_1().getLastPrice();
 		int delta =  (int) ((price -lastPrice) *100/price);
 		System.out.println(" Last Price : "+lastPrice+"   delta "+delta +" %");
-		String message = order.getMessageConfirmation()+" | delta last price ticker : "+delta +" %";
-		int result = JOptionPane.showConfirmDialog(frame,message,"Confirm "+order.getSide(), JOptionPane.OK_CANCEL_OPTION);
+		String message = operation.getOrderAchat().getMessageConfirmation()+" | delta last price ticker : "+delta +" %";
+		int result = JOptionPane.showConfirmDialog(frame,message,"Confirm buy", JOptionPane.OK_CANCEL_OPTION);
 		System.out.println("result   "+result);
 		if (result == JOptionPane.OK_OPTION){
 			System.out.println("Okk   envoie l'ordre");
-			OrderManager.getInstance().sendOrderPrivate( order);
+			operation.start();
 		}else {
 			 return;
 		}

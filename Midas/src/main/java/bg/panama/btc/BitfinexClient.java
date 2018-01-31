@@ -31,8 +31,8 @@ import bg.panama.btc.model.Balances;
 import bg.panama.btc.model.OrderBook;
 import bg.panama.btc.model.Symbols;
 import bg.panama.btc.model.TickerV1;
+import bg.panama.btc.model.operation.Order;
 import bg.panama.btc.model.v2.Tickers;
-import bg.panama.btc.trading.first.Order;
 
 /**
  * Pour générer key : https://www.bitfinex.com/api

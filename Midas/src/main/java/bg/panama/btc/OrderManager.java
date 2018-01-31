@@ -12,7 +12,7 @@ import bg.panama.btc.model.OrderBook;
 import bg.panama.btc.model.OrderBookFactory;
 import bg.panama.btc.model.Symbols;
 import bg.panama.btc.model.TickerV1;
-import bg.panama.btc.trading.first.Order;
+import bg.panama.btc.model.operation.Order;
 import bg.panama.btc.trading.first.OrderPersistFactory;
 import bg.panama.btc.trading.first.OrderRetour;
 import bg.panama.btc.trading.first.ServiceCurrencies;
@@ -68,9 +68,9 @@ public class OrderManager {
 				System.err.println("sendOrderPrivateB sending order :" + order);
 				JSONObject jo = bfnx.sendOrder(order);
 				System.err.println("sendOrderPrivateC sending order retour:" + jo);
-				Object orderRetour = instancie(jo, OrderRetour.class);
+				OrderRetour orderRetour = (OrderRetour) instancie(jo, OrderRetour.class);
 				System.err.println("OrderRetour "+orderRetour);
-				
+				order.setOrderRetour(orderRetour);
 			} else {
 				r = "No SEND ORDER  It is ONLY simu  !!!!! ";
 			}

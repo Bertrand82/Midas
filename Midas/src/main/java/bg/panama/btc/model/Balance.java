@@ -20,9 +20,9 @@ import javax.persistence.PrimaryKeyJoinColumn;
 
 import org.json.JSONObject;
 
+import bg.panama.btc.model.operation.Order;
 import bg.panama.btc.swing.SymbolConfig;
 import bg.panama.btc.swing.SymbolsConfig;
-import bg.panama.btc.trading.first.Order;
 import bg.panama.btc.trading.first.ServiceCurrencies;
 @Entity
 public class Balance implements Serializable{

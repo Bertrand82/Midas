@@ -8,11 +8,10 @@ import bg.panama.btc.model.ActiveOrders;
 
 public class OrderFactory {
   
-	private static final Logger loggerOrder= LogManager.getLogger("orders");
 	
 	
 	private static OrderFactory instance  = new OrderFactory();
-	OrderThreadSaveAllInUsd orderThreadSaveAllInUsd;
+	PanicThreadOrderSaveAllInUsd orderThreadSaveAllInUsd;
 	boolean isPanic = false;
 	private OrderFactory() {		
 	}
@@ -22,17 +21,7 @@ public class OrderFactory {
 		return instance;
 	}
 
-	public void emergencySaveInDollar(String from) {
-			this.isPanic = true;
-			BitfinexClient bitfinexClient = BitfinexClientFactory.getBitfinexClientAuthenticated();
-			loggerOrder.info("emergencySaveInDollar from :"+from);
-			if (this.orderThreadSaveAllInUsd == null){
-				this.orderThreadSaveAllInUsd = new OrderThreadSaveAllInUsd(bitfinexClient);
-			}
-			this.orderThreadSaveAllInUsd.saveAllInUSD("from OrderFactory from "+from);
-	}
 	
-
 	public void cancelAllOrders() {
 		BitfinexClient bitfinexClient = BitfinexClientFactory.getBitfinexClientAuthenticated();
 		cancelAllOrders(bitfinexClient);

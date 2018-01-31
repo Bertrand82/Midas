@@ -17,6 +17,8 @@ import bg.panama.btc.OrderFactory;
 import bg.panama.btc.OrderManager;
 import bg.panama.btc.model.ActiveOrder;
 import bg.panama.btc.model.ActiveOrders;
+import bg.panama.btc.model.operation.OperationsManager;
+import bg.panama.btc.model.operation.Order;
 import bg.panama.btc.model.v2.Tickers;
 import bg.panama.btc.model.v2.TickersFactory;
 import bg.panama.btc.swing.ConfigFileProtected;
@@ -89,6 +91,8 @@ public class ThreadFetchTickers implements Runnable{
 					em.close();
 					ServiceCurrencies.getInstance().setSessionCurrencies(sessionCurrencies);
 					sessionCurrencies.checkActiveOrders();
+					List<Order> listOrdersVente = OperationsManager.processOrdersVent();
+
 				} catch (Exception e) {
 					log("Exception22: "+e.getClass()+" "+e.getMessage());
 					System.err.println("Exception22 "+e.getClass()+" "+e.getMessage());
@@ -149,7 +153,7 @@ public class ThreadFetchTickers implements Runnable{
 
 	public void emergencySaveInDollar(String from) {
 		log("emergy save request from "+from);
-		OrderFactory.getInstance().emergencySaveInDollar( from);
+		OperationsManager.instance.emergencySaveInDollar( from);
 	}
 
 	public Config getConfig() {

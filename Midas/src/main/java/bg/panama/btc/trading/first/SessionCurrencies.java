@@ -23,6 +23,8 @@ import bg.panama.btc.model.ActiveOrder;
 import bg.panama.btc.model.ActiveOrders;
 import bg.panama.btc.model.Balance;
 import bg.panama.btc.model.Balances;
+import bg.panama.btc.model.operation.OperationsManager;
+import bg.panama.btc.model.operation.Order;
 import bg.panama.btc.model.v2.ITicker;
 import bg.panama.btc.model.v2.Ticker;
 import bg.panama.btc.model.v2.Tickers;
@@ -212,9 +214,9 @@ public class SessionCurrencies implements Serializable {
 		return null;
 	}
 
-	public List<Order> saveAllInDollar(Balances balancesCurrent) {
+	public void saveAllInDollar_(Balances balancesCurrent) {
 		System.err.println("Save All In Dollar start");	
-		return balancesCurrent.saveAllInDollar(this);
+		OperationsManager.instance.emergencySaveInDollar("");
 	}
 
 	public void saveConfiguration_______________DEPRECATED() {
