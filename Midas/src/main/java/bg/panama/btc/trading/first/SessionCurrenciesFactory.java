@@ -14,8 +14,11 @@ public class SessionCurrenciesFactory {
 	public static SessionCurrenciesFactory instance = new SessionCurrenciesFactory();
 
 	public void persists(SessionCurrencies sessionCurrencies) {
-		// TODO Auto-generated method stub
-
+		EntityManager em = emf.createEntityManager();
+		em.getTransaction().begin();
+		em.persist(sessionCurrencies);
+		em.getTransaction().commit();
+		em.close();
 	}
 
 	public void persists(EntityManager em, SessionCurrencies sessionCurrencies, Tickers tickers) throws Exception {

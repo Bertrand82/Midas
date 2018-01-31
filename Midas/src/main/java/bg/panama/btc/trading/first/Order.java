@@ -1,4 +1,4 @@
-package bg.panama.btc.trading.first;
+package  bg.panama.btc.trading.first;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -6,9 +6,11 @@ import java.util.Date;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import bg.panama.btc.BitfinexClient.OrderType;
+import bg.panama.btc.model.operation.Operation;
 // Il faut donner un nom à la table, parceque Order ca plante!!!!! 
 @Entity
 @Table(name="ORDER_BTFX2")
@@ -40,7 +42,10 @@ public class Order implements Serializable {
 	private String comment ="No Comment";
 	private double amount=0d;
 	private Date date = new Date();
+	//private Operation operation;
 	
+	
+
 	public Order() {
 	}
 
