@@ -38,6 +38,7 @@ public class OperationsManager {
 		// Vomme l'ordre panic annule tous les ordres en cours, Un ordre panic annule aussi les ordres de ventes panic precedent ... 
 		// Aussi une panique toute les 3 minutes, ca suffit ! 
 		// TODO a mettre dans le fichier de config
+		long deltaPanicMax_ms = config.getDeltaPanicMax_ms();
 		if ((System.currentTimeMillis() - timePanic) > 3 * 60000) {
 			BitfinexClient bitfinexClient = BitfinexClientFactory.getBitfinexClientAuthenticated();
 			loggerOrder.info("emergencySaveInDollar from :" + from);

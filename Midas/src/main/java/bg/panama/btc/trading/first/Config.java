@@ -19,6 +19,7 @@ public class Config implements Serializable {
 	private static final String KEY_orderAbleVente = "isOrderAbleVente";
 	private static final String KEY_plafondCryptoInDollar = "plafondCryptoInDollar";
 	private static final String KEY_plafondCurrencyInDollar = "plafondCurrencyInDollar";
+	private static final String KEY_deltaPanicMax_ms = "deltaPanicMax_ms";
 
 	private boolean orderAble = false;
 	private boolean orderAbleAchat = false;
@@ -26,6 +27,7 @@ public class Config implements Serializable {
 	private boolean savePassword;
 	private int plafondCryptoInDollar =1000;
 	private int plafondCurrencyInDollard =500;
+	private long deltaPanicMax_ms = 3*60*1000;
 	private transient String password = null;
 	private Properties pConfig = new Properties();
 	private File fileConfig = new File("p_config_gui.properties");
@@ -79,6 +81,8 @@ public class Config implements Serializable {
 			plafondCryptoInDollar=Integer.parseInt(plafondCryptoInDollarStr);
 			String plafondCurrencyInDollarStr = pConfig.getProperty(KEY_plafondCryptoInDollar, "500");
 			this.plafondCurrencyInDollard = Integer.parseInt(plafondCurrencyInDollarStr);
+			String deltaPanicMax_msStr = pConfig.getProperty(KEY_deltaPanicMax_ms, "180000");
+			this.deltaPanicMax_ms= Integer.parseInt(deltaPanicMax_msStr);
 			proceessPasswordSaved();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -99,6 +103,7 @@ public class Config implements Serializable {
 			pConfig.setProperty(KEY_SAVE_PASSWORD, "" + savePassword);
 			pConfig.setProperty(KEY_plafondCryptoInDollar, "" + plafondCryptoInDollar);
 			pConfig.setProperty(KEY_plafondCurrencyInDollar, "" + plafondCurrencyInDollard);
+			pConfig.setProperty(KEY_deltaPanicMax_ms, "" + deltaPanicMax_ms);
 			
 			FileWriter writer = new FileWriter(fileConfig);
 
@@ -180,6 +185,10 @@ public class Config implements Serializable {
 
 	public void setPlafondCurrencyInDollard(int plafondCurrencyInDollard) {
 		this.plafondCurrencyInDollard = plafondCurrencyInDollard;
+	}
+
+	public long getDeltaPanicMax_ms() {
+		return deltaPanicMax_ms;
 	}
 
 }
