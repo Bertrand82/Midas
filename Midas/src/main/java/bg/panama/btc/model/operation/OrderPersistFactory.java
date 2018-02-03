@@ -1,4 +1,4 @@
-package bg.panama.btc.trading.first;
+package bg.panama.btc.model.operation;
 
 import java.util.List;
 
@@ -8,7 +8,6 @@ import javax.persistence.Query;
 
 import bg.panama.btc.model.Balance;
 import bg.panama.btc.model.Balances;
-import bg.panama.btc.model.operation.Order;
 import bg.panama.btc.model.v2.Tickers;
 import bg.util.HibernateUtil;
 

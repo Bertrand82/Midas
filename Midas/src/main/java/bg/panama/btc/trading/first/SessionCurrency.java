@@ -349,7 +349,7 @@ public class SessionCurrency implements Serializable,Cloneable{
 
 	@Override
 	public String toString() {
-		return "SessionCurrency [id=" + id + ", date=" + date + ", shortName=" + shortName + ", hourlyPrice="
+		return "SessionCurrency [shortName= "+shortName+", id=" + id + ", date=" + date +  ", hourlyPrice="
 				+ hourlyPrice + ", lastPrice=" + lastPrice + "]";
 	}
 	public enum EtatSTOCHASTIQUE {

@@ -186,4 +186,10 @@ public class ActiveOrder {
 		this.executed_amount = executed_amount;
 	}
 
+
+	public String getShortName() {
+		
+		return (this.symbol+"    ").substring(0, 2);
+	}
+
 }

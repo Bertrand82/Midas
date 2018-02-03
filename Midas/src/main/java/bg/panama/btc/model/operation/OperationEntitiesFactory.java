@@ -37,5 +37,33 @@ public class OperationEntitiesFactory {
 
 	}
 
+	public List<Operation> getListOperationInit() {
+		
+		try {
+			EntityManager em = emf.createEntityManager();
+			String hql = "FROM Operation f WHERE f.phase !=:phase  ORDER BY f.date DESC";// DESC
+																							// ASC
+			Query query = em.createQuery(hql);
+			query.setParameter("phase", Operation.PHASE_OP.closed);
+			
+			List<Operation> list = (List<Operation>) query.getResultList();
+			em.close();
+			System.err.println("list Order no closed "+list);
+			return list;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	public void persists(Order order) {
+		EntityManager em = emf.createEntityManager();
+		em.getTransaction().begin();
+		
+		em.persist(order);
+		em.getTransaction().commit();
+		em.close();
+	}
+
 
 }

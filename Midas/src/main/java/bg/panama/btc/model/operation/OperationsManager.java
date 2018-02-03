@@ -9,8 +9,11 @@ import org.hibernate.service.spi.ServiceRegistryAwareService;
 
 import bg.panama.btc.BitfinexClient;
 import bg.panama.btc.BitfinexClientFactory;
+import bg.panama.btc.OrderFactory;
 import bg.panama.btc.OrderManager;
 import bg.panama.btc.PanicThreadOrderSaveAllInUsd;
+import bg.panama.btc.model.ActiveOrder;
+import bg.panama.btc.model.ActiveOrders;
 import bg.panama.btc.model.Balance;
 import bg.panama.btc.model.Balances;
 import bg.panama.btc.swing.SymbolConfig;
@@ -28,11 +31,27 @@ public class OperationsManager {
 
 	private static Config config = Config.getInstance();
 
+	private List<Operation> listOperations = new ArrayList<>();
+	
+	private long timePanic = 0;
+	
 	private OperationsManager() {
-
+		this.listOperations = OperationEntitiesFactory.instance.getListOperationInit();
+		this.updateListOperation();
 	}
 
-	long timePanic = 0;
+	
+
+	private void updateListOperation() {
+		System.err.println("UpdateListOperation");
+		ActiveOrders activeOrders = OrderFactory.getInstance().getAllActivesOrders();
+		for(ActiveOrder activeOrder : activeOrders.getlOrders()){
+			System.out.println(" -------------- "+activeOrder.getShortName()+"   "+activeOrder);
+			
+		}
+	}
+
+
 
 	public void emergencySaveInDollar(String from) {
 		// Vomme l'ordre panic annule tous les ordres en cours, Un ordre panic annule aussi les ordres de ventes panic precedent ... 
@@ -42,7 +61,6 @@ public class OperationsManager {
 		if ((System.currentTimeMillis() - timePanic) > 3 * 60000) {
 			BitfinexClient bitfinexClient = BitfinexClientFactory.getBitfinexClientAuthenticated();
 			loggerOrder.info("emergencySaveInDollar from :" + from);
-
 			PanicThreadOrderSaveAllInUsd panicThread = new PanicThreadOrderSaveAllInUsd(bitfinexClient);
 			panicThread.saveAllInUSD("from OrderFactory from " + from);
 		}
@@ -193,9 +211,15 @@ public class OperationsManager {
 		return null;
 	}
 
-	List<Operation> listOperations = new ArrayList<>();
+	
 	public void addOperation(Operation operation) {
 		listOperations.add(operation);
+	}
+
+
+
+	public static OperationsManager getInstance() {
+		return instance;
 	}
 
 }

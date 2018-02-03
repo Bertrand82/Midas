@@ -50,15 +50,17 @@ Passer un ordre d'achat au prix
 			panic (Traiter à part)
 	
 
+
+TODO SHORT:
+Validation cycle de vie d'une opération: Visualisation des operations, des ordres, de leur bilan (Si terminé)
+
+Horloge centrale (Permettant de re-jouer en accéléré)
+Visualisation du fichier de config
+Implementer connecteur acquisition/balance/order Simu ou Bitfinex
+
 TODO LONG: 
 Simulation sur plusieurs jours, avec plusieurs "algo" en parallèle
 Traitement d'autres plateformes
-
-TODO SHORT:
-Horloge centrale (Permettant de re-jouer en accéléré)
-Validation cycle de vie d'une opération: Visualisation des operations, des ordres, de leur bilan (Si terminé)
-Visualisation du fichier de config
-Implementer connecteur acquisition/balance/order Simu ou Bitfinex
 	
 	
 	

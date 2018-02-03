@@ -3,9 +3,11 @@ package  bg.panama.btc.model.operation;
 import java.io.Serializable;
 import java.util.Date;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
@@ -45,7 +47,8 @@ public class Order implements Serializable {
 	private Date date = new Date();
 	//private Operation operation;
 	private TypeChoicePrice typeChoicePrice;
-	
+	@OneToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name="OrdreOrdreRetour")	
 	private OrderRetour orderRetour;
 	
 

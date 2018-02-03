@@ -10,6 +10,7 @@ import bg.panama.btc.model.operation.Order;
 public class MainTestOperation {
 
 	public static void main(String[] args) {
+		insertOrder();
 		insert();
 		list();
 	}
@@ -30,6 +31,15 @@ public class MainTestOperation {
 		operation.setOrderAchat(orderAchat);
 		OperationEntitiesFactory.instance.persists(operation);
 		System.out.println("MainTestOperation done "+operation);
+		
+	}
+	public static void insertOrder() {
+		System.out.println("MainTestOperation order start");
+		
+		Order orderAchat = new Order("test", 10,Order.Side.buy, Order.TypeChoicePrice.manual);
+		OperationEntitiesFactory.instance.persists(orderAchat);
+		System.out.println("MainTestOperation order done");
+		
 		
 	}
 

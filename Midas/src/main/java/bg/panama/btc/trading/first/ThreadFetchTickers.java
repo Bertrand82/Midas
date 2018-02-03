@@ -91,7 +91,7 @@ public class ThreadFetchTickers implements Runnable{
 					em.close();
 					ServiceCurrencies.getInstance().setSessionCurrencies(sessionCurrencies);
 					sessionCurrencies.checkActiveOrders();
-					List<Order> listOrdersVente = OperationsManager.processOrdersVent();
+					OperationsManager.getInstance().processOrdersVent();
 
 				} catch (Exception e) {
 					log("Exception22: "+e.getClass()+" "+e.getMessage());

@@ -27,8 +27,10 @@ public class Operation {
 	
 	public Operation(String currency, double amount,  TypeChoicePrice type) {
 		this.orderAchat=new Order(currency, amount, Order.Side.buy,Order.TypeChoicePrice.fromTickers);
-		OperationsManager.instance.addOperation(this);
+		this.currency = currency;
+		OperationsManager.instance.addOperation(this);	
 	}
+
 
 	@Id
 	@GeneratedValue
@@ -36,20 +38,21 @@ public class Operation {
 	
 	private Date date = new Date();
 	@OneToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name="operation")
+	@JoinColumn(name="operationOrdreAchat")
 	private Order orderAchat;
 	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name="id")
 	private Order orderVenteStop;
 		
 	private PHASE_OP phase  = PHASE_OP.Preparation;
-	private double stop;
-	private double limit;
+	private double stopLow;
+	private double limitHight;
+	private String currency;
 	
 	@Override
 	public String toString() {
-		return "Operation [id=" + id + ", date=" + date + ", orderAchat=[" + orderAchat + "] , orderVenteStop="
-				+ orderVenteStop + ", orderVenteLimit=" + limit + ", phase=" + phase + "]";
+		return "Operation ["+currency+", id=" + id + ", date=" + date + ", orderAchat=[" + orderAchat + "] , orderVenteStop="
+				+ orderVenteStop + ", orderVenteLimit=" + limitHight + ", phase=" + phase + "]";
 	}
 	public long getId() {
 		return id;
@@ -83,11 +86,22 @@ public class Operation {
 	public void setPhase(PHASE_OP phase) {
 		this.phase = phase;
 	}
-	public double getLimit() {
-		return limit;
+	
+
+	public double getStopLow() {
+		return stopLow;
 	}
-	public void setLimit(double limit) {
-		this.limit = limit;
+
+	public void setStopLow(double stopLow) {
+		this.stopLow = stopLow;
+	}
+
+	public double getLimitHight() {
+		return limitHight;
+	}
+
+	public void setLimitHight(double limitHight) {
+		this.limitHight = limitHight;
 	}
 
 	public void start() {

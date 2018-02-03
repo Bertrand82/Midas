@@ -2,6 +2,7 @@ package bg.panama.btc.swing;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Desktop;
 import java.awt.Font;
 import java.awt.Point;
 import java.awt.Toolkit;
@@ -83,6 +84,15 @@ public class MidasGUI {
 		menuItemOrderAbleVente.setSelected(Config.getInstance().isOrderAbleVente());
 		textFieldPlafondMaxDollar.setText(""+Config.getInstance().getPlafondCryptoInDollar());
 		textFieldPlafondMaxDollarByCurrency.setText(""+Config.getInstance().getPlafondCurrencyInDollard());
+		JMenuItem menuShowConfig = new JMenuItem("Edit Config");
+		menuShowConfig.addActionListener(new ActionListener() {
+
+			public void actionPerformed(ActionEvent e) {
+				editConfig();
+			}
+
+			
+		});
 		JMenuItem menuTestBestCurrency = new JMenuItem("Test Best Currency");
 		menuTestBestCurrency.addActionListener(new ActionListener() {
 
@@ -291,6 +301,7 @@ public class MidasGUI {
 		menuFile.add(menuSelectCurrency);
 		menuFile.add(menuSetSecretKeys);
 		menuFile.add(menuTestBestCurrency);
+		menuFile.add(menuShowConfig);
 
 		this.menuPanic.add(menuRemovePanic);
 		this.menuPanic.add(menuSetPanic);
@@ -604,5 +615,22 @@ public class MidasGUI {
 
 	private void checkActiveOrders() {
 		ServiceCurrencies.getInstance().getSessionCurrencies().checkActiveOrders();
+	}
+	
+	private void editConfig() {
+		File f = Config.getInstance().getFileConfig();
+		try {
+			if (Desktop.isDesktopSupported()) {
+			    try {
+					Desktop.getDesktop().edit(f);
+				} catch (java.lang.UnsupportedOperationException e) {
+					Desktop.getDesktop().open(f);
+				}
+			} else {
+			    this.log("No editor "+f.getAbsolutePath());
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 }

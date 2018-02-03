@@ -65,6 +65,10 @@ public class Config implements Serializable {
 		return instance;
 	}
 
+	public File getFileConfig() {
+		return fileConfig;
+	}
+
 	private void readConfigFile() {
 		try {
 			System.out.println("ReadConfigFile");

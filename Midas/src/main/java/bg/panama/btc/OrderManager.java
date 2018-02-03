@@ -13,7 +13,7 @@ import bg.panama.btc.model.OrderBookFactory;
 import bg.panama.btc.model.Symbols;
 import bg.panama.btc.model.TickerV1;
 import bg.panama.btc.model.operation.Order;
-import bg.panama.btc.trading.first.OrderPersistFactory;
+import bg.panama.btc.model.operation.OrderPersistFactory;
 import bg.panama.btc.trading.first.OrderRetour;
 import bg.panama.btc.trading.first.ServiceCurrencies;
 import bg.panama.btc.trading.first.SessionCurrencies;
